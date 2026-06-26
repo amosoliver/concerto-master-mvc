@@ -1,0 +1,37 @@
+<%= form_with(model: g_pessoa, local: true, class: "panel-card form-card") do |form| %>
+  <% if g_pessoa.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(g_pessoa.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% g_pessoa.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :nome %>
+      <%= form.text_field :nome, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :email %>
+      <%= form.text_field :email, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_entidade_id %>
+      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_sexo_id %>
+      <%= form.collection_select :g_sexo_id, GSexo.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", g_pessoa_path(@g_pessoa), class: "secondary-button" if g_pessoa.persisted? %>
+    <%= link_to "Cancelar", g_pessoas_path, class: "secondary-button" unless g_pessoa.persisted? %>
+  </div>
+<% end %>

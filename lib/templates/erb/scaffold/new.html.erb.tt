@@ -1,0 +1,10 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Novo</p>
+      <h1>Criar <%%= <%= class_name %>.model_name.human %></h1>
+    </div>
+  </div>
+
+  <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+</div>

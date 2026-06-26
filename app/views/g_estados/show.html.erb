@@ -1,0 +1,45 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= GEstado.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_g_estado_path(@g_estado), class: "primary-button" %>
+      <%= link_to "Voltar", g_estados_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= GEstado.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= GEstado.human_attribute_name(:descricao) %></span>
+        <span class="detail-value"><%= @g_estado.descricao %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GEstado.human_attribute_name(:sigla) %></span>
+        <span class="detail-value"><%= @g_estado.sigla %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GEstado.human_attribute_name(:codigo_ibge) %></span>
+        <span class="detail-value"><%= @g_estado.codigo_ibge %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GEstado.human_attribute_name(:g_pais_id) %></span>
+        <span class="detail-value"><%= @g_estado.g_pais %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@g_estado.created_at) %></span>
+      <span>Atualizado em <%= l(@g_estado.updated_at) %></span>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,9 @@
+<%# locals: (show_path:, edit_path:, delete_path:) %>
+<div class="actions-menu" data-controller="dropdown">
+  <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+  <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+    <%= link_to show_path, class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end %>
+    <%= link_to edit_path, class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end %>
+    <%= button_to delete_path, method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+  </div>
+</div>

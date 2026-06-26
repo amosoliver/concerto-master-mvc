@@ -1,0 +1,41 @@
+<%= form_with(model: g_predio, local: true, class: "panel-card form-card") do |form| %>
+  <% if g_predio.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(g_predio.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% g_predio.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :nome_fantasia %>
+      <%= form.text_field :nome_fantasia, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :cep %>
+      <%= form.text_field :cep, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :logradouro %>
+      <%= form.text_field :logradouro, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :bairro %>
+      <%= form.text_field :bairro, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_entidade_id %>
+      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", g_predio_path(@g_predio), class: "secondary-button" if g_predio.persisted? %>
+    <%= link_to "Cancelar", g_predios_path, class: "secondary-button" unless g_predio.persisted? %>
+  </div>
+<% end %>

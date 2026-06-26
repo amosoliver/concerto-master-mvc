@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  m_musica: one
+  m_arranjador: one
+  m_tonalidade: one
+
+two:
+  m_musica: two
+  m_arranjador: two
+  m_tonalidade: two

@@ -1,0 +1,33 @@
+<%= form_with(model: m_arranjo, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_arranjo.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_arranjo.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_arranjo.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :m_musica_id %>
+      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_arranjador_id %>
+      <%= form.collection_select :m_arranjador_id, MArranjador.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_tonalidade_id %>
+      <%= form.collection_select :m_tonalidade_id, MTonalidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_arranjo_path(@m_arranjo), class: "secondary-button" if m_arranjo.persisted? %>
+    <%= link_to "Cancelar", m_arranjos_path, class: "secondary-button" unless m_arranjo.persisted? %>
+  </div>
+<% end %>

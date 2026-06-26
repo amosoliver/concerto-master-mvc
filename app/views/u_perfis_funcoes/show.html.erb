@@ -1,0 +1,37 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= UPerfilFuncao.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_u_perfil_funcao_path(@u_perfil_funcao), class: "primary-button" %>
+      <%= link_to "Voltar", u_perfis_funcoes_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= UPerfilFuncao.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= UPerfilFuncao.human_attribute_name(:u_perfil_id) %></span>
+        <span class="detail-value"><%= @u_perfil_funcao.u_perfil %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= UPerfilFuncao.human_attribute_name(:u_funcao_id) %></span>
+        <span class="detail-value"><%= @u_perfil_funcao.u_funcao %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@u_perfil_funcao.created_at) %></span>
+      <span>Atualizado em <%= l(@u_perfil_funcao.updated_at) %></span>
+    </div>
+  </section>
+</div>

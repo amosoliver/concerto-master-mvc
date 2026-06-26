@@ -1,0 +1,100 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciamento</p>
+      <h1><%= model_plural_human_name(GUsuario) %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Novo #{GUsuario.model_name.human}", new_g_usuario_path, class: "primary-button" %>
+    </div>
+  </div>
+
+  <%= search_form_for @q, url: g_usuarios_path, method: :get, class: "search-panel" do |f| %>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.search_field :email_cont, placeholder: GUsuario.human_attribute_name(:email), "aria-label": GUsuario.human_attribute_name(:email), class: "search-input__field" %>
+    </div>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.search_field :encrypted_password_cont, placeholder: GUsuario.human_attribute_name(:encrypted_password), "aria-label": GUsuario.human_attribute_name(:encrypted_password), class: "search-input__field" %>
+    </div>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.search_field :ativo_cont, placeholder: GUsuario.human_attribute_name(:ativo), "aria-label": GUsuario.human_attribute_name(:ativo), class: "search-input__field" %>
+    </div>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GUsuario.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
+    </div>
+    <div class="search-panel__actions">
+      <%= f.submit "Filtrar", class: "primary-button" %>
+      <%= link_to "Limpar", g_usuarios_path, class: "secondary-button" %>
+    </div>
+  <% end %>
+
+  <section class="panel-card" data-controller="view-toggle">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Listagem</p>
+        <h3><%= pluralize(@g_usuarios.size, "registro") %></h3>
+      </div>
+      <div class="view-switch">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper" data-view-toggle-target="table">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col"><%= GUsuario.human_attribute_name(:email) %></th>
+            <th scope="col"><%= GUsuario.human_attribute_name(:encrypted_password) %></th>
+            <th scope="col"><%= GUsuario.human_attribute_name(:ativo) %></th>
+            <th scope="col"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @g_usuarios.each do |g_usuario| %>
+            <tr>
+              <td><%= g_usuario.email %></td>
+              <td><%= g_usuario.encrypted_password %></td>
+              <td><%= g_usuario.ativo %></td>
+              <td><%= g_usuario.g_pessoa %></td>
+              <td>
+                <%= render "shared/actions_menu", show_path: g_usuario_path(g_usuario), edit_path: edit_g_usuario_path(g_usuario), delete_path: g_usuario_path(g_usuario) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" data-view-toggle-target="cards" hidden>
+      <% @g_usuarios.each do |g_usuario| %>
+        <article class="record-card">
+          <div class="record-card__body">
+            <span class="detail-label"><%= GUsuario.human_attribute_name(:email) %></span>
+            <span class="detail-value"><%= g_usuario.email %></span>
+            <span class="detail-label"><%= GUsuario.human_attribute_name(:encrypted_password) %></span>
+            <span class="detail-value"><%= g_usuario.encrypted_password %></span>
+            <span class="detail-label"><%= GUsuario.human_attribute_name(:ativo) %></span>
+            <span class="detail-value"><%= g_usuario.ativo %></span>
+            <span class="detail-label"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></span>
+            <span class="detail-value"><%= g_usuario.g_pessoa %></span>
+          </div>
+          <div class="record-card__footer">
+            <%= render "shared/actions_menu", show_path: g_usuario_path(g_usuario), edit_path: edit_g_usuario_path(g_usuario), delete_path: g_usuario_path(g_usuario) %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+
+    <% if @pagy %>
+      <div class="pagination-wrap">
+        <%== @pagy.series_nav %>
+      </div>
+    <% end %>
+  </section>
+</div>

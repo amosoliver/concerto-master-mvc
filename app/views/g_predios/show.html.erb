@@ -1,0 +1,49 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= GPredio.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_g_predio_path(@g_predio), class: "primary-button" %>
+      <%= link_to "Voltar", g_predios_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= GPredio.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= GPredio.human_attribute_name(:nome_fantasia) %></span>
+        <span class="detail-value"><%= @g_predio.nome_fantasia %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GPredio.human_attribute_name(:cep) %></span>
+        <span class="detail-value"><%= @g_predio.cep %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GPredio.human_attribute_name(:logradouro) %></span>
+        <span class="detail-value"><%= @g_predio.logradouro %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GPredio.human_attribute_name(:bairro) %></span>
+        <span class="detail-value"><%= @g_predio.bairro %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GPredio.human_attribute_name(:g_entidade_id) %></span>
+        <span class="detail-value"><%= @g_predio.g_entidade %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@g_predio.created_at) %></span>
+      <span>Atualizado em <%= l(@g_predio.updated_at) %></span>
+    </div>
+  </section>
+</div>

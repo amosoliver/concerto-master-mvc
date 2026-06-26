@@ -1,0 +1,45 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= UPermissao.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_u_permissao_path(@u_permissao), class: "primary-button" %>
+      <%= link_to "Voltar", u_permissoes_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= UPermissao.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= UPermissao.human_attribute_name(:descricao) %></span>
+        <span class="detail-value"><%= @u_permissao.descricao %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= UPermissao.human_attribute_name(:controlador) %></span>
+        <span class="detail-value"><%= @u_permissao.controlador %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= UPermissao.human_attribute_name(:acao) %></span>
+        <span class="detail-value"><%= @u_permissao.acao %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= UPermissao.human_attribute_name(:admin) %></span>
+        <span class="detail-value"><%= @u_permissao.admin %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@u_permissao.created_at) %></span>
+      <span>Atualizado em <%= l(@u_permissao.updated_at) %></span>
+    </div>
+  </section>
+</div>

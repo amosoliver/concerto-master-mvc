@@ -1,0 +1,161 @@
+pt-BR:
+  date:
+    formats:
+      default: "%d/%m/%Y"
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+
+  helpers:
+    submit:
+      create: "Criar %{model}"
+      update: "Atualizar %{model}"
+      submit: "Salvar %{model}"
+
+  # Fallback genérico de atributos: usado por qualquer model que não
+  # sobrescreva o campo em activerecord.attributes.<model>.<attributo>.
+  attributes:
+    id: "ID"
+    descricao: "Descrição"
+    nome: "Nome"
+    email: "E-mail"
+    sigla: "Sigla"
+    codigo_ibge: "Código IBGE"
+    nome_fantasia: "Nome Fantasia"
+    cep: "CEP"
+    logradouro: "Logradouro"
+    bairro: "Bairro"
+    encrypted_password: "Senha"
+    ativo: "Ativo"
+    principal: "Principal"
+    controlador: "Controlador"
+    acao: "Ação"
+    admin: "Administrador"
+    data_inicio: "Data de Início"
+    data_fim: "Data de Término"
+    created_at: "Criado em"
+    updated_at: "Atualizado em"
+    deleted_at: "Excluído em"
+    g_estado_id: "Estado"
+    g_municipio_id: "Município"
+    g_pais_id: "País"
+    g_instrumento_id: "Instrumento"
+    g_naipe_id: "Naipe"
+    g_instrumento_naipe_id: "Instrumento e Naipe"
+    g_entidade_id: "Entidade"
+    g_sexo_id: "Sexo"
+    g_pessoa_id: "Pessoa"
+    g_predio_id: "Prédio"
+    g_usuario_id: "Usuário"
+    m_musica_id: "Música"
+    m_arranjador_id: "Arranjador"
+    m_tonalidade_id: "Tonalidade"
+    m_arranjo_id: "Arranjo"
+    m_evento_id: "Evento"
+    m_tipo_grupo_id: "Tipo de Grupo"
+    m_grupo_id: "Grupo"
+    m_compositor_id: "Compositor"
+    m_artista_id: "Artista"
+    u_funcao_id: "Função"
+    u_tipo_funcao_id: "Tipo de Função"
+    u_perfil_id: "Perfil"
+    u_permissao_id: "Permissão"
+
+  activerecord:
+    models:
+      g_entidade:
+        one: "Entidade"
+        other: "Entidades"
+      g_estado:
+        one: "Estado"
+        other: "Estados"
+      g_instrumento:
+        one: "Instrumento"
+        other: "Instrumentos"
+      g_instrumento_naipe:
+        one: "Instrumento e Naipe"
+        other: "Instrumentos e Naipes"
+      g_municipio:
+        one: "Município"
+        other: "Municípios"
+      g_naipe:
+        one: "Naipe"
+        other: "Naipes"
+      g_pais:
+        one: "País"
+        other: "Países"
+      g_pessoa:
+        one: "Pessoa"
+        other: "Pessoas"
+      g_pessoas_instrumento:
+        one: "Pessoa e Instrumento"
+        other: "Pessoas e Instrumentos"
+      g_predio:
+        one: "Prédio"
+        other: "Prédios"
+      g_sexo:
+        one: "Sexo"
+        other: "Sexos"
+      g_usuario:
+        one: "Usuário"
+        other: "Usuários"
+      m_arranjador:
+        one: "Arranjador"
+        other: "Arranjadores"
+      m_arranjo:
+        one: "Arranjo"
+        other: "Arranjos"
+      m_arranjo_instrumento_naipe:
+        one: "Instrumento do Arranjo"
+        other: "Instrumentos do Arranjo"
+      m_artista:
+        one: "Artista"
+        other: "Artistas"
+      m_compositor:
+        one: "Compositor"
+        other: "Compositores"
+      m_evento:
+        one: "Evento"
+        other: "Eventos"
+      m_evento_musica:
+        one: "Música do Evento"
+        other: "Músicas do Evento"
+      m_grupo:
+        one: "Grupo"
+        other: "Grupos"
+      m_grupo_pessoa:
+        one: "Integrante do Grupo"
+        other: "Integrantes do Grupo"
+      m_musica:
+        one: "Música"
+        other: "Músicas"
+      m_pessoa_funcao:
+        one: "Função da Pessoa"
+        other: "Funções da Pessoa"
+      m_tipo_grupo:
+        one: "Tipo de Grupo"
+        other: "Tipos de Grupo"
+      m_tonalidade:
+        one: "Tonalidade"
+        other: "Tonalidades"
+      u_funcao:
+        one: "Função"
+        other: "Funções"
+      u_perfil:
+        one: "Perfil"
+        other: "Perfis"
+      u_perfil_funcao:
+        one: "Função do Perfil"
+        other: "Funções do Perfil"
+      u_perfil_permissao:
+        one: "Permissão do Perfil"
+        other: "Permissões do Perfil"
+      u_permissao:
+        one: "Permissão"
+        other: "Permissões"
+      u_tipo_funcao:
+        one: "Tipo de Função"
+        other: "Tipos de Função"
+      u_usuario_perfil:
+        one: "Perfil do Usuário"
+        other: "Perfis do Usuário"

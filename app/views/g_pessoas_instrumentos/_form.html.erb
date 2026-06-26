@@ -1,0 +1,29 @@
+<%= form_with(model: g_pessoas_instrumento, local: true, class: "panel-card form-card") do |form| %>
+  <% if g_pessoas_instrumento.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(g_pessoas_instrumento.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% g_pessoas_instrumento.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :g_pessoa_id %>
+      <%= form.collection_select :g_pessoa_id, GPessoa.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_instrumento_naipe_id %>
+      <%= form.collection_select :g_instrumento_naipe_id, GInstrumentoNaipe.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", g_pessoas_instrumento_path(@g_pessoas_instrumento), class: "secondary-button" if g_pessoas_instrumento.persisted? %>
+    <%= link_to "Cancelar", g_pessoas_instrumentos_path, class: "secondary-button" unless g_pessoas_instrumento.persisted? %>
+  </div>
+<% end %>

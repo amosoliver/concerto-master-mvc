@@ -1,0 +1,44 @@
+<%%= form_with(model: <%= model_resource_name %>, local: true, class: "panel-card form-card") do |form| %>
+  <%% if <%= singular_table_name %>.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%%= pluralize(<%= singular_table_name %>.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <%% <%= singular_table_name %>.errors.full_messages.each do |message| %>
+          <li><%%= message %></li>
+        <%% end %>
+      </ul>
+    </div>
+  <%% end %>
+
+  <div class="form-grid">
+<% attributes.each do |attribute| -%>
+<% if attribute.password_digest? -%>
+    <div class="field-group">
+      <%%= form.label :password, "Senha" %>
+      <%%= form.password_field :password, class: "form-control" %>
+    </div>
+<% elsif attribute.reference? -%>
+    <div class="field-group">
+      <%%= form.label :<%= attribute.column_name %> %>
+      <%%= form.collection_select :<%= attribute.column_name %>, <%= attribute.name.camelize %>.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+<% elsif attribute.type == :text -%>
+    <div class="field-group field-group--full">
+      <%%= form.label :<%= attribute.column_name %> %>
+      <%%= form.text_area :<%= attribute.column_name %>, rows: 5, class: "form-control" %>
+    </div>
+<% else -%>
+    <div class="field-group">
+      <%%= form.label :<%= attribute.column_name %> %>
+      <%%= form.<%= attribute.field_type %> :<%= attribute.column_name %>, class: "form-control" %>
+    </div>
+<% end -%>
+<% end -%>
+  </div>
+
+  <div class="form-actions">
+    <%%= form.submit class: "primary-button" %>
+    <%%= link_to "Cancelar", <%= singular_route_name %>_path(@<%= singular_table_name %>), class: "secondary-button" if <%= singular_table_name %>.persisted? %>
+    <%%= link_to "Cancelar", <%= plural_route_name %>_path, class: "secondary-button" unless <%= singular_table_name %>.persisted? %>
+  </div>
+<%% end %>

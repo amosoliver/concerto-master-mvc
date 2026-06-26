@@ -1,0 +1,76 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciamento</p>
+      <h1><%= model_plural_human_name(UTipoFuncao) %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Novo #{UTipoFuncao.model_name.human}", new_u_tipo_funcao_path, class: "primary-button" %>
+    </div>
+  </div>
+
+  <%= search_form_for @q, url: u_tipos_funcoes_path, method: :get, class: "search-panel" do |f| %>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.search_field :descricao_cont, placeholder: UTipoFuncao.human_attribute_name(:descricao), "aria-label": UTipoFuncao.human_attribute_name(:descricao), class: "search-input__field" %>
+    </div>
+    <div class="search-panel__actions">
+      <%= f.submit "Filtrar", class: "primary-button" %>
+      <%= link_to "Limpar", u_tipos_funcoes_path, class: "secondary-button" %>
+    </div>
+  <% end %>
+
+  <section class="panel-card" data-controller="view-toggle">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Listagem</p>
+        <h3><%= pluralize(@u_tipos_funcoes.size, "registro") %></h3>
+      </div>
+      <div class="view-switch">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper" data-view-toggle-target="table">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col"><%= UTipoFuncao.human_attribute_name(:descricao) %></th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @u_tipos_funcoes.each do |u_tipo_funcao| %>
+            <tr>
+              <td><%= u_tipo_funcao.descricao %></td>
+              <td>
+                <%= render "shared/actions_menu", show_path: u_tipo_funcao_path(u_tipo_funcao), edit_path: edit_u_tipo_funcao_path(u_tipo_funcao), delete_path: u_tipo_funcao_path(u_tipo_funcao) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" data-view-toggle-target="cards" hidden>
+      <% @u_tipos_funcoes.each do |u_tipo_funcao| %>
+        <article class="record-card">
+          <div class="record-card__body">
+            <span class="detail-label"><%= UTipoFuncao.human_attribute_name(:descricao) %></span>
+            <span class="detail-value"><%= u_tipo_funcao.descricao %></span>
+          </div>
+          <div class="record-card__footer">
+            <%= render "shared/actions_menu", show_path: u_tipo_funcao_path(u_tipo_funcao), edit_path: edit_u_tipo_funcao_path(u_tipo_funcao), delete_path: u_tipo_funcao_path(u_tipo_funcao) %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+
+    <% if @pagy %>
+      <div class="pagination-wrap">
+        <%== @pagy.series_nav %>
+      </div>
+    <% end %>
+  </section>
+</div>

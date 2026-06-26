@@ -1,0 +1,37 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= MEventoMusica.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_m_evento_musica_path(@m_evento_musica), class: "primary-button" %>
+      <%= link_to "Voltar", m_eventos_musicas_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= MEventoMusica.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= MEventoMusica.human_attribute_name(:m_evento_id) %></span>
+        <span class="detail-value"><%= @m_evento_musica.m_evento %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= MEventoMusica.human_attribute_name(:m_musica_id) %></span>
+        <span class="detail-value"><%= @m_evento_musica.m_musica %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@m_evento_musica.created_at) %></span>
+      <span>Atualizado em <%= l(@m_evento_musica.updated_at) %></span>
+    </div>
+  </section>
+</div>

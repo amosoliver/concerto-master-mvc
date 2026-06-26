@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  descricao: MyString
+  data_inicio: 2026-06-25 23:38:29
+  data_fim: 2026-06-25 23:38:29
+  g_predio: one
+
+two:
+  descricao: MyString
+  data_inicio: 2026-06-25 23:38:29
+  data_fim: 2026-06-25 23:38:29
+  g_predio: two

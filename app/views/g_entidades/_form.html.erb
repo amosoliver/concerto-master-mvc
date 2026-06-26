@@ -1,0 +1,33 @@
+<%= form_with(model: g_entidade, local: true, class: "panel-card form-card") do |form| %>
+  <% if g_entidade.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(g_entidade.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% g_entidade.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_estado_id %>
+      <%= form.collection_select :g_estado_id, GEstado.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_municipio_id %>
+      <%= form.collection_select :g_municipio_id, GMunicipio.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", g_entidade_path(@g_entidade), class: "secondary-button" if g_entidade.persisted? %>
+    <%= link_to "Cancelar", g_entidades_path, class: "secondary-button" unless g_entidade.persisted? %>
+  </div>
+<% end %>

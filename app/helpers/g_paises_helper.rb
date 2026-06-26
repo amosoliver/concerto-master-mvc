@@ -1,0 +1,2 @@
+module GPaisesHelper
+end

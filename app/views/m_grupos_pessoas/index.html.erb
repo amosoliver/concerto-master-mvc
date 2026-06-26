@@ -1,0 +1,84 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciamento</p>
+      <h1><%= model_plural_human_name(MGrupoPessoa) %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Novo #{MGrupoPessoa.model_name.human}", new_m_grupo_pessoa_path, class: "primary-button" %>
+    </div>
+  </div>
+
+  <%= search_form_for @q, url: m_grupos_pessoas_path, method: :get, class: "search-panel" do |f| %>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": MGrupoPessoa.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
+    </div>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.select :m_grupo_id_eq, options_from_collection_for_select(MGrupo.all, :id, :to_s, @q&.send(:m_grupo_id_eq)), { include_blank: true }, "aria-label": MGrupoPessoa.human_attribute_name(:m_grupo_id), class: "search-input__field" %>
+    </div>
+    <div class="search-panel__actions">
+      <%= f.submit "Filtrar", class: "primary-button" %>
+      <%= link_to "Limpar", m_grupos_pessoas_path, class: "secondary-button" %>
+    </div>
+  <% end %>
+
+  <section class="panel-card" data-controller="view-toggle">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Listagem</p>
+        <h3><%= pluralize(@m_grupos_pessoas.size, "registro") %></h3>
+      </div>
+      <div class="view-switch">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper" data-view-toggle-target="table">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col"><%= MGrupoPessoa.human_attribute_name(:g_pessoa_id) %></th>
+            <th scope="col"><%= MGrupoPessoa.human_attribute_name(:m_grupo_id) %></th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @m_grupos_pessoas.each do |m_grupo_pessoa| %>
+            <tr>
+              <td><%= m_grupo_pessoa.g_pessoa %></td>
+              <td><%= m_grupo_pessoa.m_grupo %></td>
+              <td>
+                <%= render "shared/actions_menu", show_path: m_grupo_pessoa_path(m_grupo_pessoa), edit_path: edit_m_grupo_pessoa_path(m_grupo_pessoa), delete_path: m_grupo_pessoa_path(m_grupo_pessoa) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" data-view-toggle-target="cards" hidden>
+      <% @m_grupos_pessoas.each do |m_grupo_pessoa| %>
+        <article class="record-card">
+          <div class="record-card__body">
+            <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:g_pessoa_id) %></span>
+            <span class="detail-value"><%= m_grupo_pessoa.g_pessoa %></span>
+            <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:m_grupo_id) %></span>
+            <span class="detail-value"><%= m_grupo_pessoa.m_grupo %></span>
+          </div>
+          <div class="record-card__footer">
+            <%= render "shared/actions_menu", show_path: m_grupo_pessoa_path(m_grupo_pessoa), edit_path: edit_m_grupo_pessoa_path(m_grupo_pessoa), delete_path: m_grupo_pessoa_path(m_grupo_pessoa) %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+
+    <% if @pagy %>
+      <div class="pagination-wrap">
+        <%== @pagy.series_nav %>
+      </div>
+    <% end %>
+  </section>
+</div>

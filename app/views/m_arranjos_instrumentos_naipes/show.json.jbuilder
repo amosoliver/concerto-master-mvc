@@ -1,0 +1,1 @@
+json.partial! "m_arranjos_instrumentos_naipes/m_arranjo_instrumento_naipe", m_arranjo_instrumento_naipe: @m_arranjo_instrumento_naipe

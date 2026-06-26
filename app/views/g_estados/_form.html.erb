@@ -1,0 +1,37 @@
+<%= form_with(model: g_estado, local: true, class: "panel-card form-card") do |form| %>
+  <% if g_estado.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(g_estado.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% g_estado.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :sigla %>
+      <%= form.text_field :sigla, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :codigo_ibge %>
+      <%= form.text_field :codigo_ibge, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_pais_id %>
+      <%= form.collection_select :g_pais_id, GPais.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", g_estado_path(@g_estado), class: "secondary-button" if g_estado.persisted? %>
+    <%= link_to "Cancelar", g_estados_path, class: "secondary-button" unless g_estado.persisted? %>
+  </div>
+<% end %>

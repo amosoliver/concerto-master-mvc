@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  descricao: MyString
+  g_entidade: one
+  m_tipo_grupo: one
+
+two:
+  descricao: MyString
+  g_entidade: two
+  m_tipo_grupo: two

@@ -1,0 +1,84 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciamento</p>
+      <h1>Exemplos</h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Novo Exemplo", new_example_path, class: "primary-button" %>
+    </div>
+  </div>
+
+  <%= search_form_for @q, url: examples_path, method: :get, class: "search-panel" do |f| %>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.search_field :name_cont, placeholder: "Nome", "aria-label": "Nome", class: "search-input__field" %>
+    </div>
+    <div class="search-input">
+      <span aria-hidden="true">🔎</span>
+      <%= f.search_field :description_cont, placeholder: "Descrição", "aria-label": "Descrição", class: "search-input__field" %>
+    </div>
+    <div class="search-panel__actions">
+      <%= f.submit "Filtrar", class: "primary-button" %>
+      <%= link_to "Limpar", examples_path, class: "secondary-button" %>
+    </div>
+  <% end %>
+
+  <section class="panel-card" data-controller="view-toggle">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Listagem</p>
+        <h3><%= pluralize(@examples.size, "registro") %></h3>
+      </div>
+      <div class="view-switch">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper" data-view-toggle-target="table">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Descrição</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @examples.each do |example| %>
+            <tr>
+              <td><%= example.name %></td>
+              <td><%= example.description %></td>
+              <td>
+                <%= render "shared/actions_menu", show_path: example_path(example), edit_path: edit_example_path(example), delete_path: example_path(example) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" data-view-toggle-target="cards" hidden>
+      <% @examples.each do |example| %>
+        <article class="record-card">
+          <div class="record-card__body">
+            <span class="detail-label">Nome</span>
+            <span class="detail-value"><%= example.name %></span>
+            <span class="detail-label">Descrição</span>
+            <span class="detail-value"><%= example.description %></span>
+          </div>
+          <div class="record-card__footer">
+            <%= render "shared/actions_menu", show_path: example_path(example), edit_path: edit_example_path(example), delete_path: example_path(example) %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+
+    <% if @pagy %>
+      <div class="pagination-wrap">
+        <%== @pagy.series_nav %>
+      </div>
+    <% end %>
+  </section>
+</div>

@@ -1,0 +1,41 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= GMunicipio.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_g_municipio_path(@g_municipio), class: "primary-button" %>
+      <%= link_to "Voltar", g_municipios_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= GMunicipio.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= GMunicipio.human_attribute_name(:descricao) %></span>
+        <span class="detail-value"><%= @g_municipio.descricao %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GMunicipio.human_attribute_name(:codigo_ibge) %></span>
+        <span class="detail-value"><%= @g_municipio.codigo_ibge %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GMunicipio.human_attribute_name(:g_estado_id) %></span>
+        <span class="detail-value"><%= @g_municipio.g_estado %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@g_municipio.created_at) %></span>
+      <span>Atualizado em <%= l(@g_municipio.updated_at) %></span>
+    </div>
+  </section>
+</div>

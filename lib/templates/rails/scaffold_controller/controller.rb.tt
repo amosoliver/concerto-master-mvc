@@ -1,0 +1,54 @@
+<% module_namespacing do -%>
+class <%= controller_class_name %>Controller < ApplicationController
+  before_action :set_<%= singular_table_name %>, only: %i[show edit update destroy]
+
+  def index
+    @q = <%= class_name %>.ransack(params[:q])
+    @<%= plural_table_name %> = @q.result.order(created_at: :desc)
+    @pagy, @<%= plural_table_name %> = pagy(@<%= plural_table_name %>, limit: 10)
+  end
+
+  def show
+  end
+
+  def new
+    @<%= singular_table_name %> = <%= class_name %>.new
+  end
+
+  def edit
+  end
+
+  def create
+    @<%= singular_table_name %> = <%= class_name %>.new(<%= singular_table_name %>_params)
+
+    if @<%= singular_table_name %>.save
+      redirect_to @<%= singular_table_name %>, notice: "<%= human_name %> criado com sucesso."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @<%= singular_table_name %>.update(<%= singular_table_name %>_params)
+      redirect_to @<%= singular_table_name %>, notice: "<%= human_name %> atualizado com sucesso."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @<%= singular_table_name %>.discard
+    redirect_to <%= index_helper %>_path, notice: "<%= human_name %> removido com sucesso."
+  end
+
+  private
+
+  def set_<%= singular_table_name %>
+    @<%= singular_table_name %> = <%= class_name %>.find(params[:id])
+  end
+
+  def <%= singular_table_name %>_params
+    params.require(:<%= singular_table_name %>).permit(<%= attributes_names.map { |name| ":#{name}" }.join(', ') %>)
+  end
+end
+<% end -%>

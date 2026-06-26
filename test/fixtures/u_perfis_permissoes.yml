@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  u_perfil: one
+  u_permissao: one
+
+two:
+  u_perfil: two
+  u_permissao: two

@@ -1,0 +1,2 @@
+module GInstrumentosNaipesHelper
+end

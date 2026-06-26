@@ -1,0 +1,2 @@
+module MArtistasHelper
+end

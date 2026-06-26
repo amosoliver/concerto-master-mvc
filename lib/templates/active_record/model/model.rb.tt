@@ -1,0 +1,20 @@
+<% module_namespacing do -%>
+class <%= class_name %> < <%= parent_class_name %>
+  include SoftDeletable
+
+<% attributes.select(&:reference?).each do |attribute| -%>
+  belongs_to :<%= attribute.name %><%= ", optional: true" unless attribute.required? %>
+<% end -%>
+<% if attributes.any?(&:password_digest?) -%>
+  has_secure_password
+<% end -%>
+
+  def self.ransackable_attributes(_auth_object = nil)
+    <%= (attributes.map(&:column_name) + ["deleted_at"]).inspect %>
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    []
+  end
+end
+<% end -%>

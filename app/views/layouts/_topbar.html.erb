@@ -1,0 +1,24 @@
+<header class="topbar">
+  <div class="topbar__primary">
+    <button type="button" class="sidebar-toggle" data-sidebar-target="toggle" data-action="click->sidebar#toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <label class="searchbox" aria-label="Buscar">
+      <span>🔎</span>
+      <input type="search" placeholder="Buscar músicas, eventos, usuários..." />
+    </label>
+  </div>
+
+  <div class="topbar__actions">
+    <button class="icon-button" aria-label="Notificações">🔔</button>
+    <button class="icon-button" data-action="click->theme#toggle" aria-label="Alternar tema">
+      <span data-theme-target="themeIcon">🌙</span>
+    </button>
+    <button class="icon-button" aria-label="Ajuda">❓</button>
+    <div class="avatar-pill">
+      <div class="avatar">AM</div>
+      <div>
+        <strong>Amós</strong>
+        <small>Admin</small>
+      </div>
+    </div>
+  </div>
+</header>

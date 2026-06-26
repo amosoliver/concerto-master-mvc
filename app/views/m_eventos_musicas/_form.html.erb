@@ -1,0 +1,29 @@
+<%= form_with(model: m_evento_musica, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_evento_musica.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_evento_musica.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_evento_musica.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :m_evento_id %>
+      <%= form.collection_select :m_evento_id, MEvento.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_musica_id %>
+      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_evento_musica_path(@m_evento_musica), class: "secondary-button" if m_evento_musica.persisted? %>
+    <%= link_to "Cancelar", m_eventos_musicas_path, class: "secondary-button" unless m_evento_musica.persisted? %>
+  </div>
+<% end %>

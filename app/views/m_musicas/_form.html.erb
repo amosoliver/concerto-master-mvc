@@ -1,0 +1,33 @@
+<%= form_with(model: m_musica, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_musica.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_musica.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_musica.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_compositor_id %>
+      <%= form.collection_select :m_compositor_id, MCompositor.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_artista_id %>
+      <%= form.collection_select :m_artista_id, MArtista.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_musica_path(@m_musica), class: "secondary-button" if m_musica.persisted? %>
+    <%= link_to "Cancelar", m_musicas_path, class: "secondary-button" unless m_musica.persisted? %>
+  </div>
+<% end %>

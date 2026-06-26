@@ -1,0 +1,29 @@
+<%= form_with(model: u_funcao, local: true, class: "panel-card form-card") do |form| %>
+  <% if u_funcao.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(u_funcao.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% u_funcao.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :u_tipo_funcao_id %>
+      <%= form.collection_select :u_tipo_funcao_id, UTipoFuncao.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", u_funcao_path(@u_funcao), class: "secondary-button" if u_funcao.persisted? %>
+    <%= link_to "Cancelar", u_funcoes_path, class: "secondary-button" unless u_funcao.persisted? %>
+  </div>
+<% end %>

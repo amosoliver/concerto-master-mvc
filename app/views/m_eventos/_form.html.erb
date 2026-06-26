@@ -1,0 +1,37 @@
+<%= form_with(model: m_evento, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_evento.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_evento.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_evento.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :data_inicio %>
+      <%= form.datetime_field :data_inicio, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :data_fim %>
+      <%= form.datetime_field :data_fim, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_predio_id %>
+      <%= form.collection_select :g_predio_id, GPredio.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_evento_path(@m_evento), class: "secondary-button" if m_evento.persisted? %>
+    <%= link_to "Cancelar", m_eventos_path, class: "secondary-button" unless m_evento.persisted? %>
+  </div>
+<% end %>

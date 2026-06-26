@@ -1,0 +1,37 @@
+<%= form_with(model: u_permissao, local: true, class: "panel-card form-card") do |form| %>
+  <% if u_permissao.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(u_permissao.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% u_permissao.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :controlador %>
+      <%= form.text_field :controlador, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :acao %>
+      <%= form.text_field :acao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :admin %>
+      <%= form.checkbox :admin, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", u_permissao_path(@u_permissao), class: "secondary-button" if u_permissao.persisted? %>
+    <%= link_to "Cancelar", u_permissoes_path, class: "secondary-button" unless u_permissao.persisted? %>
+  </div>
+<% end %>

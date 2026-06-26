@@ -1,0 +1,37 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= MArranjoInstrumentoNaipe.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_m_arranjo_instrumento_naipe_path(@m_arranjo_instrumento_naipe), class: "primary-button" %>
+      <%= link_to "Voltar", m_arranjos_instrumentos_naipes_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= MArranjoInstrumentoNaipe.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= MArranjoInstrumentoNaipe.human_attribute_name(:g_instrumento_naipe_id) %></span>
+        <span class="detail-value"><%= @m_arranjo_instrumento_naipe.g_instrumento_naipe %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= MArranjoInstrumentoNaipe.human_attribute_name(:m_arranjo_id) %></span>
+        <span class="detail-value"><%= @m_arranjo_instrumento_naipe.m_arranjo %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@m_arranjo_instrumento_naipe.created_at) %></span>
+      <span>Atualizado em <%= l(@m_arranjo_instrumento_naipe.updated_at) %></span>
+    </div>
+  </section>
+</div>

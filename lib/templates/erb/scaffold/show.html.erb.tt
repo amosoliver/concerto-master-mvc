@@ -1,0 +1,35 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%%= <%= class_name %>.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%%= link_to "Editar", edit_<%= singular_route_name %>_path(@<%= singular_table_name %>), class: "primary-button" %>
+      <%%= link_to "Voltar", <%= plural_route_name %>_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%%= <%= class_name %>.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+<% attributes.each do |attribute| -%>
+      <div class="detail-tile">
+        <span class="detail-label"><%%= <%= class_name %>.human_attribute_name(:<%= attribute.column_name %>) %></span>
+        <span class="detail-value"><%%= @<%= singular_table_name %>.<%= attribute.name %> %></span>
+      </div>
+<% end -%>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%%= l(@<%= singular_table_name %>.created_at) %></span>
+      <span>Atualizado em <%%= l(@<%= singular_table_name %>.updated_at) %></span>
+    </div>
+  </section>
+</div>

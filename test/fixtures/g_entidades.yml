@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  descricao: MyString
+  g_estado: one
+  g_municipio: one
+
+two:
+  descricao: MyString
+  g_estado: two
+  g_municipio: two

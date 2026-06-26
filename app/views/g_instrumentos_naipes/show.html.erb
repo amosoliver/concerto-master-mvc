@@ -1,0 +1,37 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= GInstrumentoNaipe.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_g_instrumento_naipe_path(@g_instrumento_naipe), class: "primary-button" %>
+      <%= link_to "Voltar", g_instrumentos_naipes_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= GInstrumentoNaipe.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_instrumento_id) %></span>
+        <span class="detail-value"><%= @g_instrumento_naipe.g_instrumento %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></span>
+        <span class="detail-value"><%= @g_instrumento_naipe.g_naipe %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@g_instrumento_naipe.created_at) %></span>
+      <span>Atualizado em <%= l(@g_instrumento_naipe.updated_at) %></span>
+    </div>
+  </section>
+</div>

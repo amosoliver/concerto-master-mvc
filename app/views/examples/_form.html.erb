@@ -1,0 +1,29 @@
+<%= form_with(model: @example, class: "panel-card form-card") do |form| %>
+  <% if @example.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@example.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% @example.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :name, "Nome" %>
+      <%= form.text_field :name, class: "form-control" %>
+    </div>
+
+    <div class="field-group field-group--full">
+      <%= form.label :description, "Descrição" %>
+      <%= form.text_area :description, rows: 5, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", @example.persisted? ? example_path(@example) : examples_path, class: "secondary-button" %>
+  </div>
+<% end %>

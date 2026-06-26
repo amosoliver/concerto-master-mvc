@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  descricao: MyString
+  m_compositor: one
+  m_artista: one
+
+two:
+  descricao: MyString
+  m_compositor: two
+  m_artista: two

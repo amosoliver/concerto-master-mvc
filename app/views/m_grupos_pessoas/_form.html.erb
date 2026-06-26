@@ -1,0 +1,29 @@
+<%= form_with(model: m_grupo_pessoa, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_grupo_pessoa.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_grupo_pessoa.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_grupo_pessoa.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :g_pessoa_id %>
+      <%= form.collection_select :g_pessoa_id, GPessoa.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_grupo_id %>
+      <%= form.collection_select :m_grupo_id, MGrupo.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_grupo_pessoa_path(@m_grupo_pessoa), class: "secondary-button" if m_grupo_pessoa.persisted? %>
+    <%= link_to "Cancelar", m_grupos_pessoas_path, class: "secondary-button" unless m_grupo_pessoa.persisted? %>
+  </div>
+<% end %>

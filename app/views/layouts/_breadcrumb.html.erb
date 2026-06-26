@@ -1,0 +1,16 @@
+<% crumbs = breadcrumbs %>
+<% if crumbs.size > 1 %>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <% crumbs.each_with_index do |crumb, index| %>
+        <li>
+          <% if crumb[:path] %>
+            <%= link_to crumb[:path] do %><%= "🏠 " if index.zero? %><%= crumb[:label] %><% end %>
+          <% else %>
+            <span aria-current="page"><%= crumb[:label] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+<% end %>

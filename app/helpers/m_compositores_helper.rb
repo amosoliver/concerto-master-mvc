@@ -1,0 +1,2 @@
+module MCompositoresHelper
+end

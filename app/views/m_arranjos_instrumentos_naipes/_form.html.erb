@@ -1,0 +1,29 @@
+<%= form_with(model: m_arranjo_instrumento_naipe, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_arranjo_instrumento_naipe.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_arranjo_instrumento_naipe.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_arranjo_instrumento_naipe.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :g_instrumento_naipe_id %>
+      <%= form.collection_select :g_instrumento_naipe_id, GInstrumentoNaipe.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_arranjo_id %>
+      <%= form.collection_select :m_arranjo_id, MArranjo.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_arranjo_instrumento_naipe_path(@m_arranjo_instrumento_naipe), class: "secondary-button" if m_arranjo_instrumento_naipe.persisted? %>
+    <%= link_to "Cancelar", m_arranjos_instrumentos_naipes_path, class: "secondary-button" unless m_arranjo_instrumento_naipe.persisted? %>
+  </div>
+<% end %>

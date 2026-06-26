@@ -1,0 +1,34 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV.fetch("DB_USERNAME", "dev") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "123456789") %>
+  database: <%= ENV.fetch("DB_NAME", "concreto_master_development") %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("DB_TEST_NAME", "concreto_master_test") %>
+
+production:
+  primary:
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME", "concreto_master_production") %>
+  cache:
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME", "concreto_master_production") %>_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME", "concreto_master_production") %>_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME", "concreto_master_production") %>_cable
+    migrations_paths: db/cable_migrate

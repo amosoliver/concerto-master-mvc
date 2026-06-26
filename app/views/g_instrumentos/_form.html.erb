@@ -1,0 +1,25 @@
+<%= form_with(model: g_instrumento, local: true, class: "panel-card form-card") do |form| %>
+  <% if g_instrumento.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(g_instrumento.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% g_instrumento.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", g_instrumento_path(@g_instrumento), class: "secondary-button" if g_instrumento.persisted? %>
+    <%= link_to "Cancelar", g_instrumentos_path, class: "secondary-button" unless g_instrumento.persisted? %>
+  </div>
+<% end %>

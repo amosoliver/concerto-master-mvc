@@ -1,0 +1,37 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= MGrupoPessoa.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_m_grupo_pessoa_path(@m_grupo_pessoa), class: "primary-button" %>
+      <%= link_to "Voltar", m_grupos_pessoas_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= MGrupoPessoa.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:g_pessoa_id) %></span>
+        <span class="detail-value"><%= @m_grupo_pessoa.g_pessoa %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:m_grupo_id) %></span>
+        <span class="detail-value"><%= @m_grupo_pessoa.m_grupo %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@m_grupo_pessoa.created_at) %></span>
+      <span>Atualizado em <%= l(@m_grupo_pessoa.updated_at) %></span>
+    </div>
+  </section>
+</div>

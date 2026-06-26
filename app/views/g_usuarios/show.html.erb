@@ -1,0 +1,45 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= GUsuario.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_g_usuario_path(@g_usuario), class: "primary-button" %>
+      <%= link_to "Voltar", g_usuarios_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= GUsuario.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= GUsuario.human_attribute_name(:email) %></span>
+        <span class="detail-value"><%= @g_usuario.email %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GUsuario.human_attribute_name(:encrypted_password) %></span>
+        <span class="detail-value"><%= @g_usuario.encrypted_password %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GUsuario.human_attribute_name(:ativo) %></span>
+        <span class="detail-value"><%= @g_usuario.ativo %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></span>
+        <span class="detail-value"><%= @g_usuario.g_pessoa %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@g_usuario.created_at) %></span>
+      <span>Atualizado em <%= l(@g_usuario.updated_at) %></span>
+    </div>
+  </section>
+</div>

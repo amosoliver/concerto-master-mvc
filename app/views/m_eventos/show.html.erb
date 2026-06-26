@@ -1,0 +1,45 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= MEvento.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_m_evento_path(@m_evento), class: "primary-button" %>
+      <%= link_to "Voltar", m_eventos_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= MEvento.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= MEvento.human_attribute_name(:descricao) %></span>
+        <span class="detail-value"><%= @m_evento.descricao %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= MEvento.human_attribute_name(:data_inicio) %></span>
+        <span class="detail-value"><%= @m_evento.data_inicio %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
+        <span class="detail-value"><%= @m_evento.data_fim %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
+        <span class="detail-value"><%= @m_evento.g_predio %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@m_evento.created_at) %></span>
+      <span>Atualizado em <%= l(@m_evento.updated_at) %></span>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,33 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= GSexo.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_g_sexo_path(@g_sexo), class: "primary-button" %>
+      <%= link_to "Voltar", g_sexos_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Informações</p>
+        <h3><%= GSexo.model_name.human %></h3>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label"><%= GSexo.human_attribute_name(:descricao) %></span>
+        <span class="detail-value"><%= @g_sexo.descricao %></span>
+      </div>
+    </div>
+
+    <div class="detail-meta">
+      <span>Criado em <%= l(@g_sexo.created_at) %></span>
+      <span>Atualizado em <%= l(@g_sexo.updated_at) %></span>
+    </div>
+  </section>
+</div>

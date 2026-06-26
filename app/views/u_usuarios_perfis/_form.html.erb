@@ -1,0 +1,29 @@
+<%= form_with(model: u_usuario_perfil, local: true, class: "panel-card form-card") do |form| %>
+  <% if u_usuario_perfil.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(u_usuario_perfil.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% u_usuario_perfil.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :u_perfil_id %>
+      <%= form.collection_select :u_perfil_id, UPerfil.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_usuario_id %>
+      <%= form.collection_select :g_usuario_id, GUsuario.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", u_usuario_perfil_path(@u_usuario_perfil), class: "secondary-button" if u_usuario_perfil.persisted? %>
+    <%= link_to "Cancelar", u_usuarios_perfis_path, class: "secondary-button" unless u_usuario_perfil.persisted? %>
+  </div>
+<% end %>

@@ -1,0 +1,33 @@
+<%= form_with(model: m_pessoa_funcao, local: true, class: "panel-card form-card") do |form| %>
+  <% if m_pessoa_funcao.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(m_pessoa_funcao.errors.count, "erro") %> impediram o salvamento:</h2>
+      <ul>
+        <% m_pessoa_funcao.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :g_pessoa_id %>
+      <%= form.collection_select :g_pessoa_id, GPessoa.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :u_funcao_id %>
+      <%= form.collection_select :u_funcao_id, UFuncao.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :principal %>
+      <%= form.checkbox :principal, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_pessoa_funcao_path(@m_pessoa_funcao), class: "secondary-button" if m_pessoa_funcao.persisted? %>
+    <%= link_to "Cancelar", m_pessoas_funcoes_path, class: "secondary-button" unless m_pessoa_funcao.persisted? %>
+  </div>
+<% end %>
