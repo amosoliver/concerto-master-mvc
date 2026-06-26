@@ -1,36 +1,48 @@
-<div class="page-shell">
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
       <h1><%= model_plural_human_name(GUsuario) %></h1>
     </div>
     <div class="page-header__actions">
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
       <%= link_to "Novo #{GUsuario.model_name.human}", new_g_usuario_path, class: "primary-button" %>
     </div>
   </div>
 
-  <%= search_form_for @q, url: g_usuarios_path, method: :get, class: "search-panel" do |f| %>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :email_cont, placeholder: GUsuario.human_attribute_name(:email), "aria-label": GUsuario.human_attribute_name(:email), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :encrypted_password_cont, placeholder: GUsuario.human_attribute_name(:encrypted_password), "aria-label": GUsuario.human_attribute_name(:encrypted_password), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :ativo_cont, placeholder: GUsuario.human_attribute_name(:ativo), "aria-label": GUsuario.human_attribute_name(:ativo), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GUsuario.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
-    </div>
-    <div class="search-panel__actions">
-      <%= f.submit "Filtrar", class: "primary-button" %>
-      <%= link_to "Limpar", g_usuarios_path, class: "secondary-button" %>
-    </div>
-  <% end %>
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%= search_form_for @q, url: g_usuarios_path, method: :get do |f| %>
+      <div class="search-grid">
+        <div class="search-field">
+          <label><%= GUsuario.human_attribute_name(:email) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :email_cont, placeholder: GUsuario.human_attribute_name(:email), "aria-label": GUsuario.human_attribute_name(:email), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= GUsuario.human_attribute_name(:ativo) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :ativo_cont, placeholder: GUsuario.human_attribute_name(:ativo), "aria-label": GUsuario.human_attribute_name(:ativo), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= GUsuario.human_attribute_name(:g_pessoa_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GUsuario.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
+          </div>
+        </div>
+      </div>
+      <div class="search-panel__actions">
+        <%= f.submit "Filtrar", class: "primary-button" %>
+        <%= link_to "Limpar", g_usuarios_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
 
   <section class="panel-card" data-controller="view-toggle">
     <div class="panel-card__header">
@@ -49,7 +61,6 @@
         <thead>
           <tr>
             <th scope="col"><%= GUsuario.human_attribute_name(:email) %></th>
-            <th scope="col"><%= GUsuario.human_attribute_name(:encrypted_password) %></th>
             <th scope="col"><%= GUsuario.human_attribute_name(:ativo) %></th>
             <th scope="col"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></th>
             <th scope="col">Ações</th>
@@ -59,11 +70,18 @@
           <% @g_usuarios.each do |g_usuario| %>
             <tr>
               <td><%= g_usuario.email %></td>
-              <td><%= g_usuario.encrypted_password %></td>
               <td><%= g_usuario.ativo %></td>
               <td><%= g_usuario.g_pessoa %></td>
               <td>
-                <%= render "shared/actions_menu", show_path: g_usuario_path(g_usuario), edit_path: edit_g_usuario_path(g_usuario), delete_path: g_usuario_path(g_usuario) %>
+                <div class="actions-menu" data-controller="dropdown">
+                  <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                  <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+                    <%= link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end %>
+                    <%= link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end %>
+                    <%= link_to new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), class: "actions-menu__item" do %><span aria-hidden="true">🪪</span> Associar perfis<% end %>
+                    <%= button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+                  </div>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -77,24 +95,26 @@
           <div class="record-card__body">
             <span class="detail-label"><%= GUsuario.human_attribute_name(:email) %></span>
             <span class="detail-value"><%= g_usuario.email %></span>
-            <span class="detail-label"><%= GUsuario.human_attribute_name(:encrypted_password) %></span>
-            <span class="detail-value"><%= g_usuario.encrypted_password %></span>
             <span class="detail-label"><%= GUsuario.human_attribute_name(:ativo) %></span>
             <span class="detail-value"><%= g_usuario.ativo %></span>
             <span class="detail-label"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></span>
             <span class="detail-value"><%= g_usuario.g_pessoa %></span>
           </div>
           <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: g_usuario_path(g_usuario), edit_path: edit_g_usuario_path(g_usuario), delete_path: g_usuario_path(g_usuario) %>
+            <div class="actions-menu" data-controller="dropdown">
+              <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+              <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+                <%= link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end %>
+                <%= link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end %>
+                <%= link_to new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), class: "actions-menu__item" do %><span aria-hidden="true">🪪</span> Associar perfis<% end %>
+                <%= button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+              </div>
+            </div>
           </div>
         </article>
       <% end %>
     </div>
 
-    <% if @pagy %>
-      <div class="pagination-wrap">
-        <%== @pagy.series_nav %>
-      </div>
-    <% end %>
+    <%= render "layouts/pagination", pagy: @pagy %>
   </section>
 </div>

@@ -13,7 +13,7 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :name, "Nome" %>
-      <%= form.text_field :name, class: "form-control" %>
+      <%= form.text_field :name, class: "form-control", data: { controller: "uppercase" } %>
     </div>
 
     <div class="field-group field-group--full">

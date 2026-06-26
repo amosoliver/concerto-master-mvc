@@ -21,7 +21,7 @@ class UPerfisFuncoesController < ApplicationController
     @u_perfil_funcao = UPerfilFuncao.new(u_perfil_funcao_params)
 
     if @u_perfil_funcao.save
-      redirect_to @u_perfil_funcao, notice: "U perfil funcao criado com sucesso."
+      redirect_to @u_perfil_funcao, notice: "#{UPerfilFuncao.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class UPerfisFuncoesController < ApplicationController
 
   def update
     if @u_perfil_funcao.update(u_perfil_funcao_params)
-      redirect_to @u_perfil_funcao, notice: "U perfil funcao atualizado com sucesso."
+      redirect_to @u_perfil_funcao, notice: "#{UPerfilFuncao.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class UPerfisFuncoesController < ApplicationController
 
   def destroy
     @u_perfil_funcao.discard
-    redirect_to u_perfis_funcoes_path, notice: "U perfil funcao removido com sucesso."
+    redirect_to u_perfis_funcoes_path, notice: "#{UPerfilFuncao.model_name.human} removido com sucesso."
   end
 
   private

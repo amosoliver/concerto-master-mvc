@@ -21,7 +21,7 @@ class MEventosController < ApplicationController
     @m_evento = MEvento.new(m_evento_params)
 
     if @m_evento.save
-      redirect_to @m_evento, notice: "M evento criado com sucesso."
+      redirect_to @m_evento, notice: "#{MEvento.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MEventosController < ApplicationController
 
   def update
     if @m_evento.update(m_evento_params)
-      redirect_to @m_evento, notice: "M evento atualizado com sucesso."
+      redirect_to @m_evento, notice: "#{MEvento.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MEventosController < ApplicationController
 
   def destroy
     @m_evento.discard
-    redirect_to m_eventos_path, notice: "M evento removido com sucesso."
+    redirect_to m_eventos_path, notice: "#{MEvento.model_name.human} removido com sucesso."
   end
 
   private

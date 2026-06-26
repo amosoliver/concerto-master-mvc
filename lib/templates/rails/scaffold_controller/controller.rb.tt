@@ -22,7 +22,7 @@ class <%= controller_class_name %>Controller < ApplicationController
     @<%= singular_table_name %> = <%= class_name %>.new(<%= singular_table_name %>_params)
 
     if @<%= singular_table_name %>.save
-      redirect_to @<%= singular_table_name %>, notice: "<%= human_name %> criado com sucesso."
+      redirect_to @<%= singular_table_name %>, notice: "#{<%= class_name %>.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class <%= controller_class_name %>Controller < ApplicationController
 
   def update
     if @<%= singular_table_name %>.update(<%= singular_table_name %>_params)
-      redirect_to @<%= singular_table_name %>, notice: "<%= human_name %> atualizado com sucesso."
+      redirect_to @<%= singular_table_name %>, notice: "#{<%= class_name %>.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class <%= controller_class_name %>Controller < ApplicationController
 
   def destroy
     @<%= singular_table_name %>.discard
-    redirect_to <%= index_helper %>_path, notice: "<%= human_name %> removido com sucesso."
+    redirect_to <%= index_helper %>_path, notice: "#{<%= class_name %>.model_name.human} removido com sucesso."
   end
 
   private

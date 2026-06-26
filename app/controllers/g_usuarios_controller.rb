@@ -21,7 +21,7 @@ class GUsuariosController < ApplicationController
     @g_usuario = GUsuario.new(g_usuario_params)
 
     if @g_usuario.save
-      redirect_to @g_usuario, notice: "G usuario criado com sucesso."
+      redirect_to @g_usuario, notice: "#{GUsuario.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GUsuariosController < ApplicationController
 
   def update
     if @g_usuario.update(g_usuario_params)
-      redirect_to @g_usuario, notice: "G usuario atualizado com sucesso."
+      redirect_to @g_usuario, notice: "#{GUsuario.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class GUsuariosController < ApplicationController
 
   def destroy
     @g_usuario.discard
-    redirect_to g_usuarios_path, notice: "G usuario removido com sucesso."
+    redirect_to g_usuarios_path, notice: "#{GUsuario.model_name.human} removido com sucesso."
   end
 
   private
@@ -47,6 +47,6 @@ class GUsuariosController < ApplicationController
   end
 
   def g_usuario_params
-    params.require(:g_usuario).permit(:email, :encrypted_password, :ativo, :g_pessoa_id)
+    params.require(:g_usuario).permit(:email, :password, :password_confirmation, :ativo, :g_pessoa_id)
   end
 end

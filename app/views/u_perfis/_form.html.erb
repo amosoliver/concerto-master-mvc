@@ -1,4 +1,6 @@
-<%= form_with(model: u_perfil, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: u_perfil, local: true, class: "form-card") do |form| %>
+  <% current_section = params[:section] %>
+
   <% if u_perfil.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(u_perfil.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -11,15 +13,53 @@
   <% end %>
 
   <div class="form-grid">
-    <div class="field-group">
-      <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control" %>
-    </div>
+    <% unless current_section == "funcoes" || current_section == "permissoes" %>
+      <div class="field-group field-group--full">
+        <%= form.label :descricao %>
+        <%= form.text_field :descricao, class: "form-control" %>
+      </div>
+    <% end %>
+
+    <% unless current_section == "permissoes" %>
+      <div class="field-group">
+        <label>Funções do perfil</label>
+        <p class="selection-help">Marque as funções que esse perfil pode exercer.</p>
+        <div class="selection-panel">
+          <% u_funcoes.each do |u_funcao| %>
+            <label class="selection-item">
+              <%= check_box_tag "u_perfil[u_funcao_ids][]", u_funcao.id, u_perfil.u_funcao_ids.include?(u_funcao.id) %>
+              <span><%= u_funcao.descricao %></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% unless current_section == "funcoes" %>
+      <div class="field-group field-group--full">
+        <label>Permissões do perfil</label>
+        <p class="selection-help">Selecione as permissões liberadas para esse perfil.</p>
+        <div class="selection-panel">
+          <% u_permissoes.group_by(&:controlador).sort.each do |controlador, permissoes| %>
+            <div class="selection-group">
+              <p class="selection-group__title"><%= controlador.humanize %></p>
+              <div class="selection-group__items">
+                <% permissoes.each do |u_permissao| %>
+                  <label class="selection-item">
+                    <%= check_box_tag "u_perfil[u_permissao_ids][]", u_permissao.id, u_perfil.u_permissao_ids.include?(u_permissao.id) %>
+                    <span><%= u_permissao.descricao %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <div class="form-actions">
-    <%= form.submit class: "primary-button" %>
-    <%= link_to "Cancelar", u_perfil_path(@u_perfil), class: "secondary-button" if u_perfil.persisted? %>
-    <%= link_to "Cancelar", u_perfis_path, class: "secondary-button" unless u_perfil.persisted? %>
+    <%= form.submit(u_perfil.persisted? ? "Atualizar perfil" : "Criar perfil", class: "primary-button") %>
+    <%= link_to "Cancelar", u_perfis_path, class: "secondary-button" %>
   </div>
 <% end %>

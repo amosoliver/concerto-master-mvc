@@ -1,33 +1,46 @@
-<div class="page-shell">
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
       <h1><%%= model_plural_human_name(<%= class_name %>) %></h1>
     </div>
     <div class="page-header__actions">
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
       <%%= link_to "Novo #{<%= class_name %>.model_name.human}", new_<%= singular_route_name %>_path, class: "primary-button" %>
     </div>
   </div>
 
-  <%%= search_form_for @q, url: <%= plural_route_name %>_path, method: :get, class: "search-panel" do |f| %>
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%%= search_form_for @q, url: <%= plural_route_name %>_path, method: :get do |f| %>
+      <div class="search-grid">
 <% attributes.each do |attribute| -%>
 <% if attribute.reference? -%>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%%= f.select :<%= attribute.name %>_id_eq, options_from_collection_for_select(<%= attribute.name.camelize %>.all, :id, :to_s, @q&.send(:<%= attribute.name %>_id_eq)), { include_blank: true }, "aria-label": <%= class_name %>.human_attribute_name(:<%= attribute.name %>_id), class: "search-input__field" %>
-    </div>
+        <div class="search-field">
+          <label><%%= <%= class_name %>.human_attribute_name(:<%= attribute.name %>_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%%= f.select :<%= attribute.name %>_id_eq, options_from_collection_for_select(<%= attribute.name.camelize %>.all, :id, :to_s, @q&.send(:<%= attribute.name %>_id_eq)), { include_blank: true }, "aria-label": <%= class_name %>.human_attribute_name(:<%= attribute.name %>_id), class: "search-input__field" %>
+          </div>
+        </div>
 <% else -%>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%%= f.search_field :<%= attribute.name %>_cont, placeholder: <%= class_name %>.human_attribute_name(:<%= attribute.name %>), "aria-label": <%= class_name %>.human_attribute_name(:<%= attribute.name %>), class: "search-input__field" %>
-    </div>
+        <div class="search-field">
+          <label><%%= <%= class_name %>.human_attribute_name(:<%= attribute.name %>) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%%= f.search_field :<%= attribute.name %>_cont, placeholder: <%= class_name %>.human_attribute_name(:<%= attribute.name %>), "aria-label": <%= class_name %>.human_attribute_name(:<%= attribute.name %>), class: "search-input__field" %>
+          </div>
+        </div>
 <% end -%>
 <% end -%>
-    <div class="search-panel__actions">
-      <%%= f.submit "Filtrar", class: "primary-button" %>
-      <%%= link_to "Limpar", <%= plural_route_name %>_path, class: "secondary-button" %>
-    </div>
-  <%% end %>
+      </div>
+      <div class="search-panel__actions">
+        <%%= f.submit "Filtrar", class: "primary-button" %>
+        <%%= link_to "Limpar", <%= plural_route_name %>_path, class: "secondary-button" %>
+      </div>
+    <%% end %>
+  </div>
 
   <section class="panel-card" data-controller="view-toggle">
     <div class="panel-card__header">
@@ -82,10 +95,6 @@
       <%% end %>
     </div>
 
-    <%% if @pagy %>
-      <div class="pagination-wrap">
-        <%%== @pagy.series_nav %>
-      </div>
-    <%% end %>
+    <%%= render "layouts/pagination", pagy: @pagy %>
   </section>
 </div>

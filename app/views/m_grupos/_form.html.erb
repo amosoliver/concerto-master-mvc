@@ -1,4 +1,4 @@
-<%= form_with(model: m_grupo, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: m_grupo, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if m_grupo.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(m_grupo.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,15 +13,15 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control" %>
+      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
     </div>
     <div class="field-group">
       <%= form.label :g_entidade_id %>
-      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: "Selecione uma entidade..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_tipo_grupo_id %>
-      <%= form.collection_select :m_tipo_grupo_id, MTipoGrupo.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_tipo_grupo_id, MTipoGrupo.all, :id, :to_s, { include_blank: "Selecione um tipo de grupo..." }, class: "form-control" %>
     </div>
   </div>
 

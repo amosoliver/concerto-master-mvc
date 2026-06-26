@@ -21,7 +21,7 @@ class UPermissoesController < ApplicationController
     @u_permissao = UPermissao.new(u_permissao_params)
 
     if @u_permissao.save
-      redirect_to @u_permissao, notice: "U permissao criado com sucesso."
+      redirect_to @u_permissao, notice: "#{UPermissao.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class UPermissoesController < ApplicationController
 
   def update
     if @u_permissao.update(u_permissao_params)
-      redirect_to @u_permissao, notice: "U permissao atualizado com sucesso."
+      redirect_to @u_permissao, notice: "#{UPermissao.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,14 @@ class UPermissoesController < ApplicationController
 
   def destroy
     @u_permissao.discard
-    redirect_to u_permissoes_path, notice: "U permissao removido com sucesso."
+    redirect_to u_permissoes_path, notice: "#{UPermissao.model_name.human} removido com sucesso."
+  end
+
+  def atualizar
+    total = UPermissoesSyncService.call
+    redirect_to u_permissoes_path, notice: "#{total} permissões sincronizadas com sucesso."
+  rescue StandardError => error
+    redirect_to u_permissoes_path, alert: "Erro ao atualizar permissões: #{error.message}"
   end
 
   private

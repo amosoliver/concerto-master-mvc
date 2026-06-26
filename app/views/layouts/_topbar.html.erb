@@ -13,12 +13,19 @@
       <span data-theme-target="themeIcon">🌙</span>
     </button>
     <button class="icon-button" aria-label="Ajuda">❓</button>
-    <div class="avatar-pill">
-      <div class="avatar">AM</div>
-      <div>
-        <strong>Amós</strong>
-        <small>Admin</small>
+    <% if g_usuario_signed_in? %>
+      <div class="actions-menu" data-controller="dropdown">
+        <button type="button" class="avatar-pill" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false">
+          <div class="avatar"><%= current_g_usuario.g_pessoa.nome.to_s.first(2).upcase %></div>
+          <div>
+            <strong><%= current_g_usuario.g_pessoa.nome %></strong>
+            <small><%= current_g_usuario.email %></small>
+          </div>
+        </button>
+        <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+          <%= button_to destroy_g_usuario_session_path, method: :delete, class: "actions-menu__item" do %><span aria-hidden="true">🚪</span> Sair<% end %>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </header>

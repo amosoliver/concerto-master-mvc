@@ -1,5 +1,8 @@
 class UPerfisController < ApplicationController
+  helper_method :section_title
+
   before_action :set_u_perfil, only: %i[show edit update destroy]
+  before_action :load_form_collections, only: %i[new create edit update]
 
   def index
     @q = UPerfil.ransack(params[:q])
@@ -8,6 +11,7 @@ class UPerfisController < ApplicationController
   end
 
   def show
+    redirect_to edit_u_perfil_path(@u_perfil)
   end
 
   def new
@@ -20,24 +24,30 @@ class UPerfisController < ApplicationController
   def create
     @u_perfil = UPerfil.new(u_perfil_params)
 
-    if @u_perfil.save
-      redirect_to @u_perfil, notice: "U perfil criado com sucesso."
-    else
-      render :new, status: :unprocessable_entity
+    UPerfil.transaction do
+      @u_perfil.save!
+      sync_relations!(@u_perfil)
     end
+
+    redirect_to u_perfis_path, notice: "#{UPerfil.model_name.human} criado com sucesso."
+  rescue ActiveRecord::RecordInvalid
+    render :new, status: :unprocessable_entity
   end
 
   def update
-    if @u_perfil.update(u_perfil_params)
-      redirect_to @u_perfil, notice: "U perfil atualizado com sucesso."
-    else
-      render :edit, status: :unprocessable_entity
+    UPerfil.transaction do
+      @u_perfil.update!(u_perfil_params)
+      sync_relations!(@u_perfil)
     end
+
+    redirect_to u_perfis_path, notice: "#{UPerfil.model_name.human} atualizado com sucesso."
+  rescue ActiveRecord::RecordInvalid
+    render :edit, status: :unprocessable_entity
   end
 
   def destroy
     @u_perfil.discard
-    redirect_to u_perfis_path, notice: "U perfil removido com sucesso."
+    redirect_to u_perfis_path, notice: "#{UPerfil.model_name.human} removido com sucesso."
   end
 
   private
@@ -48,5 +58,22 @@ class UPerfisController < ApplicationController
 
   def u_perfil_params
     params.require(:u_perfil).permit(:descricao)
+  end
+  def load_form_collections
+    @u_permissoes = UPermissao.order(:descricao)
+    @u_funcoes = UFuncao.order(:descricao)
+  end
+
+  def sync_relations!(u_perfil)
+    u_perfil.sync_u_permissoes!(params.dig(:u_perfil, :u_permissao_ids))
+    u_perfil.sync_u_funcoes!(params.dig(:u_perfil, :u_funcao_ids))
+  end
+
+  def section_title(section)
+    case section
+    when "funcoes" then "Funções do perfil"
+    when "permissoes" then "Permissões do perfil"
+    else "Perfil completo"
+    end
   end
 end

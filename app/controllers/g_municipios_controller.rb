@@ -21,7 +21,7 @@ class GMunicipiosController < ApplicationController
     @g_municipio = GMunicipio.new(g_municipio_params)
 
     if @g_municipio.save
-      redirect_to @g_municipio, notice: "G municipio criado com sucesso."
+      redirect_to @g_municipio, notice: "#{GMunicipio.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GMunicipiosController < ApplicationController
 
   def update
     if @g_municipio.update(g_municipio_params)
-      redirect_to @g_municipio, notice: "G municipio atualizado com sucesso."
+      redirect_to @g_municipio, notice: "#{GMunicipio.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class GMunicipiosController < ApplicationController
 
   def destroy
     @g_municipio.discard
-    redirect_to g_municipios_path, notice: "G municipio removido com sucesso."
+    redirect_to g_municipios_path, notice: "#{GMunicipio.model_name.human} removido com sucesso."
   end
 
   private

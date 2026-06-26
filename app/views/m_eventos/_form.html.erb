@@ -1,4 +1,4 @@
-<%= form_with(model: m_evento, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: m_evento, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if m_evento.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(m_evento.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,7 +13,7 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control" %>
+      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
     </div>
     <div class="field-group">
       <%= form.label :data_inicio %>
@@ -25,7 +25,7 @@
     </div>
     <div class="field-group">
       <%= form.label :g_predio_id %>
-      <%= form.collection_select :g_predio_id, GPredio.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :g_predio_id, GPredio.all, :id, :to_s, { include_blank: "Selecione um prédio..." }, class: "form-control" %>
     </div>
   </div>
 

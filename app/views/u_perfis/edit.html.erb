@@ -1,10 +1,33 @@
 <div class="page-shell">
   <div class="page-header">
     <div>
-      <p class="eyebrow">Editar</p>
-      <h1>Editar <%= UPerfil.model_name.human %></h1>
+      <p class="eyebrow">Acesso</p>
+      <h1><%= @u_perfil.descricao %></h1>
+    </div>
+    <div class="page-header__actions">
+      <div class="actions-menu" data-controller="dropdown">
+        <button type="button" class="primary-button" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false">
+          Ações
+        </button>
+        <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+          <%= link_to edit_u_perfil_path(@u_perfil), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Atualizar perfil<% end %>
+          <%= link_to edit_u_perfil_path(@u_perfil, section: "funcoes"), class: "actions-menu__item" do %><span aria-hidden="true">🎖️</span> Gerir funções<% end %>
+          <%= link_to edit_u_perfil_path(@u_perfil, section: "permissoes"), class: "actions-menu__item" do %><span aria-hidden="true">🛡️</span> Gerir permissões<% end %>
+          <%= button_to u_perfil_path(@u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+        </div>
+      </div>
+      <%= link_to "Voltar", u_perfis_path, class: "secondary-button" %>
     </div>
   </div>
 
-  <%= render "form", u_perfil: @u_perfil %>
+  <section class="panel-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Gestão</p>
+        <h3><%= section_title(params[:section]) %></h3>
+      </div>
+    </div>
+
+    <%= render "form", u_perfil: @u_perfil, u_permissoes: @u_permissoes, u_funcoes: @u_funcoes %>
+  </section>
 </div>

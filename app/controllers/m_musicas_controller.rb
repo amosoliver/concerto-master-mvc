@@ -21,7 +21,7 @@ class MMusicasController < ApplicationController
     @m_musica = MMusica.new(m_musica_params)
 
     if @m_musica.save
-      redirect_to @m_musica, notice: "M musica criado com sucesso."
+      redirect_to @m_musica, notice: "#{MMusica.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MMusicasController < ApplicationController
 
   def update
     if @m_musica.update(m_musica_params)
-      redirect_to @m_musica, notice: "M musica atualizado com sucesso."
+      redirect_to @m_musica, notice: "#{MMusica.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MMusicasController < ApplicationController
 
   def destroy
     @m_musica.discard
-    redirect_to m_musicas_path, notice: "M musica removido com sucesso."
+    redirect_to m_musicas_path, notice: "#{MMusica.model_name.human} removido com sucesso."
   end
 
   private

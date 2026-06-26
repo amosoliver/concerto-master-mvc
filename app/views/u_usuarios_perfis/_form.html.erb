@@ -1,4 +1,4 @@
-<%= form_with(model: u_usuario_perfil, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: u_usuario_perfil, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if u_usuario_perfil.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(u_usuario_perfil.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,11 +13,12 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :u_perfil_id %>
-      <%= form.collection_select :u_perfil_id, UPerfil.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :u_perfil_id, UPerfil.all, :id, :to_s, { include_blank: "Selecione um perfil..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :g_usuario_id %>
-      <%= form.collection_select :g_usuario_id, GUsuario.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <% usuarios = @selected_g_usuario.present? ? [@selected_g_usuario] : GUsuario.all %>
+      <%= form.collection_select :g_usuario_id, usuarios, :id, :to_s, { include_blank: @selected_g_usuario.present? ? false : "Selecione um usuário..." }, class: "form-control" %>
     </div>
   </div>
 

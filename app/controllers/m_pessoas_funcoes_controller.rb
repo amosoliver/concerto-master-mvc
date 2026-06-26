@@ -21,7 +21,7 @@ class MPessoasFuncoesController < ApplicationController
     @m_pessoa_funcao = MPessoaFuncao.new(m_pessoa_funcao_params)
 
     if @m_pessoa_funcao.save
-      redirect_to @m_pessoa_funcao, notice: "M pessoa funcao criado com sucesso."
+      redirect_to @m_pessoa_funcao, notice: "#{MPessoaFuncao.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MPessoasFuncoesController < ApplicationController
 
   def update
     if @m_pessoa_funcao.update(m_pessoa_funcao_params)
-      redirect_to @m_pessoa_funcao, notice: "M pessoa funcao atualizado com sucesso."
+      redirect_to @m_pessoa_funcao, notice: "#{MPessoaFuncao.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MPessoasFuncoesController < ApplicationController
 
   def destroy
     @m_pessoa_funcao.discard
-    redirect_to m_pessoas_funcoes_path, notice: "M pessoa funcao removido com sucesso."
+    redirect_to m_pessoas_funcoes_path, notice: "#{MPessoaFuncao.model_name.human} removido com sucesso."
   end
 
   private

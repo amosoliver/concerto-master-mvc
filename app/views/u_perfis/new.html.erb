@@ -1,10 +1,22 @@
 <div class="page-shell">
   <div class="page-header">
     <div>
-      <p class="eyebrow">Novo</p>
-      <h1>Criar <%= UPerfil.model_name.human %></h1>
+      <p class="eyebrow">Acesso</p>
+      <h1>Novo <%= UPerfil.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Voltar", u_perfis_path, class: "secondary-button" %>
     </div>
   </div>
 
-  <%= render "form", u_perfil: @u_perfil %>
+  <section class="panel-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Cadastro</p>
+        <h3>Dados do perfil</h3>
+      </div>
+    </div>
+
+    <%= render "form", u_perfil: @u_perfil, u_permissoes: @u_permissoes, u_funcoes: @u_funcoes %>
+  </section>
 </div>

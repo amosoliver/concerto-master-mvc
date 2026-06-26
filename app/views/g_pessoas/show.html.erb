@@ -28,6 +28,10 @@
         <span class="detail-value"><%= @g_pessoa.email %></span>
       </div>
       <div class="detail-tile">
+        <span class="detail-label"><%= GPessoa.human_attribute_name(:cpf) %></span>
+        <span class="detail-value"><%= format_cpf(@g_pessoa.cpf) %></span>
+      </div>
+      <div class="detail-tile">
         <span class="detail-label"><%= GPessoa.human_attribute_name(:g_entidade_id) %></span>
         <span class="detail-value"><%= @g_pessoa.g_entidade %></span>
       </div>

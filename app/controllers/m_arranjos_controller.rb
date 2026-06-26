@@ -21,7 +21,7 @@ class MArranjosController < ApplicationController
     @m_arranjo = MArranjo.new(m_arranjo_params)
 
     if @m_arranjo.save
-      redirect_to @m_arranjo, notice: "M arranjo criado com sucesso."
+      redirect_to @m_arranjo, notice: "#{MArranjo.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MArranjosController < ApplicationController
 
   def update
     if @m_arranjo.update(m_arranjo_params)
-      redirect_to @m_arranjo, notice: "M arranjo atualizado com sucesso."
+      redirect_to @m_arranjo, notice: "#{MArranjo.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MArranjosController < ApplicationController
 
   def destroy
     @m_arranjo.discard
-    redirect_to m_arranjos_path, notice: "M arranjo removido com sucesso."
+    redirect_to m_arranjos_path, notice: "#{MArranjo.model_name.human} removido com sucesso."
   end
 
   private

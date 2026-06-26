@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :g_usuarios, controllers: { sessions: "g_usuarios/sessions", registrations: "g_usuarios/registrations" }
+
   resources :m_eventos_musicas
   resources :m_eventos
   resources :m_arranjos_instrumentos_naipes
@@ -21,7 +23,11 @@ Rails.application.routes.draw do
   resources :u_tipos_funcoes
   resources :u_usuarios_perfis
   resources :u_perfis_permissoes
-  resources :u_permissoes
+  resources :u_permissoes do
+    collection do
+      post :atualizar
+    end
+  end
   resources :u_perfis
   resources :g_usuarios
   resources :g_pessoas

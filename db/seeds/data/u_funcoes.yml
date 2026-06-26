@@ -1,0 +1,6 @@
+# Dados para a tabela u_funcoes
+# tipo_funcao deve corresponder a uma descrição em u_tipos_funcoes.yml
+- descricao: Líder
+  tipo_funcao: Musical
+- descricao: Instrumentista
+  tipo_funcao: Musical

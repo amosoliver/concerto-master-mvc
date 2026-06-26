@@ -1,4 +1,4 @@
-<%= form_with(model: g_predio, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: g_predio, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if g_predio.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(g_predio.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,23 +13,23 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :nome_fantasia %>
-      <%= form.text_field :nome_fantasia, class: "form-control" %>
+      <%= form.text_field :nome_fantasia, class: "form-control", data: { controller: "uppercase" } %>
     </div>
     <div class="field-group">
       <%= form.label :cep %>
-      <%= form.text_field :cep, class: "form-control" %>
+      <%= form.text_field :cep, class: "form-control", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep" } %>
     </div>
     <div class="field-group">
       <%= form.label :logradouro %>
-      <%= form.text_field :logradouro, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :bairro %>
-      <%= form.text_field :bairro, class: "form-control" %>
+      <%= form.text_field :logradouro, class: "form-control", data: { controller: "uppercase" } %>
     </div>
     <div class="field-group">
       <%= form.label :g_entidade_id %>
-      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade..." }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :bairro %>
+      <%= form.text_field :bairro, class: "form-control", data: { controller: "uppercase" } %>
     </div>
   </div>
 

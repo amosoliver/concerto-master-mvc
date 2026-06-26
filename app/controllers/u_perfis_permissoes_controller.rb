@@ -21,7 +21,7 @@ class UPerfisPermissoesController < ApplicationController
     @u_perfil_permissao = UPerfilPermissao.new(u_perfil_permissao_params)
 
     if @u_perfil_permissao.save
-      redirect_to @u_perfil_permissao, notice: "U perfil permissao criado com sucesso."
+      redirect_to @u_perfil_permissao, notice: "#{UPerfilPermissao.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class UPerfisPermissoesController < ApplicationController
 
   def update
     if @u_perfil_permissao.update(u_perfil_permissao_params)
-      redirect_to @u_perfil_permissao, notice: "U perfil permissao atualizado com sucesso."
+      redirect_to @u_perfil_permissao, notice: "#{UPerfilPermissao.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class UPerfisPermissoesController < ApplicationController
 
   def destroy
     @u_perfil_permissao.discard
-    redirect_to u_perfis_permissoes_path, notice: "U perfil permissao removido com sucesso."
+    redirect_to u_perfis_permissoes_path, notice: "#{UPerfilPermissao.model_name.human} removido com sucesso."
   end
 
   private

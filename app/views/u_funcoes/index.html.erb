@@ -1,28 +1,41 @@
-<div class="page-shell">
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
       <h1><%= model_plural_human_name(UFuncao) %></h1>
     </div>
     <div class="page-header__actions">
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
       <%= link_to "Novo #{UFuncao.model_name.human}", new_u_funcao_path, class: "primary-button" %>
     </div>
   </div>
 
-  <%= search_form_for @q, url: u_funcoes_path, method: :get, class: "search-panel" do |f| %>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :descricao_cont, placeholder: UFuncao.human_attribute_name(:descricao), "aria-label": UFuncao.human_attribute_name(:descricao), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.select :u_tipo_funcao_id_eq, options_from_collection_for_select(UTipoFuncao.all, :id, :to_s, @q&.send(:u_tipo_funcao_id_eq)), { include_blank: true }, "aria-label": UFuncao.human_attribute_name(:u_tipo_funcao_id), class: "search-input__field" %>
-    </div>
-    <div class="search-panel__actions">
-      <%= f.submit "Filtrar", class: "primary-button" %>
-      <%= link_to "Limpar", u_funcoes_path, class: "secondary-button" %>
-    </div>
-  <% end %>
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%= search_form_for @q, url: u_funcoes_path, method: :get do |f| %>
+      <div class="search-grid">
+        <div class="search-field">
+          <label><%= UFuncao.human_attribute_name(:descricao) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :descricao_cont, placeholder: UFuncao.human_attribute_name(:descricao), "aria-label": UFuncao.human_attribute_name(:descricao), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= UFuncao.human_attribute_name(:u_tipo_funcao_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :u_tipo_funcao_id_eq, options_from_collection_for_select(UTipoFuncao.all, :id, :to_s, @q&.send(:u_tipo_funcao_id_eq)), { include_blank: true }, "aria-label": UFuncao.human_attribute_name(:u_tipo_funcao_id), class: "search-input__field" %>
+          </div>
+        </div>
+      </div>
+      <div class="search-panel__actions">
+        <%= f.submit "Filtrar", class: "primary-button" %>
+        <%= link_to "Limpar", u_funcoes_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
 
   <section class="panel-card" data-controller="view-toggle">
     <div class="panel-card__header">
@@ -75,10 +88,6 @@
       <% end %>
     </div>
 
-    <% if @pagy %>
-      <div class="pagination-wrap">
-        <%== @pagy.series_nav %>
-      </div>
-    <% end %>
+    <%= render "layouts/pagination", pagy: @pagy %>
   </section>
 </div>

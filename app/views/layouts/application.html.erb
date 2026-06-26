@@ -17,10 +17,16 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Vendored as a plain UMD bundle (not import-mapped): it ships unbundled
+        ESM source with relative imports between its own files, which only
+        resolve when served from its own CDN tree, not once downloaded. %>
+    <%= javascript_include_tag "tom-select", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
+    <%= render "layouts/flash" %>
+
     <div class="dashboard-shell" data-controller="theme sidebar">
       <%= render "layouts/sidebar" %>
       <div class="sidebar-overlay" data-sidebar-target="overlay" data-action="click->sidebar#close"></div>

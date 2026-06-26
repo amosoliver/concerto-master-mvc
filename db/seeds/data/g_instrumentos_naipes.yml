@@ -1,0 +1,25 @@
+# Fonte única para g_instrumentos, g_naipes e g_instrumentos_naipes.
+# Cada instrumento lista os naipes (vozes/divisões) que ele possui.
+# Quando o instrumento não tem divisão de naipes, repita o nome do
+# instrumento como naipe (ex.: Violão, Bateria).
+- instrumento: Voz
+  naipes:
+    - Soprano
+    - Mezzo-soprano
+    - Contralto
+    - Tenor
+    - Barítono
+    - Baixo
+- instrumento: Guitarra
+  naipes:
+    - Guitarra Solo
+    - Guitarra Rítmica
+- instrumento: Baixo
+  naipes:
+    - Baixo
+- instrumento: Violão
+  naipes:
+    - Violão
+- instrumento: Bateria
+  naipes:
+    - Bateria

@@ -39,42 +39,109 @@ module ApplicationHelper
     plural == singular ? plural.pluralize : plural
   end
 
-  def sidebar_nav_items
+  # cpf/cep are stored unmasked (digits only); these format them for display
+  # only, mirroring the live input mask used while typing in the forms.
+  def format_cpf(value)
+    return if value.blank?
+
+    value.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4')
+  end
+
+  def format_cep(value)
+    return if value.blank?
+
+    value.gsub(/(\d{5})(\d{3})/, '\1-\2')
+  end
+
+  # Sidebar structure: a list of groups. Each group either renders its
+  # `items` directly (no header) or splits them into labeled `subgroups`.
+  # Association/join tables (no identity of their own, just linking two
+  # entities) all share the same "link" icon so the icon language stays
+  # meaningful instead of forcing a unique icon onto every junction table.
+  def sidebar_nav_groups
     [
-      { label: "Dashboard", icon: "◉", path: root_path, controller: "home" },
-      { label: "G Entidades", icon: "◌", path: g_entidades_path, controller: "g_entidades" },
-      { label: "G Estados", icon: "◌", path: g_estados_path, controller: "g_estados" },
-      { label: "G Instrumentos", icon: "◌", path: g_instrumentos_path, controller: "g_instrumentos" },
-      { label: "G Instrumentos Naipes", icon: "◌", path: g_instrumentos_naipes_path, controller: "g_instrumentos_naipes" },
-      { label: "G Municípios", icon: "◌", path: g_municipios_path, controller: "g_municipios" },
-      { label: "G Naipes", icon: "◌", path: g_naipes_path, controller: "g_naipes" },
-      { label: "G Países", icon: "◌", path: g_paises_path, controller: "g_paises" },
-      { label: "G Pessoas", icon: "◌", path: g_pessoas_path, controller: "g_pessoas" },
-      { label: "G Pessoas Instrumentos", icon: "◌", path: g_pessoas_instrumentos_path, controller: "g_pessoas_instrumentos" },
-      { label: "G Prédios", icon: "◌", path: g_predios_path, controller: "g_predios" },
-      { label: "G Sexos", icon: "◌", path: g_sexos_path, controller: "g_sexos" },
-      { label: "G Usuários", icon: "◌", path: g_usuarios_path, controller: "g_usuarios" },
-      { label: "M Arranjadores", icon: "◌", path: m_arranjadores_path, controller: "m_arranjadores" },
-      { label: "M Arranjos", icon: "◌", path: m_arranjos_path, controller: "m_arranjos" },
-      { label: "M Arranjos Instrumentos Naipes", icon: "◌", path: m_arranjos_instrumentos_naipes_path, controller: "m_arranjos_instrumentos_naipes" },
-      { label: "M Artistas", icon: "◌", path: m_artistas_path, controller: "m_artistas" },
-      { label: "M Compositores", icon: "◌", path: m_compositores_path, controller: "m_compositores" },
-      { label: "M Eventos", icon: "◌", path: m_eventos_path, controller: "m_eventos" },
-      { label: "M Eventos Músicas", icon: "◌", path: m_eventos_musicas_path, controller: "m_eventos_musicas" },
-      { label: "M Grupos", icon: "◌", path: m_grupos_path, controller: "m_grupos" },
-      { label: "M Grupos Pessoas", icon: "◌", path: m_grupos_pessoas_path, controller: "m_grupos_pessoas" },
-      { label: "M Músicas", icon: "◌", path: m_musicas_path, controller: "m_musicas" },
-      { label: "M Pessoas Funções", icon: "◌", path: m_pessoas_funcoes_path, controller: "m_pessoas_funcoes" },
-      { label: "M Tipos Grupos", icon: "◌", path: m_tipos_grupos_path, controller: "m_tipos_grupos" },
-      { label: "M Tonalidades", icon: "◌", path: m_tonalidades_path, controller: "m_tonalidades" },
-      { label: "U Funções", icon: "◌", path: u_funcoes_path, controller: "u_funcoes" },
-      { label: "U Perfis", icon: "◌", path: u_perfis_path, controller: "u_perfis" },
-      { label: "U Perfis Funções", icon: "◌", path: u_perfis_funcoes_path, controller: "u_perfis_funcoes" },
-      { label: "U Perfis Permissões", icon: "◌", path: u_perfis_permissoes_path, controller: "u_perfis_permissoes" },
-      { label: "U Permissões", icon: "◌", path: u_permissoes_path, controller: "u_permissoes" },
-      { label: "U Tipos Funções", icon: "◌", path: u_tipos_funcoes_path, controller: "u_tipos_funcoes" },
-      { label: "U Usuários Perfis", icon: "◌", path: u_usuarios_perfis_path, controller: "u_usuarios_perfis" },
-      { label: "Exemplos", icon: "◌", path: examples_path, controller: "examples" }
+      { items: [nav_item("Dashboard", "📊", root_path, "home")] },
+      {
+        label: "Geral",
+        subgroups: [
+          {
+            label: "Localização",
+            items: [
+              nav_item(model_plural_human_name(GPais), "🌎", g_paises_path, "g_paises"),
+              nav_item(model_plural_human_name(GEstado), "🗺️", g_estados_path, "g_estados"),
+              nav_item(model_plural_human_name(GMunicipio), "📍", g_municipios_path, "g_municipios")
+            ]
+          },
+          {
+            label: "Pessoas e Entidades",
+            items: [
+              nav_item(model_plural_human_name(GEntidade), "🏢", g_entidades_path, "g_entidades"),
+              nav_item(model_plural_human_name(GPredio), "🏛️", g_predios_path, "g_predios"),
+              nav_item(model_plural_human_name(GPessoa), "👤", g_pessoas_path, "g_pessoas"),
+              nav_item(model_plural_human_name(GSexo), "⚧️", g_sexos_path, "g_sexos"),
+              nav_item(model_plural_human_name(GPessoasInstrumento), "🔗", g_pessoas_instrumentos_path, "g_pessoas_instrumentos")
+            ]
+          },
+          {
+            label: "Instrumentos",
+            items: [
+              nav_item(model_plural_human_name(GInstrumento), "🎸", g_instrumentos_path, "g_instrumentos"),
+              nav_item(model_plural_human_name(GNaipe), "🎻", g_naipes_path, "g_naipes"),
+              nav_item(model_plural_human_name(GInstrumentoNaipe), "🔗", g_instrumentos_naipes_path, "g_instrumentos_naipes")
+            ]
+          }
+        ]
+      },
+      {
+        label: "Música",
+        subgroups: [
+          {
+            label: "Catálogo",
+            items: [
+              nav_item(model_plural_human_name(MMusica), "🎵", m_musicas_path, "m_musicas"),
+              nav_item(model_plural_human_name(MArtista), "🎤", m_artistas_path, "m_artistas"),
+              nav_item(model_plural_human_name(MCompositor), "✍️", m_compositores_path, "m_compositores"),
+              nav_item(model_plural_human_name(MTonalidade), "🎹", m_tonalidades_path, "m_tonalidades"),
+              nav_item(model_plural_human_name(MArranjador), "🎚️", m_arranjadores_path, "m_arranjadores"),
+              nav_item(model_plural_human_name(MArranjo), "🎼", m_arranjos_path, "m_arranjos"),
+              nav_item(model_plural_human_name(MArranjoInstrumentoNaipe), "🔗", m_arranjos_instrumentos_naipes_path, "m_arranjos_instrumentos_naipes")
+            ]
+          },
+          {
+            label: "Eventos",
+            items: [
+              nav_item(model_plural_human_name(MEvento), "📅", m_eventos_path, "m_eventos"),
+              nav_item(model_plural_human_name(MEventoMusica), "🔗", m_eventos_musicas_path, "m_eventos_musicas")
+            ]
+          },
+          {
+            label: "Grupos",
+            items: [
+              nav_item(model_plural_human_name(MGrupo), "👥", m_grupos_path, "m_grupos"),
+              nav_item(model_plural_human_name(MTipoGrupo), "🏷️", m_tipos_grupos_path, "m_tipos_grupos"),
+              nav_item(model_plural_human_name(MGrupoPessoa), "🔗", m_grupos_pessoas_path, "m_grupos_pessoas"),
+              nav_item(model_plural_human_name(MPessoaFuncao), "🔗", m_pessoas_funcoes_path, "m_pessoas_funcoes")
+            ]
+          }
+        ]
+      },
+      {
+        label: "Acesso",
+        items: [
+          nav_item(model_plural_human_name(GUsuario), "🔑", g_usuarios_path, "g_usuarios"),
+          nav_item(model_plural_human_name(UPerfil), "🪪", u_perfis_path, "u_perfis"),
+          nav_item(model_plural_human_name(UFuncao), "🎖️", u_funcoes_path, "u_funcoes"),
+          nav_item(model_plural_human_name(UTipoFuncao), "🏷️", u_tipos_funcoes_path, "u_tipos_funcoes"),
+          nav_item(model_plural_human_name(UPermissao), "🛡️", u_permissoes_path, "u_permissoes")
+        ]
+      },
+      { items: [nav_item(model_plural_human_name(Example), "🧪", examples_path, "examples")] }
     ]
+  end
+
+  private
+
+  def nav_item(label, icon, path, controller)
+    { label: label, icon: icon, path: path, controller: controller }
   end
 end

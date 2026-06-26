@@ -21,7 +21,7 @@ class GEstadosController < ApplicationController
     @g_estado = GEstado.new(g_estado_params)
 
     if @g_estado.save
-      redirect_to @g_estado, notice: "G estado criado com sucesso."
+      redirect_to @g_estado, notice: "#{GEstado.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GEstadosController < ApplicationController
 
   def update
     if @g_estado.update(g_estado_params)
-      redirect_to @g_estado, notice: "G estado atualizado com sucesso."
+      redirect_to @g_estado, notice: "#{GEstado.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class GEstadosController < ApplicationController
 
   def destroy
     @g_estado.discard
-    redirect_to g_estados_path, notice: "G estado removido com sucesso."
+    redirect_to g_estados_path, notice: "#{GEstado.model_name.human} removido com sucesso."
   end
 
   private

@@ -1,4 +1,4 @@
-<%= form_with(model: u_funcao, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: u_funcao, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if u_funcao.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(u_funcao.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -17,7 +17,7 @@
     </div>
     <div class="field-group">
       <%= form.label :u_tipo_funcao_id %>
-      <%= form.collection_select :u_tipo_funcao_id, UTipoFuncao.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :u_tipo_funcao_id, UTipoFuncao.all, :id, :to_s, { include_blank: "Selecione um tipo de função..." }, class: "form-control" %>
     </div>
   </div>
 

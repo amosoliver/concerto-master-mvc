@@ -9,12 +9,27 @@
   </div>
 
   <nav class="sidebar__nav" aria-label="Menu principal">
-    <% sidebar_nav_items.each do |item| %>
-      <a href="<%= item[:path] || '#' %>" class="nav-item<%= ' nav-item--active' if item[:controller] && item[:controller] == controller_name %>">
-        <span class="nav-item__icon"><%= item[:icon] %></span>
-        <span><%= item[:label] %></span>
-        <% if item[:badge] %><span class="nav-item__badge"><%= item[:badge] %></span><% end %>
-      </a>
+    <% sidebar_nav_groups.each do |group| %>
+      <div class="sidebar-group">
+        <% if group[:label] %>
+          <p class="sidebar-group__title"><%= group[:label] %></p>
+        <% end %>
+
+        <% if group[:subgroups] %>
+          <% group[:subgroups].each do |subgroup| %>
+            <div class="sidebar-subgroup">
+              <p class="sidebar-subgroup__title"><%= subgroup[:label] %></p>
+              <% subgroup[:items].each do |item| %>
+                <%= render "layouts/sidebar_item", item: item %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <% group[:items].each do |item| %>
+            <%= render "layouts/sidebar_item", item: item %>
+          <% end %>
+        <% end %>
+      </div>
     <% end %>
   </nav>
 </aside>

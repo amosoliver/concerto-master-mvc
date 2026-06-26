@@ -1,0 +1,27 @@
+<p class="eyebrow">Bem-vindo(a)</p>
+<h2>Entrar na sua conta</h2>
+
+<%= render "devise/shared/error_messages", resource: resource %>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "form-card auth-form" }) do |f| %>
+  <div class="field-group">
+    <%= f.label :login, "E-mail ou CPF" %>
+    <%= f.text_field :login, autofocus: true, autocomplete: "username", class: "form-control", placeholder: "seu@email.com ou 000.000.000-00" %>
+  </div>
+
+  <div class="field-group">
+    <%= f.label :password, "Senha" %>
+    <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
+  </div>
+
+  <% if devise_mapping.rememberable? %>
+    <label class="auth-remember">
+      <%= f.check_box :remember_me %>
+      <%= f.label :remember_me, "Lembrar de mim", class: "auth-remember__label" %>
+    </label>
+  <% end %>
+
+  <div class="form-actions">
+    <%= f.submit "Entrar", class: "primary-button auth-submit" %>
+  </div>
+<% end %>

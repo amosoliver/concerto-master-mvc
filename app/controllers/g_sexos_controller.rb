@@ -21,7 +21,7 @@ class GSexosController < ApplicationController
     @g_sexo = GSexo.new(g_sexo_params)
 
     if @g_sexo.save
-      redirect_to @g_sexo, notice: "G sexo criado com sucesso."
+      redirect_to @g_sexo, notice: "#{GSexo.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GSexosController < ApplicationController
 
   def update
     if @g_sexo.update(g_sexo_params)
-      redirect_to @g_sexo, notice: "G sexo atualizado com sucesso."
+      redirect_to @g_sexo, notice: "#{GSexo.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class GSexosController < ApplicationController
 
   def destroy
     @g_sexo.discard
-    redirect_to g_sexos_path, notice: "G sexo removido com sucesso."
+    redirect_to g_sexos_path, notice: "#{GSexo.model_name.human} removido com sucesso."
   end
 
   private

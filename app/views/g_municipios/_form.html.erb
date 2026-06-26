@@ -1,4 +1,4 @@
-<%= form_with(model: g_municipio, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: g_municipio, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if g_municipio.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(g_municipio.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -21,7 +21,7 @@
     </div>
     <div class="field-group">
       <%= form.label :g_estado_id %>
-      <%= form.collection_select :g_estado_id, GEstado.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :g_estado_id, GEstado.all, :id, :to_s, { include_blank: "Selecione um estado..." }, class: "form-control" %>
     </div>
   </div>
 

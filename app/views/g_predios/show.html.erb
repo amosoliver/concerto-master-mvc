@@ -25,7 +25,7 @@
       </div>
       <div class="detail-tile">
         <span class="detail-label"><%= GPredio.human_attribute_name(:cep) %></span>
-        <span class="detail-value"><%= @g_predio.cep %></span>
+        <span class="detail-value"><%= format_cep(@g_predio.cep) %></span>
       </div>
       <div class="detail-tile">
         <span class="detail-label"><%= GPredio.human_attribute_name(:logradouro) %></span>

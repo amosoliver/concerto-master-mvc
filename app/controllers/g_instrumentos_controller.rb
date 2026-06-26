@@ -21,7 +21,7 @@ class GInstrumentosController < ApplicationController
     @g_instrumento = GInstrumento.new(g_instrumento_params)
 
     if @g_instrumento.save
-      redirect_to @g_instrumento, notice: "G instrumento criado com sucesso."
+      redirect_to @g_instrumento, notice: "#{GInstrumento.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GInstrumentosController < ApplicationController
 
   def update
     if @g_instrumento.update(g_instrumento_params)
-      redirect_to @g_instrumento, notice: "G instrumento atualizado com sucesso."
+      redirect_to @g_instrumento, notice: "#{GInstrumento.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class GInstrumentosController < ApplicationController
 
   def destroy
     @g_instrumento.discard
-    redirect_to g_instrumentos_path, notice: "G instrumento removido com sucesso."
+    redirect_to g_instrumentos_path, notice: "#{GInstrumento.model_name.human} removido com sucesso."
   end
 
   private

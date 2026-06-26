@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,10 +27,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "descricao"
+    t.bigint "g_entidade_id"
     t.bigint "g_estado_id", null: false
     t.bigint "g_municipio_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_g_entidades_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_g_entidades_on_g_entidade_id"
     t.index ["g_estado_id"], name: "index_g_entidades_on_g_estado_id"
     t.index ["g_municipio_id"], name: "index_g_entidades_on_g_municipio_id"
   end
@@ -94,6 +96,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
   end
 
   create_table "g_pessoas", force: :cascade do |t|
+    t.string "cpf"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "email"
@@ -145,6 +148,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
     t.string "email"
     t.string "encrypted_password"
     t.bigint "g_pessoa_id", null: false
+    t.boolean "primeiro_acesso", default: true, null: false
+    t.datetime "remember_created_at"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_g_usuarios_on_deleted_at"
     t.index ["g_pessoa_id"], name: "index_g_usuarios_on_g_pessoa_id"
@@ -231,6 +236,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
     t.index ["deleted_at"], name: "index_m_grupos_on_deleted_at"
     t.index ["g_entidade_id"], name: "index_m_grupos_on_g_entidade_id"
     t.index ["m_tipo_grupo_id"], name: "index_m_grupos_on_m_tipo_grupo_id"
+  end
+
+  create_table "m_grupos_instrumentos_naipes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "g_instrumento_naipe_id", null: false
+    t.bigint "m_grupo_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_m_grupos_instrumentos_naipes_on_deleted_at"
+    t.index ["g_instrumento_naipe_id"], name: "index_m_grupos_instrumentos_naipes_on_g_instrumento_naipe_id"
+    t.index ["m_grupo_id"], name: "index_m_grupos_instrumentos_naipes_on_m_grupo_id"
   end
 
   create_table "m_grupos_pessoas", force: :cascade do |t|
@@ -354,6 +370,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
     t.index ["u_perfil_id"], name: "index_u_usuarios_perfis_on_u_perfil_id"
   end
 
+  add_foreign_key "g_entidades", "g_entidades"
   add_foreign_key "g_entidades", "g_estados"
   add_foreign_key "g_entidades", "g_municipios"
   add_foreign_key "g_estados", "g_paises"
@@ -376,6 +393,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_033840) do
   add_foreign_key "m_eventos_musicas", "m_musicas"
   add_foreign_key "m_grupos", "g_entidades"
   add_foreign_key "m_grupos", "m_tipos_grupos"
+  add_foreign_key "m_grupos_instrumentos_naipes", "g_instrumentos_naipes"
+  add_foreign_key "m_grupos_instrumentos_naipes", "m_grupos"
   add_foreign_key "m_grupos_pessoas", "g_pessoas"
   add_foreign_key "m_grupos_pessoas", "m_grupos"
   add_foreign_key "m_musicas", "m_artistas"

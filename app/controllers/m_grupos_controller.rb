@@ -21,7 +21,7 @@ class MGruposController < ApplicationController
     @m_grupo = MGrupo.new(m_grupo_params)
 
     if @m_grupo.save
-      redirect_to @m_grupo, notice: "M grupo criado com sucesso."
+      redirect_to @m_grupo, notice: "#{MGrupo.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MGruposController < ApplicationController
 
   def update
     if @m_grupo.update(m_grupo_params)
-      redirect_to @m_grupo, notice: "M grupo atualizado com sucesso."
+      redirect_to @m_grupo, notice: "#{MGrupo.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MGruposController < ApplicationController
 
   def destroy
     @m_grupo.discard
-    redirect_to m_grupos_path, notice: "M grupo removido com sucesso."
+    redirect_to m_grupos_path, notice: "#{MGrupo.model_name.human} removido com sucesso."
   end
 
   private

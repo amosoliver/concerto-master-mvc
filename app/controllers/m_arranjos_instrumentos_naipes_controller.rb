@@ -21,7 +21,7 @@ class MArranjosInstrumentosNaipesController < ApplicationController
     @m_arranjo_instrumento_naipe = MArranjoInstrumentoNaipe.new(m_arranjo_instrumento_naipe_params)
 
     if @m_arranjo_instrumento_naipe.save
-      redirect_to @m_arranjo_instrumento_naipe, notice: "M arranjo instrumento naipe criado com sucesso."
+      redirect_to @m_arranjo_instrumento_naipe, notice: "#{MArranjoInstrumentoNaipe.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MArranjosInstrumentosNaipesController < ApplicationController
 
   def update
     if @m_arranjo_instrumento_naipe.update(m_arranjo_instrumento_naipe_params)
-      redirect_to @m_arranjo_instrumento_naipe, notice: "M arranjo instrumento naipe atualizado com sucesso."
+      redirect_to @m_arranjo_instrumento_naipe, notice: "#{MArranjoInstrumentoNaipe.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MArranjosInstrumentosNaipesController < ApplicationController
 
   def destroy
     @m_arranjo_instrumento_naipe.discard
-    redirect_to m_arranjos_instrumentos_naipes_path, notice: "M arranjo instrumento naipe removido com sucesso."
+    redirect_to m_arranjos_instrumentos_naipes_path, notice: "#{MArranjoInstrumentoNaipe.model_name.human} removido com sucesso."
   end
 
   private

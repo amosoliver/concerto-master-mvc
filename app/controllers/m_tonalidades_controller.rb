@@ -21,7 +21,7 @@ class MTonalidadesController < ApplicationController
     @m_tonalidade = MTonalidade.new(m_tonalidade_params)
 
     if @m_tonalidade.save
-      redirect_to @m_tonalidade, notice: "M tonalidade criado com sucesso."
+      redirect_to @m_tonalidade, notice: "#{MTonalidade.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MTonalidadesController < ApplicationController
 
   def update
     if @m_tonalidade.update(m_tonalidade_params)
-      redirect_to @m_tonalidade, notice: "M tonalidade atualizado com sucesso."
+      redirect_to @m_tonalidade, notice: "#{MTonalidade.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MTonalidadesController < ApplicationController
 
   def destroy
     @m_tonalidade.discard
-    redirect_to m_tonalidades_path, notice: "M tonalidade removido com sucesso."
+    redirect_to m_tonalidades_path, notice: "#{MTonalidade.model_name.human} removido com sucesso."
   end
 
   private

@@ -1,4 +1,4 @@
-<%= form_with(model: m_arranjo_instrumento_naipe, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: m_arranjo_instrumento_naipe, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if m_arranjo_instrumento_naipe.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(m_arranjo_instrumento_naipe.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,11 +13,11 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :g_instrumento_naipe_id %>
-      <%= form.collection_select :g_instrumento_naipe_id, GInstrumentoNaipe.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :g_instrumento_naipe_id, GInstrumentoNaipe.all, :id, :to_s, { include_blank: "Selecione um instrumento e naipe..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_arranjo_id %>
-      <%= form.collection_select :m_arranjo_id, MArranjo.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_arranjo_id, MArranjo.all, :id, :to_s, { include_blank: "Selecione um arranjo..." }, class: "form-control" %>
     </div>
   </div>
 

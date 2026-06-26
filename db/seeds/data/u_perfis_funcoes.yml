@@ -1,0 +1,6 @@
+# Vínculos entre u_perfis e u_funcoes
+# perfil e funcao devem corresponder a descrições já cadastradas
+- perfil: Líder
+  funcao: Líder
+- perfil: Instrumentista
+  funcao: Instrumentista

@@ -1,4 +1,4 @@
-<%= form_with(model: m_arranjo, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: m_arranjo, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if m_arranjo.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(m_arranjo.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,15 +13,15 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :m_musica_id %>
-      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_arranjador_id %>
-      <%= form.collection_select :m_arranjador_id, MArranjador.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_arranjador_id, MArranjador.all, :id, :to_s, { include_blank: "Selecione um arranjador..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_tonalidade_id %>
-      <%= form.collection_select :m_tonalidade_id, MTonalidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_tonalidade_id, MTonalidade.all, :id, :to_s, { include_blank: "Selecione uma tonalidade..." }, class: "form-control" %>
     </div>
   </div>
 

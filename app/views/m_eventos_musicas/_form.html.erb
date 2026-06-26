@@ -1,4 +1,4 @@
-<%= form_with(model: m_evento_musica, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: m_evento_musica, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
   <% if m_evento_musica.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(m_evento_musica.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -13,11 +13,11 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :m_evento_id %>
-      <%= form.collection_select :m_evento_id, MEvento.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_evento_id, MEvento.all, :id, :to_s, { include_blank: "Selecione um evento..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_musica_id %>
-      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
+      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
     </div>
   </div>
 

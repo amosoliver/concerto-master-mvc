@@ -1,4 +1,6 @@
-<%= form_with(model: g_entidade, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: g_entidade, local: true, class: "panel-card form-card", data: { controller: "select grupo-builder", grupo_builder_index_value: @group_rows.size }) do |form| %>
+  <%= hidden_field_tag :step, current_step %>
+
   <% if g_entidade.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(g_entidade.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -10,24 +12,91 @@
     </div>
   <% end %>
 
-  <div class="form-grid">
-    <div class="field-group">
-      <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :g_estado_id %>
-      <%= form.collection_select :g_estado_id, GEstado.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :g_municipio_id %>
-      <%= form.collection_select :g_municipio_id, GMunicipio.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
-    </div>
+  <div class="steps-nav">
+    <% GEntidadesController::STEPS.each_with_index do |step, index| %>
+      <%= link_to step_path_for(step), class: "steps-nav__item #{'is-active' if current_step == step}" do %>
+        <%= "#{index + 1}. #{step.titleize}" %>
+      <% end %>
+    <% end %>
   </div>
 
+  <% if current_step == "dados" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 1</p>
+        <h3>Dados principais da entidade</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group">
+        <%= form.label :descricao %>
+        <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+      </div>
+      <div class="field-group">
+        <%= form.label :g_estado_id %>
+        <%= form.collection_select :g_estado_id, @g_estados, :id, :to_s, { include_blank: "Selecione um estado..." }, class: "form-control" %>
+      </div>
+      <div class="field-group">
+        <%= form.label :g_municipio_id %>
+        <%= form.collection_select :g_municipio_id, @g_municipios, :id, :to_s, { include_blank: "Selecione um município..." }, class: "form-control" %>
+      </div>
+      <div class="field-group">
+        <%= form.label :g_entidade_id %>
+        <%= form.collection_select :g_entidade_id, @g_entidades_pai, :id, :to_s, { include_blank: "Selecione a entidade pai..." }, class: "form-control" %>
+      </div>
+    </div>
+  <% elsif current_step == "predio" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 2</p>
+        <h3>Prédio da entidade</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group">
+        <label>Nome fantasia</label>
+        <%= text_field_tag "g_entidade[predio_attributes][nome_fantasia]", @g_predio&.nome_fantasia, class: "form-control", data: { controller: "uppercase" } %>
+      </div>
+      <div class="field-group">
+        <label>CEP</label>
+        <%= text_field_tag "g_entidade[predio_attributes][cep]", @g_predio&.cep, class: "form-control", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep" } %>
+      </div>
+      <div class="field-group">
+        <label>Logradouro</label>
+        <%= text_field_tag "g_entidade[predio_attributes][logradouro]", @g_predio&.logradouro, class: "form-control", data: { controller: "uppercase" } %>
+      </div>
+      <div class="field-group">
+        <label>Bairro</label>
+        <%= text_field_tag "g_entidade[predio_attributes][bairro]", @g_predio&.bairro, class: "form-control", data: { controller: "uppercase" } %>
+      </div>
+    </div>
+  <% else %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 3</p>
+        <h3>Grupos e instrumentos da entidade</h3>
+      </div>
+      <button type="button" class="primary-button" data-action="click->grupo-builder#add">Adicionar grupo</button>
+    </div>
+
+    <div class="groups-stack" data-grupo-builder-target="container">
+      <% @group_rows.each_with_index do |group, index| %>
+        <%= render "grupo_fields", group: group, index: index %>
+      <% end %>
+    </div>
+
+    <template data-grupo-builder-target="template">
+      <%= raw render("grupo_fields", group: { descricao: nil, m_tipo_grupo_id: nil, g_instrumento_naipe_ids: [] }, index: "__INDEX__") %>
+    </template>
+  <% end %>
+
   <div class="form-actions">
-    <%= form.submit class: "primary-button" %>
-    <%= link_to "Cancelar", g_entidade_path(@g_entidade), class: "secondary-button" if g_entidade.persisted? %>
-    <%= link_to "Cancelar", g_entidades_path, class: "secondary-button" unless g_entidade.persisted? %>
+    <% unless first_step? %>
+      <%= button_tag "Voltar", name: :navigation, value: "previous", class: "secondary-button" %>
+    <% end %>
+    <%= form.submit(last_step? ? (g_entidade.persisted? ? "Atualizar entidade" : "Criar entidade") : "Próximo", class: "primary-button") %>
+    <%= link_to "Cancelar", g_entidade.persisted? ? g_entidade_path(g_entidade) : g_entidades_path, class: "secondary-button" %>
   </div>
 <% end %>

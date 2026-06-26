@@ -1,24 +1,44 @@
-<div class="page-shell">
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
-      <p class="eyebrow">Gerenciamento</p>
+      <p class="eyebrow">Acesso</p>
       <h1><%= model_plural_human_name(UPerfil) %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Novo #{UPerfil.model_name.human}", new_u_perfil_path, class: "primary-button" %>
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
+
+      <div class="actions-menu" data-controller="dropdown">
+        <button type="button" class="primary-button" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false">
+          Ações
+        </button>
+        <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+          <%= link_to new_u_perfil_path, class: "actions-menu__item" do %>
+            <span aria-hidden="true">➕</span> Cadastrar perfil
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <%= search_form_for @q, url: u_perfis_path, method: :get, class: "search-panel" do |f| %>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :descricao_cont, placeholder: UPerfil.human_attribute_name(:descricao), "aria-label": UPerfil.human_attribute_name(:descricao), class: "search-input__field" %>
-    </div>
-    <div class="search-panel__actions">
-      <%= f.submit "Filtrar", class: "primary-button" %>
-      <%= link_to "Limpar", u_perfis_path, class: "secondary-button" %>
-    </div>
-  <% end %>
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%= search_form_for @q, url: u_perfis_path, method: :get do |f| %>
+      <div class="search-grid">
+        <div class="search-field">
+          <label><%= UPerfil.human_attribute_name(:descricao) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :descricao_cont, placeholder: UPerfil.human_attribute_name(:descricao), "aria-label": UPerfil.human_attribute_name(:descricao), class: "search-input__field" %>
+          </div>
+        </div>
+      </div>
+      <div class="search-panel__actions">
+        <%= f.submit "Filtrar", class: "primary-button" %>
+        <%= link_to "Limpar", u_perfis_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
 
   <section class="panel-card" data-controller="view-toggle">
     <div class="panel-card__header">
@@ -37,6 +57,8 @@
         <thead>
           <tr>
             <th scope="col"><%= UPerfil.human_attribute_name(:descricao) %></th>
+            <th scope="col">Funções</th>
+            <th scope="col">Permissões</th>
             <th scope="col">Ações</th>
           </tr>
         </thead>
@@ -44,8 +66,18 @@
           <% @u_perfis.each do |u_perfil| %>
             <tr>
               <td><%= u_perfil.descricao %></td>
+              <td><%= u_perfil.u_funcoes.count %></td>
+              <td><%= u_perfil.u_permissoes.count %></td>
               <td>
-                <%= render "shared/actions_menu", show_path: u_perfil_path(u_perfil), edit_path: edit_u_perfil_path(u_perfil), delete_path: u_perfil_path(u_perfil) %>
+                <div class="actions-menu" data-controller="dropdown">
+                  <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                  <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+                    <%= link_to edit_u_perfil_path(u_perfil), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Atualizar perfil<% end %>
+                    <%= link_to edit_u_perfil_path(u_perfil, section: "funcoes"), class: "actions-menu__item" do %><span aria-hidden="true">🎖️</span> Gerir funções<% end %>
+                    <%= link_to edit_u_perfil_path(u_perfil, section: "permissoes"), class: "actions-menu__item" do %><span aria-hidden="true">🛡️</span> Gerir permissões<% end %>
+                    <%= button_to u_perfil_path(u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+                  </div>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -59,18 +91,26 @@
           <div class="record-card__body">
             <span class="detail-label"><%= UPerfil.human_attribute_name(:descricao) %></span>
             <span class="detail-value"><%= u_perfil.descricao %></span>
+            <span class="detail-label">Funções</span>
+            <span class="detail-value"><%= u_perfil.u_funcoes.count %></span>
+            <span class="detail-label">Permissões</span>
+            <span class="detail-value"><%= u_perfil.u_permissoes.count %></span>
           </div>
           <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: u_perfil_path(u_perfil), edit_path: edit_u_perfil_path(u_perfil), delete_path: u_perfil_path(u_perfil) %>
+            <div class="actions-menu" data-controller="dropdown">
+              <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+              <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+                <%= link_to edit_u_perfil_path(u_perfil), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Atualizar perfil<% end %>
+                <%= link_to edit_u_perfil_path(u_perfil, section: "funcoes"), class: "actions-menu__item" do %><span aria-hidden="true">🎖️</span> Gerir funções<% end %>
+                <%= link_to edit_u_perfil_path(u_perfil, section: "permissoes"), class: "actions-menu__item" do %><span aria-hidden="true">🛡️</span> Gerir permissões<% end %>
+                <%= button_to u_perfil_path(u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+              </div>
+            </div>
           </div>
         </article>
       <% end %>
     </div>
 
-    <% if @pagy %>
-      <div class="pagination-wrap">
-        <%== @pagy.series_nav %>
-      </div>
-    <% end %>
+    <%= render "layouts/pagination", pagy: @pagy %>
   </section>
 </div>

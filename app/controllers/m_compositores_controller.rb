@@ -21,7 +21,7 @@ class MCompositoresController < ApplicationController
     @m_compositor = MCompositor.new(m_compositor_params)
 
     if @m_compositor.save
-      redirect_to @m_compositor, notice: "M compositor criado com sucesso."
+      redirect_to @m_compositor, notice: "#{MCompositor.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MCompositoresController < ApplicationController
 
   def update
     if @m_compositor.update(m_compositor_params)
-      redirect_to @m_compositor, notice: "M compositor atualizado com sucesso."
+      redirect_to @m_compositor, notice: "#{MCompositor.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class MCompositoresController < ApplicationController
 
   def destroy
     @m_compositor.discard
-    redirect_to m_compositores_path, notice: "M compositor removido com sucesso."
+    redirect_to m_compositores_path, notice: "#{MCompositor.model_name.human} removido com sucesso."
   end
 
   private

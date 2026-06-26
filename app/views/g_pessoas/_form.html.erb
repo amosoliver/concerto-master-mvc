@@ -1,4 +1,9 @@
-<%= form_with(model: g_pessoa, local: true, class: "panel-card form-card") do |form| %>
+<% selected_funcao_ids = Array(wizard_values["u_funcao_ids"] || g_pessoa.u_funcao_ids).map(&:to_i) %>
+<% g_usuario = g_pessoa.g_usuario_principal || g_pessoa.g_usuarios.build(ativo: true, email: g_pessoa.email) %>
+
+<%= form_with(model: g_pessoa, local: true, class: "panel-card form-card", data: { controller: "select pessoa-filtros", pessoa_filtros_selected_funcao_ids_value: selected_funcao_ids.join(",") }) do |form| %>
+  <%= hidden_field_tag :step, current_step %>
+
   <% if g_pessoa.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(g_pessoa.errors.count, "erro") %> impediram o salvamento:</h2>
@@ -9,29 +14,208 @@
       </ul>
     </div>
   <% end %>
-
-  <div class="form-grid">
-    <div class="field-group">
-      <%= form.label :nome %>
-      <%= form.text_field :nome, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :email %>
-      <%= form.text_field :email, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :g_entidade_id %>
-      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :g_sexo_id %>
-      <%= form.collection_select :g_sexo_id, GSexo.all, :id, :to_s, { include_blank: true }, class: "form-control" %>
-    </div>
+  <div class="steps-nav">
+    <% GPessoasController::STEPS.each_with_index do |step, index| %>
+      <%= link_to step_path_for(step), class: "steps-nav__item #{'is-active' if current_step == step}" do %>
+        <%= "#{index + 1}. #{step.titleize}" %>
+      <% end %>
+    <% end %>
   </div>
 
-  <div class="form-actions">
-    <%= form.submit class: "primary-button" %>
-    <%= link_to "Cancelar", g_pessoa_path(@g_pessoa), class: "secondary-button" if g_pessoa.persisted? %>
-    <%= link_to "Cancelar", g_pessoas_path, class: "secondary-button" unless g_pessoa.persisted? %>
+  <% case current_step %>
+  <% when "dados" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 1</p>
+        <h3>Dados da pessoa</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group">
+        <%= form.label :nome %>
+        <%= form.text_field :nome, value: wizard_values["nome"] || g_pessoa.nome, class: "form-control", data: { controller: "uppercase" } %>
+      </div>
+      <div class="field-group">
+        <%= form.label :email %>
+        <%= form.email_field :email, value: wizard_values["email"] || g_pessoa.email, class: "form-control" %>
+      </div>
+      <div class="field-group">
+        <%= form.label :cpf %>
+        <%= form.text_field :cpf, value: wizard_values["cpf"] || g_pessoa.cpf, class: "form-control", inputmode: "numeric", maxlength: 14, data: { controller: "mask", mask_pattern_value: "cpf" } %>
+      </div>
+      <div class="field-group">
+        <%= form.label :g_entidade_id %>
+        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control" %>
+        <% if @g_entidades.blank? %><p class="empty-hint">Nenhuma entidade cadastrada.</p><% end %>
+      </div>
+      <div class="field-group">
+        <%= form.label :g_sexo_id %>
+        <%= form.collection_select :g_sexo_id, @g_sexos, :id, :to_s, { include_blank: "Selecione um sexo...", selected: wizard_values["g_sexo_id"] || g_pessoa.g_sexo_id }, class: "form-control" %>
+        <% if @g_sexos.blank? %><p class="empty-hint">Nenhum sexo cadastrado.</p><% end %>
+      </div>
+    </div>
+  <% when "grupos" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 2</p>
+        <h3>Grupos</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group field-group--full">
+        <%= form.label :g_entidade_id, "Entidade" %>
+        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#filterGroups" } %>
+      </div>
+
+      <div class="field-group field-group--full">
+        <label>Grupos da pessoa</label>
+        <p class="selection-help">Escolha primeiro a entidade. A lista abaixo mostra só os grupos daquela entidade.</p>
+        <div class="selection-panel">
+          <div class="selection-group">
+            <div class="selection-group__items">
+              <% selected_ids = Array(wizard_values["m_grupo_ids"] || g_pessoa.m_grupo_ids).map(&:to_i) %>
+              <% @m_grupos.each do |m_grupo| %>
+                <label class="selection-item" data-pessoa-filtros-target="groupItem" data-entidade-id="<%= m_grupo.g_entidade_id %>">
+                  <%= check_box_tag "g_pessoa[m_grupo_ids][]", m_grupo.id, selected_ids.include?(m_grupo.id), data: { pessoa_filtros_target: "groupCheckbox", action: "change->pessoa-filtros#filterInstrumentos" } %>
+                  <span><%= m_grupo.descricao %></span>
+                </label>
+              <% end %>
+            </div>
+            <p class="empty-hint" data-pessoa-filtros-target="groupsEmpty" hidden>Nenhum grupo encontrado para a entidade selecionada.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% when "instrumentos" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 3</p>
+        <h3>Instrumentos e naipes</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group field-group--full">
+        <%= form.label :g_entidade_id, "Entidade" %>
+        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#filterInstrumentos" } %>
+      </div>
+
+      <div class="field-group field-group--full">
+        <label>Grupos selecionados</label>
+        <p class="selection-help">Os instrumentos/naipes abaixo aparecem conforme os grupos marcados.</p>
+        <div class="selection-panel">
+          <div class="selection-group">
+            <div class="selection-group__items">
+              <% selected_grupo_ids = Array(wizard_values["m_grupo_ids"] || g_pessoa.m_grupo_ids).map(&:to_i) %>
+              <% @m_grupos.each do |m_grupo| %>
+                <label class="selection-item" data-pessoa-filtros-target="groupItem" data-entidade-id="<%= m_grupo.g_entidade_id %>">
+                  <%= check_box_tag "g_pessoa[m_grupo_ids][]", m_grupo.id, selected_grupo_ids.include?(m_grupo.id), data: { pessoa_filtros_target: "groupCheckbox", action: "change->pessoa-filtros#filterInstrumentos" } %>
+                  <span><%= m_grupo.descricao %></span>
+                </label>
+              <% end %>
+            </div>
+            <p class="empty-hint" data-pessoa-filtros-target="groupsEmpty" hidden>Nenhum grupo encontrado para a entidade selecionada.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group field-group--full">
+        <label>Instrumentos vinculados</label>
+        <p class="selection-help">Só são exibidos instrumentos/naipes permitidos pelos grupos escolhidos.</p>
+        <div class="selection-panel">
+          <div class="selection-group">
+            <div class="selection-group__items">
+              <% selected_ids = Array(wizard_values["g_instrumento_naipe_ids"] || g_pessoa.g_instrumento_naipe_ids).map(&:to_i) %>
+              <% @g_instrumentos_naipes.each do |g_instrumento_naipe| %>
+                <label class="selection-item" data-pessoa-filtros-target="instrumentoItem" data-grupo-ids="<%= g_instrumento_naipe.m_grupo_ids.join(',') %>">
+                  <%= check_box_tag "g_pessoa[g_instrumento_naipe_ids][]", g_instrumento_naipe.id, selected_ids.include?(g_instrumento_naipe.id) %>
+                  <span><%= g_instrumento_naipe %></span>
+                </label>
+              <% end %>
+            </div>
+            <p class="empty-hint" data-pessoa-filtros-target="instrumentosEmpty" hidden>Nenhum instrumento/naipe disponível para os grupos selecionados.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% when "funcoes" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 4</p>
+        <h3>Funções</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group field-group--full">
+        <label>Funções da pessoa</label>
+        <p class="selection-help">Marque as funções e escolha a principal.</p>
+        <div class="selection-panel">
+          <div class="selection-group">
+            <div class="selection-group__items">
+              <% selected_ids = Array(wizard_values["u_funcao_ids"] || g_pessoa.u_funcao_ids).map(&:to_i) %>
+              <% @u_funcoes.each do |u_funcao| %>
+                <label class="selection-item">
+                  <%= check_box_tag "g_pessoa[u_funcao_ids][]", u_funcao.id, selected_ids.include?(u_funcao.id) %>
+                  <span><%= u_funcao.descricao %></span>
+                </label>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <%= form.label :principal_u_funcao_id, "Função principal" %>
+        <%= form.collection_select :principal_u_funcao_id, @u_funcoes, :id, :to_s, { include_blank: "Selecione a função principal...", selected: wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id }, class: "form-control" %>
+        <% if @u_funcoes.blank? %><p class="empty-hint">Nenhuma função cadastrada.</p><% end %>
+      </div>
+    </div>
+  <% when "usuario" %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Etapa 5</p>
+        <h3>Usuário e perfis</h3>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group field-group--full">
+        <label>Acesso do usuário</label>
+        <p class="selection-help">O usuário é criado automaticamente com senha inicial `102030` e obrigado a trocá-la no primeiro acesso.</p>
+      </div>
+      <div class="field-group field-group--full">
+        <label>Perfis do usuário</label>
+        <p class="selection-help">Só aparecem perfis compatíveis com as funções selecionadas anteriormente.</p>
+        <div class="selection-panel">
+          <div class="selection-group">
+            <div class="selection-group__items">
+              <% selected_ids = Array(wizard_values["u_perfil_ids"] || g_usuario.u_perfil_ids).map(&:to_i) %>
+              <% @u_perfis.each do |u_perfil| %>
+                <label class="selection-item" data-pessoa-filtros-target="perfilItem" data-funcao-ids="<%= u_perfil.u_funcao_ids.join(',') %>">
+                  <%= check_box_tag "g_pessoa[u_perfil_ids][]", u_perfil.id, selected_ids.include?(u_perfil.id) %>
+                  <span><%= u_perfil.descricao %></span>
+                </label>
+              <% end %>
+            </div>
+            <p class="empty-hint" data-pessoa-filtros-target="perfisEmpty" hidden>Nenhum perfil disponível para as funções selecionadas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="steps-actions">
+    <% unless first_step? %>
+      <%= button_tag "Voltar", name: :navigation, value: "previous", class: "secondary-button" %>
+    <% end %>
+    <% if last_step? %>
+      <%= form.submit(g_pessoa.persisted? ? "Atualizar pessoa" : "Criar pessoa", class: "primary-button") %>
+    <% else %>
+      <%= form.submit "Próximo", class: "primary-button" %>
+    <% end %>
+    <%= link_to "Cancelar", g_pessoa.persisted? ? g_pessoa_path(g_pessoa) : g_pessoas_path, class: "secondary-button" %>
   </div>
 <% end %>

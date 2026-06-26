@@ -21,7 +21,7 @@ class GInstrumentosNaipesController < ApplicationController
     @g_instrumento_naipe = GInstrumentoNaipe.new(g_instrumento_naipe_params)
 
     if @g_instrumento_naipe.save
-      redirect_to @g_instrumento_naipe, notice: "G instrumento naipe criado com sucesso."
+      redirect_to @g_instrumento_naipe, notice: "#{GInstrumentoNaipe.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GInstrumentosNaipesController < ApplicationController
 
   def update
     if @g_instrumento_naipe.update(g_instrumento_naipe_params)
-      redirect_to @g_instrumento_naipe, notice: "G instrumento naipe atualizado com sucesso."
+      redirect_to @g_instrumento_naipe, notice: "#{GInstrumentoNaipe.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class GInstrumentosNaipesController < ApplicationController
 
   def destroy
     @g_instrumento_naipe.discard
-    redirect_to g_instrumentos_naipes_path, notice: "G instrumento naipe removido com sucesso."
+    redirect_to g_instrumentos_naipes_path, notice: "#{GInstrumentoNaipe.model_name.human} removido com sucesso."
   end
 
   private

@@ -1,5 +1,8 @@
 class Example < ApplicationRecord
   include SoftDeletable
+  include Uppercasable
+
+  upcases :name
 
   validates :name, presence: true
 

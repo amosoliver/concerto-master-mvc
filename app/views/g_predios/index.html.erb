@@ -1,40 +1,62 @@
-<div class="page-shell">
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
       <h1><%= model_plural_human_name(GPredio) %></h1>
     </div>
     <div class="page-header__actions">
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
       <%= link_to "Novo #{GPredio.model_name.human}", new_g_predio_path, class: "primary-button" %>
     </div>
   </div>
 
-  <%= search_form_for @q, url: g_predios_path, method: :get, class: "search-panel" do |f| %>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :nome_fantasia_cont, placeholder: GPredio.human_attribute_name(:nome_fantasia), "aria-label": GPredio.human_attribute_name(:nome_fantasia), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :cep_cont, placeholder: GPredio.human_attribute_name(:cep), "aria-label": GPredio.human_attribute_name(:cep), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :logradouro_cont, placeholder: GPredio.human_attribute_name(:logradouro), "aria-label": GPredio.human_attribute_name(:logradouro), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.search_field :bairro_cont, placeholder: GPredio.human_attribute_name(:bairro), "aria-label": GPredio.human_attribute_name(:bairro), class: "search-input__field" %>
-    </div>
-    <div class="search-input">
-      <span aria-hidden="true">🔎</span>
-      <%= f.select :g_entidade_id_eq, options_from_collection_for_select(GEntidade.all, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": GPredio.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
-    </div>
-    <div class="search-panel__actions">
-      <%= f.submit "Filtrar", class: "primary-button" %>
-      <%= link_to "Limpar", g_predios_path, class: "secondary-button" %>
-    </div>
-  <% end %>
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%= search_form_for @q, url: g_predios_path, method: :get do |f| %>
+      <div class="search-grid">
+        <div class="search-field">
+          <label><%= GPredio.human_attribute_name(:nome_fantasia) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :nome_fantasia_cont, placeholder: GPredio.human_attribute_name(:nome_fantasia), "aria-label": GPredio.human_attribute_name(:nome_fantasia), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= GPredio.human_attribute_name(:cep) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :cep_cont, placeholder: GPredio.human_attribute_name(:cep), "aria-label": GPredio.human_attribute_name(:cep), class: "search-input__field", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep" } %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= GPredio.human_attribute_name(:logradouro) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :logradouro_cont, placeholder: GPredio.human_attribute_name(:logradouro), "aria-label": GPredio.human_attribute_name(:logradouro), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= GPredio.human_attribute_name(:bairro) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :bairro_cont, placeholder: GPredio.human_attribute_name(:bairro), "aria-label": GPredio.human_attribute_name(:bairro), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= GPredio.human_attribute_name(:g_entidade_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :g_entidade_id_eq, options_from_collection_for_select(GEntidade.all, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": GPredio.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
+          </div>
+        </div>
+      </div>
+      <div class="search-panel__actions">
+        <%= f.submit "Filtrar", class: "primary-button" %>
+        <%= link_to "Limpar", g_predios_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
 
   <section class="panel-card" data-controller="view-toggle">
     <div class="panel-card__header">
@@ -64,7 +86,7 @@
           <% @g_predios.each do |g_predio| %>
             <tr>
               <td><%= g_predio.nome_fantasia %></td>
-              <td><%= g_predio.cep %></td>
+              <td><%= format_cep(g_predio.cep) %></td>
               <td><%= g_predio.logradouro %></td>
               <td><%= g_predio.bairro %></td>
               <td><%= g_predio.g_entidade %></td>
@@ -84,7 +106,7 @@
             <span class="detail-label"><%= GPredio.human_attribute_name(:nome_fantasia) %></span>
             <span class="detail-value"><%= g_predio.nome_fantasia %></span>
             <span class="detail-label"><%= GPredio.human_attribute_name(:cep) %></span>
-            <span class="detail-value"><%= g_predio.cep %></span>
+            <span class="detail-value"><%= format_cep(g_predio.cep) %></span>
             <span class="detail-label"><%= GPredio.human_attribute_name(:logradouro) %></span>
             <span class="detail-value"><%= g_predio.logradouro %></span>
             <span class="detail-label"><%= GPredio.human_attribute_name(:bairro) %></span>
@@ -99,10 +121,6 @@
       <% end %>
     </div>
 
-    <% if @pagy %>
-      <div class="pagination-wrap">
-        <%== @pagy.series_nav %>
-      </div>
-    <% end %>
+    <%= render "layouts/pagination", pagy: @pagy %>
   </section>
 </div>

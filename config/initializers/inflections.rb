@@ -30,6 +30,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'm_grupo', 'm_grupos'
   inflect.irregular 'm_tipo_grupo', 'm_tipos_grupos'
   inflect.irregular 'm_grupo_pessoa', 'm_grupos_pessoas'
+  inflect.irregular 'm_grupo_instrumento_naipe', 'm_grupos_instrumentos_naipes'
 
   inflect.irregular 'm_evento', 'm_eventos'
   inflect.irregular 'm_evento_musica', 'm_eventos_musicas'

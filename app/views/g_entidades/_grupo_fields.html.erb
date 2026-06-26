@@ -1,0 +1,50 @@
+<% group = local_assigns[:group] || {} %>
+<% index = local_assigns[:index] %>
+<% selected_ids = Array(group[:g_instrumento_naipe_ids] || group["g_instrumento_naipe_ids"] || group.try(:g_instrumento_naipe_ids)).map(&:to_i) %>
+
+<div class="group-builder" data-grupo-builder-target="item">
+  <%= hidden_field_tag "g_entidade[grupos_attributes][#{index}][id]", (group[:id] || group["id"] || group.try(:id)) %>
+  <%= hidden_field_tag "g_entidade[grupos_attributes][#{index}][_destroy]", "0", data: { grupo_builder_target: "destroyField" } %>
+
+  <div class="panel-card group-builder__card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Grupo</p>
+        <h3>Configuração do grupo</h3>
+      </div>
+      <button type="button" class="danger-button danger-button--sm" data-action="click->grupo-builder#remove">Remover grupo</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group">
+        <label>Descrição</label>
+        <%= text_field_tag "g_entidade[grupos_attributes][#{index}][descricao]", (group[:descricao] || group["descricao"] || group.try(:descricao)), class: "form-control", data: { controller: "uppercase" } %>
+      </div>
+
+      <div class="field-group">
+        <label>Tipo do grupo</label>
+        <%= select_tag "g_entidade[grupos_attributes][#{index}][m_tipo_grupo_id]",
+          options_from_collection_for_select(@m_tipos_grupos, :id, :to_s, (group[:m_tipo_grupo_id] || group["m_tipo_grupo_id"] || group.try(:m_tipo_grupo_id))),
+          include_blank: "Selecione um tipo...",
+          class: "form-control" %>
+      </div>
+
+      <div class="field-group field-group--full">
+        <label>Instrumentos e naipes do grupo</label>
+        <p class="selection-help">Marque os instrumentos/naipes permitidos para este grupo.</p>
+        <div class="selection-panel">
+          <div class="selection-group">
+            <div class="selection-group__items">
+              <% @g_instrumentos_naipes.each do |g_instrumento_naipe| %>
+                <label class="selection-item">
+                  <%= check_box_tag "g_entidade[grupos_attributes][#{index}][g_instrumento_naipe_ids][]", g_instrumento_naipe.id, selected_ids.include?(g_instrumento_naipe.id) %>
+                  <span><%= g_instrumento_naipe %></span>
+                </label>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
