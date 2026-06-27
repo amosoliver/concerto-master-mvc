@@ -8,7 +8,7 @@
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
         <span aria-hidden="true">🔎</span> Filtros
       </button>
-      <%= link_to "Novo #{MGrupoPessoa.model_name.human}", new_m_grupo_pessoa_path, class: "primary-button" %>
+      <%= authorized_link_to "Novo #{MGrupoPessoa.model_name.human}", new_m_grupo_pessoa_path, class: "primary-button" %>
     </div>
   </div>
 
@@ -19,14 +19,14 @@
           <label><%= MGrupoPessoa.human_attribute_name(:g_pessoa_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": MGrupoPessoa.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
+            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(tenant_pessoa_scope, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": MGrupoPessoa.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MGrupoPessoa.human_attribute_name(:m_grupo_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :m_grupo_id_eq, options_from_collection_for_select(MGrupo.all, :id, :to_s, @q&.send(:m_grupo_id_eq)), { include_blank: true }, "aria-label": MGrupoPessoa.human_attribute_name(:m_grupo_id), class: "search-input__field" %>
+            <%= f.select :m_grupo_id_eq, options_from_collection_for_select(tenant_grupo_scope, :id, :to_s, @q&.send(:m_grupo_id_eq)), { include_blank: true }, "aria-label": MGrupoPessoa.human_attribute_name(:m_grupo_id), class: "search-input__field" %>
           </div>
         </div>
       </div>

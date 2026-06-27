@@ -3,7 +3,7 @@ class GPrediosController < ApplicationController
   before_action :load_form_collections, only: %i[new create edit update]
 
   def index
-    @q = GPredio.ransack(params[:q])
+    @q = tenant_scope(GPredio).ransack(params[:q])
     @g_predios = @q.result.order(created_at: :desc)
     @pagy, @g_predios = pagy(@g_predios, limit: 10)
   end
@@ -19,7 +19,7 @@ class GPrediosController < ApplicationController
   end
 
   def create
-    @g_predio = GPredio.new(g_predio_params)
+    @g_predio = GPredio.new(g_predio_params.merge(g_entidade_id: tenant_entity_id_for(g_predio_params[:g_entidade_id])))
 
     if @g_predio.save
       redirect_to @g_predio, notice: "#{GPredio.model_name.human} criado com sucesso."
@@ -44,7 +44,7 @@ class GPrediosController < ApplicationController
   private
 
   def set_g_predio
-    @g_predio = GPredio.find(params[:id])
+    @g_predio = tenant_record!(GPredio, params[:id])
   end
 
   def g_predio_params
@@ -52,6 +52,6 @@ class GPrediosController < ApplicationController
   end
 
   def load_form_collections
-    @g_entidades = GEntidade.order(:descricao)
+    @g_entidades = tenant_entity_scope
   end
 end

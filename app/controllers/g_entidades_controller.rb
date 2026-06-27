@@ -2,14 +2,14 @@ class GEntidadesController < ApplicationController
   STEPS = %w[dados predio grupos].freeze
 
   before_action :set_g_entidade, only: %i[show edit update destroy]
-  before_action :load_form_collections, only: %i[new create edit update]
-  before_action :load_group_rows, only: %i[new create edit update]
   before_action :prepare_new_wizard, only: %i[new create]
   before_action :prepare_edit_wizard, only: %i[edit update]
+  before_action :load_form_collections, only: %i[new create edit update]
+  before_action :load_group_rows, only: %i[new create edit update]
   helper_method :current_step, :first_step?, :last_step?, :step_path_for
 
   def index
-    @q = GEntidade.ransack(params[:q])
+    @q = tenant_scope(GEntidade).ransack(params[:q])
     @g_entidades = @q.result.order(created_at: :desc)
     @pagy, @g_entidades = pagy(@g_entidades, limit: 10)
   end
@@ -32,13 +32,13 @@ class GEntidadesController < ApplicationController
     apply_wizard_values
 
     if navigating_previous?
-      redirect_to new_g_entidade_path(step: previous_step)
+      redirect_to new_g_entidade_path(step: previous_step, resume: 1)
     elsif last_step?
       GEntidades::CreateService.new(g_entidade: @g_entidade, params: wizard_params).call
       clear_new_wizard!
       redirect_to g_entidades_path, notice: "#{GEntidade.model_name.human} criado com sucesso."
     else
-      redirect_to new_g_entidade_path(step: next_step)
+      redirect_to new_g_entidade_path(step: next_step, resume: 1)
     end
   rescue ActiveRecord::RecordInvalid
     render :new, status: :unprocessable_entity
@@ -49,13 +49,13 @@ class GEntidadesController < ApplicationController
     apply_wizard_values
 
     if navigating_previous?
-      redirect_to edit_g_entidade_path(@g_entidade, step: previous_step)
+      redirect_to edit_g_entidade_path(@g_entidade, step: previous_step, resume: 1)
     elsif last_step?
       GEntidades::UpdateService.new(g_entidade: @g_entidade, params: wizard_params).call
       clear_edit_wizard!
       redirect_to g_entidades_path, notice: "#{GEntidade.model_name.human} atualizado com sucesso."
     else
-      redirect_to edit_g_entidade_path(@g_entidade, step: next_step)
+      redirect_to edit_g_entidade_path(@g_entidade, step: next_step, resume: 1)
     end
   rescue ActiveRecord::RecordInvalid
     render :edit, status: :unprocessable_entity
@@ -69,7 +69,7 @@ class GEntidadesController < ApplicationController
   private
 
   def set_g_entidade
-    @g_entidade = GEntidade.find(params[:id])
+    @g_entidade = tenant_record!(GEntidade, params[:id])
   end
 
   def g_entidade_params
@@ -112,9 +112,9 @@ class GEntidadesController < ApplicationController
 
   def step_path_for(step)
     if @g_entidade&.persisted?
-      edit_g_entidade_path(@g_entidade, step: step)
+      edit_g_entidade_path(@g_entidade, step: step, resume: 1)
     else
-      new_g_entidade_path(step: step)
+      new_g_entidade_path(step: step, resume: 1)
     end
   end
 
@@ -131,11 +131,11 @@ class GEntidadesController < ApplicationController
   end
 
   def prepare_new_wizard
-    clear_new_wizard! if params[:reset] == "1"
+    clear_new_wizard! if params[:reset] == "1" || fresh_wizard_start?
   end
 
   def prepare_edit_wizard
-    clear_edit_wizard! if params[:reset] == "1"
+    clear_edit_wizard! if params[:reset] == "1" || fresh_wizard_start?
   end
 
   def clear_new_wizard!
@@ -150,12 +150,16 @@ class GEntidadesController < ApplicationController
     params[:navigation] == "previous"
   end
 
+  def fresh_wizard_start?
+    action_name.in?(%w[new edit]) && params[:resume] != "1"
+  end
+
   def load_form_collections
     @g_estados = GEstado.order(:descricao)
     @g_municipios = GMunicipio.order(:descricao)
-    @g_entidades_pai = @g_entidade&.persisted? ? GEntidade.where.not(id: @g_entidade.id).order(:descricao) : GEntidade.order(:descricao)
+    @g_entidades_pai = @g_entidade&.persisted? ? tenant_entity_scope.where.not(id: @g_entidade.id) : tenant_entity_scope
     @m_tipos_grupos = MTipoGrupo.order(:descricao)
-    @g_instrumentos_naipes = GInstrumentoNaipe.includes(:g_instrumento, :g_naipe).sort_by(&:to_s)
+    @g_instrumentos_naipes = tenant_instrumento_scope.sort_by(&:to_s)
     @g_predio ||= @g_entidade&.g_predio_principal || GPredio.new
   end
 

@@ -2,7 +2,7 @@ class MEventosController < ApplicationController
   before_action :set_m_evento, only: %i[show edit update destroy]
 
   def index
-    @q = MEvento.ransack(params[:q])
+    @q = tenant_scope(MEvento).ransack(params[:q])
     @m_eventos = @q.result.order(created_at: :desc)
     @pagy, @m_eventos = pagy(@m_eventos, limit: 10)
   end
@@ -43,7 +43,7 @@ class MEventosController < ApplicationController
   private
 
   def set_m_evento
-    @m_evento = MEvento.find(params[:id])
+    @m_evento = tenant_record!(MEvento, params[:id])
   end
 
   def m_evento_params

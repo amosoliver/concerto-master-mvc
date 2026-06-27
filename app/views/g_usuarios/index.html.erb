@@ -8,7 +8,7 @@
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
         <span aria-hidden="true">🔎</span> Filtros
       </button>
-      <%= link_to "Novo #{GUsuario.model_name.human}", new_g_usuario_path, class: "primary-button" %>
+      <%= authorized_link_to "Novo #{GUsuario.model_name.human}", new_g_usuario_path, class: "primary-button" %>
     </div>
   </div>
 
@@ -33,7 +33,7 @@
           <label><%= GUsuario.human_attribute_name(:g_pessoa_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GUsuario.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
+            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(tenant_pessoa_scope, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GUsuario.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
           </div>
         </div>
       </div>
@@ -73,15 +73,21 @@
               <td><%= g_usuario.ativo %></td>
               <td><%= g_usuario.g_pessoa %></td>
               <td>
-                <div class="actions-menu" data-controller="dropdown">
-                  <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
-                  <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-                    <%= link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end %>
-                    <%= link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end %>
-                    <%= link_to new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), class: "actions-menu__item" do %><span aria-hidden="true">🪪</span> Associar perfis<% end %>
-                    <%= button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+                <% can_show = allowed_path?(g_usuario_path(g_usuario), method: :get) %>
+                <% can_edit = allowed_path?(edit_g_usuario_path(g_usuario), method: :get) %>
+                <% can_profile = allowed_path?(new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), method: :get) %>
+                <% can_delete = allowed_path?(g_usuario_path(g_usuario), method: :delete) %>
+                <% if can_show || can_edit || can_profile || can_delete %>
+                  <div class="actions-menu" data-controller="dropdown">
+                    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                    <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+                      <%= authorized_link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end if can_show %>
+                      <%= authorized_link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end if can_edit %>
+                      <%= authorized_link_to new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), class: "actions-menu__item" do %><span aria-hidden="true">🪪</span> Associar perfis<% end if can_profile %>
+                      <%= authorized_button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+                    </div>
                   </div>
-                </div>
+                <% end %>
               </td>
             </tr>
           <% end %>
@@ -101,15 +107,21 @@
             <span class="detail-value"><%= g_usuario.g_pessoa %></span>
           </div>
           <div class="record-card__footer">
-            <div class="actions-menu" data-controller="dropdown">
-              <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
-              <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-                <%= link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end %>
-                <%= link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end %>
-                <%= link_to new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), class: "actions-menu__item" do %><span aria-hidden="true">🪪</span> Associar perfis<% end %>
-                <%= button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end %>
+            <% can_show = allowed_path?(g_usuario_path(g_usuario), method: :get) %>
+            <% can_edit = allowed_path?(edit_g_usuario_path(g_usuario), method: :get) %>
+            <% can_profile = allowed_path?(new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), method: :get) %>
+            <% can_delete = allowed_path?(g_usuario_path(g_usuario), method: :delete) %>
+            <% if can_show || can_edit || can_profile || can_delete %>
+              <div class="actions-menu" data-controller="dropdown">
+                <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
+                  <%= authorized_link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end if can_show %>
+                  <%= authorized_link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end if can_edit %>
+                  <%= authorized_link_to new_u_usuario_perfil_path(g_usuario_id: g_usuario.id), class: "actions-menu__item" do %><span aria-hidden="true">🪪</span> Associar perfis<% end if can_profile %>
+                  <%= authorized_button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+                </div>
               </div>
-            </div>
+            <% end %>
           </div>
         </article>
       <% end %>

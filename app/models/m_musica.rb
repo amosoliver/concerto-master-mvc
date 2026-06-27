@@ -4,6 +4,7 @@ class MMusica < ApplicationRecord
 
   upcases :descricao
 
+  belongs_to :g_entidade
   belongs_to :m_compositor
   belongs_to :m_artista
 
@@ -11,15 +12,23 @@ class MMusica < ApplicationRecord
   has_many :m_eventos_musicas
   has_many :m_eventos, through: :m_eventos_musicas
 
+  before_validation :assign_g_entidade
+
   def to_s
     descricao
   end
 
   def self.ransackable_attributes(_auth_object = nil)
-    ["descricao", "m_compositor_id", "m_artista_id", "deleted_at"]
+    ["descricao", "g_entidade_id", "m_compositor_id", "m_artista_id", "deleted_at"]
   end
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+
+  private
+
+  def assign_g_entidade
+    self.g_entidade_id ||= Current.g_usuario&.g_pessoa&.g_entidade_id
   end
 end

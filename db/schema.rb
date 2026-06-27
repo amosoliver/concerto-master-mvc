@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_27_123000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -112,10 +112,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   create_table "g_pessoas_instrumentos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_instrumento_naipe_id", null: false
     t.bigint "g_pessoa_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_g_pessoas_instrumentos_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_g_pessoas_instrumentos_on_g_entidade_id"
     t.index ["g_instrumento_naipe_id"], name: "index_g_pessoas_instrumentos_on_g_instrumento_naipe_id"
     t.index ["g_pessoa_id"], name: "index_g_pessoas_instrumentos_on_g_pessoa_id"
   end
@@ -166,11 +168,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   create_table "m_arranjos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "m_arranjador_id", null: false
     t.bigint "m_musica_id", null: false
     t.bigint "m_tonalidade_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_arranjos_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_arranjos_on_g_entidade_id"
     t.index ["m_arranjador_id"], name: "index_m_arranjos_on_m_arranjador_id"
     t.index ["m_musica_id"], name: "index_m_arranjos_on_m_musica_id"
     t.index ["m_tonalidade_id"], name: "index_m_arranjos_on_m_tonalidade_id"
@@ -179,10 +183,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   create_table "m_arranjos_instrumentos_naipes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_instrumento_naipe_id", null: false
     t.bigint "m_arranjo_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_arranjos_instrumentos_naipes_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_arranjos_instrumentos_naipes_on_g_entidade_id"
     t.index ["g_instrumento_naipe_id"], name: "index_m_arranjos_instrumentos_naipes_on_g_instrumento_naipe_id"
     t.index ["m_arranjo_id"], name: "index_m_arranjos_instrumentos_naipes_on_m_arranjo_id"
   end
@@ -209,19 +215,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
     t.datetime "data_inicio"
     t.datetime "deleted_at"
     t.string "descricao"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_predio_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_eventos_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_eventos_on_g_entidade_id"
     t.index ["g_predio_id"], name: "index_m_eventos_on_g_predio_id"
   end
 
   create_table "m_eventos_musicas", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "m_evento_id", null: false
     t.bigint "m_musica_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_eventos_musicas_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_eventos_musicas_on_g_entidade_id"
     t.index ["m_evento_id"], name: "index_m_eventos_musicas_on_m_evento_id"
     t.index ["m_musica_id"], name: "index_m_eventos_musicas_on_m_musica_id"
   end
@@ -241,10 +251,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   create_table "m_grupos_instrumentos_naipes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_instrumento_naipe_id", null: false
     t.bigint "m_grupo_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_grupos_instrumentos_naipes_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_grupos_instrumentos_naipes_on_g_entidade_id"
     t.index ["g_instrumento_naipe_id"], name: "index_m_grupos_instrumentos_naipes_on_g_instrumento_naipe_id"
     t.index ["m_grupo_id"], name: "index_m_grupos_instrumentos_naipes_on_m_grupo_id"
   end
@@ -252,10 +264,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   create_table "m_grupos_pessoas", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_pessoa_id", null: false
     t.bigint "m_grupo_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_grupos_pessoas_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_grupos_pessoas_on_g_entidade_id"
     t.index ["g_pessoa_id"], name: "index_m_grupos_pessoas_on_g_pessoa_id"
     t.index ["m_grupo_id"], name: "index_m_grupos_pessoas_on_m_grupo_id"
   end
@@ -264,10 +278,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "descricao"
+    t.bigint "g_entidade_id", null: false
     t.bigint "m_artista_id", null: false
     t.bigint "m_compositor_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_musicas_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_musicas_on_g_entidade_id"
     t.index ["m_artista_id"], name: "index_m_musicas_on_m_artista_id"
     t.index ["m_compositor_id"], name: "index_m_musicas_on_m_compositor_id"
   end
@@ -275,11 +291,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   create_table "m_pessoas_funcoes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_pessoa_id", null: false
     t.boolean "principal"
     t.bigint "u_funcao_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_pessoas_funcoes_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_pessoas_funcoes_on_g_entidade_id"
     t.index ["g_pessoa_id"], name: "index_m_pessoas_funcoes_on_g_pessoa_id"
     t.index ["u_funcao_id"], name: "index_m_pessoas_funcoes_on_u_funcao_id"
   end
@@ -379,26 +397,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_27_010000) do
   add_foreign_key "g_municipios", "g_estados"
   add_foreign_key "g_pessoas", "g_entidades"
   add_foreign_key "g_pessoas", "g_sexos"
+  add_foreign_key "g_pessoas_instrumentos", "g_entidades"
   add_foreign_key "g_pessoas_instrumentos", "g_instrumentos_naipes"
   add_foreign_key "g_pessoas_instrumentos", "g_pessoas"
   add_foreign_key "g_predios", "g_entidades"
   add_foreign_key "g_usuarios", "g_pessoas"
+  add_foreign_key "m_arranjos", "g_entidades"
   add_foreign_key "m_arranjos", "m_arranjadores"
   add_foreign_key "m_arranjos", "m_musicas"
   add_foreign_key "m_arranjos", "m_tonalidades"
+  add_foreign_key "m_arranjos_instrumentos_naipes", "g_entidades"
   add_foreign_key "m_arranjos_instrumentos_naipes", "g_instrumentos_naipes"
   add_foreign_key "m_arranjos_instrumentos_naipes", "m_arranjos"
+  add_foreign_key "m_eventos", "g_entidades"
   add_foreign_key "m_eventos", "g_predios"
+  add_foreign_key "m_eventos_musicas", "g_entidades"
   add_foreign_key "m_eventos_musicas", "m_eventos"
   add_foreign_key "m_eventos_musicas", "m_musicas"
   add_foreign_key "m_grupos", "g_entidades"
   add_foreign_key "m_grupos", "m_tipos_grupos"
+  add_foreign_key "m_grupos_instrumentos_naipes", "g_entidades"
   add_foreign_key "m_grupos_instrumentos_naipes", "g_instrumentos_naipes"
   add_foreign_key "m_grupos_instrumentos_naipes", "m_grupos"
+  add_foreign_key "m_grupos_pessoas", "g_entidades"
   add_foreign_key "m_grupos_pessoas", "g_pessoas"
   add_foreign_key "m_grupos_pessoas", "m_grupos"
+  add_foreign_key "m_musicas", "g_entidades"
   add_foreign_key "m_musicas", "m_artistas"
   add_foreign_key "m_musicas", "m_compositores"
+  add_foreign_key "m_pessoas_funcoes", "g_entidades"
   add_foreign_key "m_pessoas_funcoes", "g_pessoas"
   add_foreign_key "m_pessoas_funcoes", "u_funcoes"
   add_foreign_key "u_funcoes", "u_tipos_funcoes"

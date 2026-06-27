@@ -5,7 +5,7 @@
       <h1><%= GUsuario.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_g_usuario_path(@g_usuario), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_g_usuario_path(@g_usuario), class: "primary-button" %>
       <%= link_to "Voltar", g_usuarios_path, class: "secondary-button" %>
     </div>
   </div>

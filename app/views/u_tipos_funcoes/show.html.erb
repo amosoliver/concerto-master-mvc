@@ -5,7 +5,7 @@
       <h1><%= UTipoFuncao.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_u_tipo_funcao_path(@u_tipo_funcao), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_u_tipo_funcao_path(@u_tipo_funcao), class: "primary-button" %>
       <%= link_to "Voltar", u_tipos_funcoes_path, class: "secondary-button" %>
     </div>
   </div>

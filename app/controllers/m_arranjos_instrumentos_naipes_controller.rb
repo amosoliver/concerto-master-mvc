@@ -2,7 +2,7 @@ class MArranjosInstrumentosNaipesController < ApplicationController
   before_action :set_m_arranjo_instrumento_naipe, only: %i[show edit update destroy]
 
   def index
-    @q = MArranjoInstrumentoNaipe.ransack(params[:q])
+    @q = tenant_scope(MArranjoInstrumentoNaipe).ransack(params[:q])
     @m_arranjos_instrumentos_naipes = @q.result.order(created_at: :desc)
     @pagy, @m_arranjos_instrumentos_naipes = pagy(@m_arranjos_instrumentos_naipes, limit: 10)
   end
@@ -43,7 +43,7 @@ class MArranjosInstrumentosNaipesController < ApplicationController
   private
 
   def set_m_arranjo_instrumento_naipe
-    @m_arranjo_instrumento_naipe = MArranjoInstrumentoNaipe.find(params[:id])
+    @m_arranjo_instrumento_naipe = tenant_record!(MArranjoInstrumentoNaipe, params[:id])
   end
 
   def m_arranjo_instrumento_naipe_params

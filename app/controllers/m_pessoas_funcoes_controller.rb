@@ -2,7 +2,7 @@ class MPessoasFuncoesController < ApplicationController
   before_action :set_m_pessoa_funcao, only: %i[show edit update destroy]
 
   def index
-    @q = MPessoaFuncao.ransack(params[:q])
+    @q = tenant_scope(MPessoaFuncao).ransack(params[:q])
     @m_pessoas_funcoes = @q.result.order(created_at: :desc)
     @pagy, @m_pessoas_funcoes = pagy(@m_pessoas_funcoes, limit: 10)
   end
@@ -43,7 +43,7 @@ class MPessoasFuncoesController < ApplicationController
   private
 
   def set_m_pessoa_funcao
-    @m_pessoa_funcao = MPessoaFuncao.find(params[:id])
+    @m_pessoa_funcao = tenant_record!(MPessoaFuncao, params[:id])
   end
 
   def m_pessoa_funcao_params

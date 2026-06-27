@@ -5,7 +5,7 @@
       <h1><%= GNaipe.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_g_naipe_path(@g_naipe), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_g_naipe_path(@g_naipe), class: "primary-button" %>
       <%= link_to "Voltar", g_naipes_path, class: "secondary-button" %>
     </div>
   </div>

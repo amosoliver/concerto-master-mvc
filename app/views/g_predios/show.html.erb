@@ -5,7 +5,7 @@
       <h1><%= GPredio.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_g_predio_path(@g_predio), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_g_predio_path(@g_predio), class: "primary-button" %>
       <%= link_to "Voltar", g_predios_path, class: "secondary-button" %>
     </div>
   </div>

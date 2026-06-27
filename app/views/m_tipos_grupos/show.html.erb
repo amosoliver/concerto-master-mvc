@@ -5,7 +5,7 @@
       <h1><%= MTipoGrupo.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_tipo_grupo_path(@m_tipo_grupo), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_tipo_grupo_path(@m_tipo_grupo), class: "primary-button" %>
       <%= link_to "Voltar", m_tipos_grupos_path, class: "secondary-button" %>
     </div>
   </div>

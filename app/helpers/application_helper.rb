@@ -53,95 +53,120 @@ module ApplicationHelper
     value.gsub(/(\d{5})(\d{3})/, '\1-\2')
   end
 
-  # Sidebar structure: a list of groups. Each group either renders its
-  # `items` directly (no header) or splits them into labeled `subgroups`.
-  # Association/join tables (no identity of their own, just linking two
-  # entities) all share the same "link" icon so the icon language stays
-  # meaningful instead of forcing a unique icon onto every junction table.
   def sidebar_nav_groups
+    referencial_localizacao = [
+      nav_item(model_plural_human_name(GPais), "🌎", g_paises_path, "g_paises"),
+      nav_item(model_plural_human_name(GEstado), "🗺️", g_estados_path, "g_estados"),
+      nav_item(model_plural_human_name(GMunicipio), "📍", g_municipios_path, "g_municipios")
+    ]
+
+    referencial_classificacoes = [
+      nav_item(model_plural_human_name(GSexo), "⚧️", g_sexos_path, "g_sexos"),
+      nav_item(model_plural_human_name(GInstrumento), "🎸", g_instrumentos_path, "g_instrumentos"),
+      nav_item(model_plural_human_name(GNaipe), "🎻", g_naipes_path, "g_naipes"),
+      nav_item(model_plural_human_name(GInstrumentoNaipe), "🔗", g_instrumentos_naipes_path, "g_instrumentos_naipes")
+    ]
+
+    gestao_pessoas_entidades = [
+      nav_item(model_plural_human_name(GEntidade), "🏢", g_entidades_path, "g_entidades"),
+      nav_item(model_plural_human_name(GPredio), "🏛️", g_predios_path, "g_predios"),
+      nav_item(model_plural_human_name(GPessoa), "👤", g_pessoas_path, "g_pessoas")
+    ]
+
+    musica_catalogo = [
+      nav_item(model_plural_human_name(MMusica), "🎵", m_musicas_path, "m_musicas"),
+      nav_item(model_plural_human_name(MArtista), "🎤", m_artistas_path, "m_artistas"),
+      nav_item(model_plural_human_name(MCompositor), "✍️", m_compositores_path, "m_compositores"),
+      nav_item(model_plural_human_name(MTonalidade), "🎹", m_tonalidades_path, "m_tonalidades"),
+      nav_item(model_plural_human_name(MArranjador), "🎚️", m_arranjadores_path, "m_arranjadores"),
+      nav_item(model_plural_human_name(MArranjo), "🎼", m_arranjos_path, "m_arranjos"),
+      nav_item(model_plural_human_name(MArranjoInstrumentoNaipe), "🔗", m_arranjos_instrumentos_naipes_path, "m_arranjos_instrumentos_naipes")
+    ]
+
+    musica_eventos = [
+      nav_item(model_plural_human_name(MEvento), "📅", m_eventos_path, "m_eventos"),
+      nav_item(model_plural_human_name(MEventoMusica), "🔗", m_eventos_musicas_path, "m_eventos_musicas")
+    ]
+
+    musica_grupos = [
+      nav_item(model_plural_human_name(MGrupo), "👥", m_grupos_path, "m_grupos"),
+      nav_item(model_plural_human_name(MTipoGrupo), "🏷️", m_tipos_grupos_path, "m_tipos_grupos"),
+      nav_item(model_plural_human_name(MGrupoPessoa), "🔗", m_grupos_pessoas_path, "m_grupos_pessoas"),
+      nav_item(model_plural_human_name(MPessoaFuncao), "🔗", m_pessoas_funcoes_path, "m_pessoas_funcoes")
+    ]
+
+    acesso_items = [
+      nav_item(model_plural_human_name(GUsuario), "🔑", g_usuarios_path, "g_usuarios"),
+      nav_item(model_plural_human_name(UPerfil), "🪪", u_perfis_path, "u_perfis"),
+      nav_item(model_plural_human_name(UFuncao), "🎖️", u_funcoes_path, "u_funcoes"),
+      nav_item(model_plural_human_name(UTipoFuncao), "🏷️", u_tipos_funcoes_path, "u_tipos_funcoes"),
+      nav_item(model_plural_human_name(UPermissao), "🛡️", u_permissoes_path, "u_permissoes")
+    ]
+
     [
       { items: [nav_item("Dashboard", "📊", root_path, "home")] },
-      {
-        label: "Geral",
-        subgroups: [
-          {
-            label: "Localização",
-            items: [
-              nav_item(model_plural_human_name(GPais), "🌎", g_paises_path, "g_paises"),
-              nav_item(model_plural_human_name(GEstado), "🗺️", g_estados_path, "g_estados"),
-              nav_item(model_plural_human_name(GMunicipio), "📍", g_municipios_path, "g_municipios")
-            ]
-          },
-          {
-            label: "Pessoas e Entidades",
-            items: [
-              nav_item(model_plural_human_name(GEntidade), "🏢", g_entidades_path, "g_entidades"),
-              nav_item(model_plural_human_name(GPredio), "🏛️", g_predios_path, "g_predios"),
-              nav_item(model_plural_human_name(GPessoa), "👤", g_pessoas_path, "g_pessoas"),
-              nav_item(model_plural_human_name(GSexo), "⚧️", g_sexos_path, "g_sexos"),
-              nav_item(model_plural_human_name(GPessoasInstrumento), "🔗", g_pessoas_instrumentos_path, "g_pessoas_instrumentos")
-            ]
-          },
-          {
-            label: "Instrumentos",
-            items: [
-              nav_item(model_plural_human_name(GInstrumento), "🎸", g_instrumentos_path, "g_instrumentos"),
-              nav_item(model_plural_human_name(GNaipe), "🎻", g_naipes_path, "g_naipes"),
-              nav_item(model_plural_human_name(GInstrumentoNaipe), "🔗", g_instrumentos_naipes_path, "g_instrumentos_naipes")
-            ]
-          }
-        ]
-      },
-      {
-        label: "Música",
-        subgroups: [
-          {
-            label: "Catálogo",
-            items: [
-              nav_item(model_plural_human_name(MMusica), "🎵", m_musicas_path, "m_musicas"),
-              nav_item(model_plural_human_name(MArtista), "🎤", m_artistas_path, "m_artistas"),
-              nav_item(model_plural_human_name(MCompositor), "✍️", m_compositores_path, "m_compositores"),
-              nav_item(model_plural_human_name(MTonalidade), "🎹", m_tonalidades_path, "m_tonalidades"),
-              nav_item(model_plural_human_name(MArranjador), "🎚️", m_arranjadores_path, "m_arranjadores"),
-              nav_item(model_plural_human_name(MArranjo), "🎼", m_arranjos_path, "m_arranjos"),
-              nav_item(model_plural_human_name(MArranjoInstrumentoNaipe), "🔗", m_arranjos_instrumentos_naipes_path, "m_arranjos_instrumentos_naipes")
-            ]
-          },
-          {
-            label: "Eventos",
-            items: [
-              nav_item(model_plural_human_name(MEvento), "📅", m_eventos_path, "m_eventos"),
-              nav_item(model_plural_human_name(MEventoMusica), "🔗", m_eventos_musicas_path, "m_eventos_musicas")
-            ]
-          },
-          {
-            label: "Grupos",
-            items: [
-              nav_item(model_plural_human_name(MGrupo), "👥", m_grupos_path, "m_grupos"),
-              nav_item(model_plural_human_name(MTipoGrupo), "🏷️", m_tipos_grupos_path, "m_tipos_grupos"),
-              nav_item(model_plural_human_name(MGrupoPessoa), "🔗", m_grupos_pessoas_path, "m_grupos_pessoas"),
-              nav_item(model_plural_human_name(MPessoaFuncao), "🔗", m_pessoas_funcoes_path, "m_pessoas_funcoes")
-            ]
-          }
-        ]
-      },
-      {
-        label: "Acesso",
-        items: [
-          nav_item(model_plural_human_name(GUsuario), "🔑", g_usuarios_path, "g_usuarios"),
-          nav_item(model_plural_human_name(UPerfil), "🪪", u_perfis_path, "u_perfis"),
-          nav_item(model_plural_human_name(UFuncao), "🎖️", u_funcoes_path, "u_funcoes"),
-          nav_item(model_plural_human_name(UTipoFuncao), "🏷️", u_tipos_funcoes_path, "u_tipos_funcoes"),
-          nav_item(model_plural_human_name(UPermissao), "🛡️", u_permissoes_path, "u_permissoes")
-        ]
-      },
+      nav_group("Referencial", "🧭", items: referencial_localizacao + referencial_classificacoes),
+      nav_group("Gestão", "🗂️", items: gestao_pessoas_entidades),
+      nav_group("Música", "🎼", items: musica_catalogo + musica_eventos + musica_grupos),
+      nav_group("Acesso", "🔐", items: acesso_items),
       { items: [nav_item(model_plural_human_name(Example), "🧪", examples_path, "examples")] }
-    ]
+    ].filter_map do |group|
+      filtered_items = Array(group[:items]).select { |item| allowed_action?(item[:controller], "index") }
+      next if filtered_items.blank?
+
+      group.merge(items: filtered_items)
+    end
+  end
+
+  def authorized_link_to(name = nil, options = nil, html_options = nil, &block)
+    target = block_given? ? name : options
+    method = extract_authorized_link_method(block_given? ? options : html_options)
+    return unless allowed_path?(target, method: method)
+
+    return link_to(name, options, &block) if block_given?
+
+    link_to(name, options, html_options)
+  end
+
+  def authorized_button_to(name = nil, options = nil, html_options = nil, &block)
+    target = block_given? ? name : options
+    method = extract_authorized_button_method(block_given? ? options : html_options)
+    return unless allowed_path?(target, method: method)
+
+    return button_to(name, options, &block) if block_given?
+
+    button_to(name, options, html_options)
   end
 
   private
 
   def nav_item(label, icon, path, controller)
     { label: label, icon: icon, path: path, controller: controller }
+  end
+
+  def nav_group(label, icon, items: [])
+    {
+      label: label,
+      icon: icon,
+      items: items,
+      expanded: nav_collection_active?(items)
+    }
+  end
+
+  def nav_collection_active?(items)
+    items.any? { |item| item[:controller] == controller_name }
+  end
+
+  def extract_authorized_link_method(html_options)
+    return :get unless html_options.respond_to?(:to_h)
+
+    options_hash = html_options.to_h
+    options_hash[:method] || options_hash.dig(:data, :turbo_method) || :get
+  end
+
+  def extract_authorized_button_method(html_options)
+    return :post unless html_options.respond_to?(:to_h)
+
+    html_options.to_h[:method] || :post
   end
 end

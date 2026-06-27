@@ -2,7 +2,7 @@ class MEventosMusicasController < ApplicationController
   before_action :set_m_evento_musica, only: %i[show edit update destroy]
 
   def index
-    @q = MEventoMusica.ransack(params[:q])
+    @q = tenant_scope(MEventoMusica).ransack(params[:q])
     @m_eventos_musicas = @q.result.order(created_at: :desc)
     @pagy, @m_eventos_musicas = pagy(@m_eventos_musicas, limit: 10)
   end
@@ -43,7 +43,7 @@ class MEventosMusicasController < ApplicationController
   private
 
   def set_m_evento_musica
-    @m_evento_musica = MEventoMusica.find(params[:id])
+    @m_evento_musica = tenant_record!(MEventoMusica, params[:id])
   end
 
   def m_evento_musica_params

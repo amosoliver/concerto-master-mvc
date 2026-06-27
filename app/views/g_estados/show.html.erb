@@ -5,7 +5,7 @@
       <h1><%= GEstado.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_g_estado_path(@g_estado), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_g_estado_path(@g_estado), class: "primary-button" %>
       <%= link_to "Voltar", g_estados_path, class: "secondary-button" %>
     </div>
   </div>

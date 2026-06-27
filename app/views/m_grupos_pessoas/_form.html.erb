@@ -13,11 +13,11 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :g_pessoa_id %>
-      <%= form.collection_select :g_pessoa_id, GPessoa.all, :id, :to_s, { include_blank: "Selecione uma pessoa..." }, class: "form-control" %>
+      <%= form.collection_select :g_pessoa_id, tenant_pessoa_scope, :id, :to_s, { include_blank: "Selecione uma pessoa..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_grupo_id %>
-      <%= form.collection_select :m_grupo_id, MGrupo.all, :id, :to_s, { include_blank: "Selecione um grupo..." }, class: "form-control" %>
+      <%= form.collection_select :m_grupo_id, tenant_grupo_scope, :id, :to_s, { include_blank: "Selecione um grupo..." }, class: "form-control" %>
     </div>
   </div>
 

@@ -5,7 +5,7 @@
       <h1><%= MPessoaFuncao.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_pessoa_funcao_path(@m_pessoa_funcao), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_pessoa_funcao_path(@m_pessoa_funcao), class: "primary-button" %>
       <%= link_to "Voltar", m_pessoas_funcoes_path, class: "secondary-button" %>
     </div>
   </div>

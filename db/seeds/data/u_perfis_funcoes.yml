@@ -1,6 +1,10 @@
 # Vínculos entre u_perfis e u_funcoes
-# perfil e funcao devem corresponder a descrições já cadastradas
+# perfil e funcoes devem corresponder a descrições já cadastradas
+- perfil: Administrador
+  funcoes: []
 - perfil: Líder
-  funcao: Líder
+  funcoes:
+    - Líder
 - perfil: Instrumentista
-  funcao: Instrumentista
+  funcoes:
+    - Instrumentista

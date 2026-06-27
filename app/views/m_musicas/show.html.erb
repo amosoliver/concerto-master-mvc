@@ -5,7 +5,7 @@
       <h1><%= MMusica.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_musica_path(@m_musica), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_musica_path(@m_musica), class: "primary-button" %>
       <%= link_to "Voltar", m_musicas_path, class: "secondary-button" %>
     </div>
   </div>

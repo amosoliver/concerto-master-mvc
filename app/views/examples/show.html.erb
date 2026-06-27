@@ -5,7 +5,7 @@
       <h1>Exemplo</h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_example_path(@example), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_example_path(@example), class: "primary-button" %>
       <%= link_to "Voltar", examples_path, class: "secondary-button" %>
     </div>
   </div>

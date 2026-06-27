@@ -5,7 +5,7 @@
       <h1><%= UPerfilPermissao.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_u_perfil_permissao_path(@u_perfil_permissao), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_u_perfil_permissao_path(@u_perfil_permissao), class: "primary-button" %>
       <%= link_to "Voltar", u_perfis_permissoes_path, class: "secondary-button" %>
     </div>
   </div>

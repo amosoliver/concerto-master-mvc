@@ -17,7 +17,7 @@
     </div>
     <div class="field-group">
       <%= form.label :g_entidade_id %>
-      <%= form.collection_select :g_entidade_id, GEntidade.all, :id, :to_s, { include_blank: "Selecione uma entidade..." }, class: "form-control" %>
+      <%= form.collection_select :g_entidade_id, tenant_entity_scope, :id, :to_s, { include_blank: "Selecione uma entidade..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_tipo_grupo_id %>

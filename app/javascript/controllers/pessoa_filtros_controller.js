@@ -1,12 +1,25 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["entidadeSelect", "groupItem", "groupCheckbox", "instrumentoItem", "perfilItem", "groupsEmpty", "instrumentosEmpty", "perfisEmpty"]
+  static targets = ["entidadeSelect", "groupItem", "groupCheckbox", "instrumentoItem", "perfilItem", "principalFuncaoSelect", "groupsEmpty", "instrumentosEmpty", "perfisEmpty"]
   static values = { selectedFuncaoIds: String }
 
   connect() {
     this.filterGroups()
     this.filterInstrumentos()
+    this.syncPrincipalFuncoes()
+    this.filterPerfis()
+  }
+
+  syncEntity() {
+    this.clearChecks(this.groupCheckboxTargets)
+    this.clearChecks(this.instrumentCheckboxes)
+    this.filterGroups()
+    this.filterInstrumentos()
+  }
+
+  syncFuncoes() {
+    this.syncPrincipalFuncoes()
     this.filterPerfis()
   }
 
@@ -58,7 +71,7 @@ export default class extends Controller {
   filterPerfis() {
     if (!this.hasPerfilItemTarget) return
 
-    const selectedFuncaoIds = (this.selectedFuncaoIdsValue || "").split(",").filter(Boolean)
+    const selectedFuncaoIds = this.selectedFunctionIds()
     let visibleCount = 0
 
     this.perfilItemTargets.forEach((item) => {
@@ -79,5 +92,56 @@ export default class extends Controller {
   toggleItem(item, visible) {
     item.hidden = !visible
     item.classList.toggle("is-hidden", !visible)
+  }
+
+  syncPrincipalFuncoes() {
+    if (!this.hasPrincipalFuncaoSelectTarget) return
+
+    const selectedFuncaoIds = this.selectedFunctionIds()
+    const select = this.principalFuncaoSelectTarget
+    let currentValueAllowed = false
+
+    Array.from(select.options).forEach((option) => {
+      if (option.value === "") {
+        option.hidden = false
+        option.disabled = false
+        return
+      }
+
+      const allowed = selectedFuncaoIds.includes(option.value)
+      option.hidden = !allowed
+      option.disabled = !allowed
+      currentValueAllowed ||= allowed && option.value === select.value
+    })
+
+    if (!currentValueAllowed) {
+      select.value = ""
+    }
+  }
+
+  clearChecks(checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = false
+    })
+  }
+
+  get instrumentCheckboxes() {
+    return this.instrumentoItemTargets
+      .map((item) => item.querySelector('input[type="checkbox"]'))
+      .filter(Boolean)
+  }
+
+  get functionCheckboxes() {
+    return Array.from(this.element.querySelectorAll('input[name="g_pessoa[u_funcao_ids][]"]'))
+  }
+
+  selectedFunctionIds() {
+    const checkedIds = this.functionCheckboxes
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => String(checkbox.value))
+
+    if (checkedIds.length > 0) return checkedIds
+
+    return (this.selectedFuncaoIdsValue || "").split(",").filter(Boolean)
   }
 }

@@ -46,7 +46,7 @@
       </div>
       <div class="field-group">
         <%= form.label :g_entidade_id %>
-        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control" %>
+        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#syncEntity" } %>
         <% if @g_entidades.blank? %><p class="empty-hint">Nenhuma entidade cadastrada.</p><% end %>
       </div>
       <div class="field-group">
@@ -65,8 +65,9 @@
 
     <div class="form-grid">
       <div class="field-group field-group--full">
-        <%= form.label :g_entidade_id, "Entidade" %>
-        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#filterGroups" } %>
+        <label>Entidade selecionada</label>
+        <%= hidden_field_tag "g_pessoa[g_entidade_id]", selected_entity&.id %>
+        <div class="form-control form-control--static"><%= selected_entity&.to_s || "Selecione uma entidade na etapa anterior." %></div>
       </div>
 
       <div class="field-group field-group--full">
@@ -98,8 +99,9 @@
 
     <div class="form-grid">
       <div class="field-group field-group--full">
-        <%= form.label :g_entidade_id, "Entidade" %>
-        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#filterInstrumentos" } %>
+        <label>Entidade selecionada</label>
+        <%= hidden_field_tag "g_pessoa[g_entidade_id]", selected_entity&.id %>
+        <div class="form-control form-control--static"><%= selected_entity&.to_s || "Selecione uma entidade na etapa anterior." %></div>
       </div>
 
       <div class="field-group field-group--full">
@@ -158,7 +160,7 @@
               <% selected_ids = Array(wizard_values["u_funcao_ids"] || g_pessoa.u_funcao_ids).map(&:to_i) %>
               <% @u_funcoes.each do |u_funcao| %>
                 <label class="selection-item">
-                  <%= check_box_tag "g_pessoa[u_funcao_ids][]", u_funcao.id, selected_ids.include?(u_funcao.id) %>
+                  <%= check_box_tag "g_pessoa[u_funcao_ids][]", u_funcao.id, selected_ids.include?(u_funcao.id), data: { action: "change->pessoa-filtros#syncFuncoes" } %>
                   <span><%= u_funcao.descricao %></span>
                 </label>
               <% end %>
@@ -168,8 +170,8 @@
       </div>
 
       <div class="field-group">
-        <%= form.label :principal_u_funcao_id, "Função principal" %>
-        <%= form.collection_select :principal_u_funcao_id, @u_funcoes, :id, :to_s, { include_blank: "Selecione a função principal...", selected: wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id }, class: "form-control" %>
+        <%= form.label :principal_u_funcao_id, "Função principal entre as marcadas" %>
+        <%= form.collection_select :principal_u_funcao_id, @u_funcoes, :id, :to_s, { include_blank: "Selecione a função principal...", selected: wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id }, class: "form-control", data: { pessoa_filtros_target: "principalFuncaoSelect" } %>
         <% if @u_funcoes.blank? %><p class="empty-hint">Nenhuma função cadastrada.</p><% end %>
       </div>
     </div>

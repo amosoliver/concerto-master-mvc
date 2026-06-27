@@ -8,7 +8,7 @@
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
         <span aria-hidden="true">🔎</span> Filtros
       </button>
-      <%= link_to "Novo #{GInstrumentoNaipe.model_name.human}", new_g_instrumento_naipe_path, class: "primary-button" %>
+      <%= authorized_link_to "Novo #{GInstrumentoNaipe.model_name.human}", new_g_instrumento_naipe_path, class: "primary-button" %>
     </div>
   </div>
 

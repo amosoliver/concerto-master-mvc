@@ -5,7 +5,7 @@
       <h1><%= GPessoa.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_g_pessoa_path(@g_pessoa), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_g_pessoa_path(@g_pessoa), class: "primary-button" %>
       <%= link_to "Voltar", g_pessoas_path, class: "secondary-button" %>
     </div>
   </div>

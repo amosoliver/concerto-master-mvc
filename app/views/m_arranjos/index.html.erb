@@ -8,7 +8,7 @@
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
         <span aria-hidden="true">🔎</span> Filtros
       </button>
-      <%= link_to "Novo #{MArranjo.model_name.human}", new_m_arranjo_path, class: "primary-button" %>
+      <%= authorized_link_to "Novo #{MArranjo.model_name.human}", new_m_arranjo_path, class: "primary-button" %>
     </div>
   </div>
 
@@ -19,7 +19,7 @@
           <label><%= MArranjo.human_attribute_name(:m_musica_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :m_musica_id_eq, options_from_collection_for_select(MMusica.all, :id, :to_s, @q&.send(:m_musica_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_musica_id), class: "search-input__field" %>
+            <%= f.select :m_musica_id_eq, options_from_collection_for_select(tenant_musica_scope, :id, :to_s, @q&.send(:m_musica_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_musica_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">

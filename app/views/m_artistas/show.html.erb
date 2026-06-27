@@ -5,7 +5,7 @@
       <h1><%= MArtista.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_artista_path(@m_artista), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_artista_path(@m_artista), class: "primary-button" %>
       <%= link_to "Voltar", m_artistas_path, class: "secondary-button" %>
     </div>
   </div>

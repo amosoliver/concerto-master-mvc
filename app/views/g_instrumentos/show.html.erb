@@ -5,7 +5,7 @@
       <h1><%= GInstrumento.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_g_instrumento_path(@g_instrumento), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_g_instrumento_path(@g_instrumento), class: "primary-button" %>
       <%= link_to "Voltar", g_instrumentos_path, class: "secondary-button" %>
     </div>
   </div>

@@ -2,7 +2,7 @@ class MGruposPessoasController < ApplicationController
   before_action :set_m_grupo_pessoa, only: %i[show edit update destroy]
 
   def index
-    @q = MGrupoPessoa.ransack(params[:q])
+    @q = tenant_scope(MGrupoPessoa).ransack(params[:q])
     @m_grupos_pessoas = @q.result.order(created_at: :desc)
     @pagy, @m_grupos_pessoas = pagy(@m_grupos_pessoas, limit: 10)
   end
@@ -43,7 +43,7 @@ class MGruposPessoasController < ApplicationController
   private
 
   def set_m_grupo_pessoa
-    @m_grupo_pessoa = MGrupoPessoa.find(params[:id])
+    @m_grupo_pessoa = tenant_record!(MGrupoPessoa, params[:id])
   end
 
   def m_grupo_pessoa_params

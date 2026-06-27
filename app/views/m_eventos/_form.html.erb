@@ -25,7 +25,7 @@
     </div>
     <div class="field-group">
       <%= form.label :g_predio_id %>
-      <%= form.collection_select :g_predio_id, GPredio.all, :id, :to_s, { include_blank: "Selecione um prédio..." }, class: "form-control" %>
+      <%= form.collection_select :g_predio_id, tenant_predio_scope, :id, :to_s, { include_blank: "Selecione um prédio..." }, class: "form-control" %>
     </div>
   </div>
 

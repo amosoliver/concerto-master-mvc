@@ -1,3 +1,5 @@
+require "set"
+
 class GUsuario < ApplicationRecord
   include SoftDeletable
 
@@ -7,6 +9,7 @@ class GUsuario < ApplicationRecord
 
   has_many :u_usuarios_perfis
   has_many :u_perfis, through: :u_usuarios_perfis
+  has_many :u_permissoes, -> { distinct }, through: :u_perfis
 
   attr_writer :login
 
@@ -35,6 +38,14 @@ class GUsuario < ApplicationRecord
 
   def to_s
     email
+  end
+
+  def allowed_to?(controller_name, action_name)
+    permission_keys.include?("#{controller_name}##{action_name}")
+  end
+
+  def permission_keys
+    @permission_keys ||= u_permissoes.distinct.pluck(:controlador, :acao).map { |controller_name, action_name| "#{controller_name}##{action_name}" }.to_set
   end
 
   def self.ransackable_attributes(_auth_object = nil)

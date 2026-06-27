@@ -97,18 +97,58 @@ button, input { font: inherit; }
   padding-bottom: 12px;
 }
 .sidebar-group { display: flex; flex-direction: column; gap: 2px; }
-.sidebar-group__title {
-  padding: 10px 12px 4px;
-  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--accent);
+.sidebar-module { border-radius: 16px; }
+.sidebar-module[open] {
+  background: rgba(13, 148, 136, 0.06);
 }
-.sidebar-subgroup { display: flex; flex-direction: column; gap: 2px; }
-.sidebar-subgroup__title {
-  padding: 8px 12px 2px 18px;
-  font-size: 0.64rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+.sidebar-module__summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+.sidebar-module__summary::-webkit-details-marker {
+  display: none;
+}
+.sidebar-module__summary {
+  padding: 12px;
+  border-radius: 14px;
+  color: var(--text);
+}
+.sidebar-module__summary:hover {
+  background: rgba(13, 148, 136, 0.08);
+}
+.sidebar-module__title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-module__icon {
+  width: 18px;
+  text-align: center;
+}
+.sidebar-module__title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.sidebar-module__chevron {
   color: var(--muted);
+  transition: transform 0.2s ease;
 }
-.sidebar-subgroup .nav-item { padding-left: 20px; }
+.sidebar-module[open] .sidebar-module__chevron {
+  transform: rotate(180deg);
+}
+.sidebar-module__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 8px 8px;
+}
+.sidebar-module__content .nav-item { margin-left: 4px; }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 12px;
@@ -293,6 +333,12 @@ button, input { font: inherit; }
 }
 .form-control { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel-strong); color: var(--text); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
 .form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14); }
+.form-control--static {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+}
 
 /* Tom Select: no theme CSS loaded (see vendor/javascript/tom-select.js), so the
    base layout rules below are written by hand alongside the .form-control skin. */

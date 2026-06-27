@@ -12,6 +12,7 @@ namespace :db do
       u_tipos_funcoes:populate
       u_funcoes:populate
       u_perfis:populate
+      u_permissoes:populate
       u_perfis_funcoes:populate
       u_perfis_permissoes:populate
     ].each do |task_name|

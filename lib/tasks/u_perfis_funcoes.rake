@@ -5,9 +5,12 @@ namespace :u_perfis_funcoes do
 
     vinculos_data.each do |vinculo_data|
       perfil = UPerfil.find_by!(descricao: vinculo_data["perfil"])
-      funcao = UFuncao.find_by!(descricao: vinculo_data["funcao"])
-      UPerfilFuncao.find_or_create_by!(u_perfil: perfil, u_funcao: funcao)
-      puts "✓ #{perfil.descricao} - #{funcao.descricao}"
+      funcao_ids = Array(vinculo_data["funcoes"]).map do |funcao_descricao|
+        UFuncao.find_by!(descricao: funcao_descricao).id
+      end
+
+      perfil.sync_u_funcoes!(funcao_ids)
+      puts "✓ #{perfil.descricao}: #{funcao_ids.size} funções vinculadas."
     end
 
     puts "u_perfis_funcoes: #{UPerfilFuncao.count} registros."

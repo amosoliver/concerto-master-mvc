@@ -13,6 +13,21 @@ class GEntidade < ApplicationRecord
   has_many :g_pessoas
   has_many :m_grupos
 
+  def self_and_descendant_ids
+    ids = [id]
+    queue = [id]
+
+    until queue.empty?
+      parent_ids = queue.shift(100)
+      child_ids = self.class.where(g_entidade_id: parent_ids).pluck(:id)
+      child_ids -= ids
+      ids.concat(child_ids)
+      queue.concat(child_ids)
+    end
+
+    ids
+  end
+
   def g_predio_principal
     g_predios.first
   end

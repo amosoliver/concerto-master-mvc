@@ -2,7 +2,7 @@ class GPessoasInstrumentosController < ApplicationController
   before_action :set_g_pessoas_instrumento, only: %i[show edit update destroy]
 
   def index
-    @q = GPessoasInstrumento.ransack(params[:q])
+    @q = tenant_scope(GPessoasInstrumento).ransack(params[:q])
     @g_pessoas_instrumentos = @q.result.order(created_at: :desc)
     @pagy, @g_pessoas_instrumentos = pagy(@g_pessoas_instrumentos, limit: 10)
   end
@@ -43,7 +43,7 @@ class GPessoasInstrumentosController < ApplicationController
   private
 
   def set_g_pessoas_instrumento
-    @g_pessoas_instrumento = GPessoasInstrumento.find(params[:id])
+    @g_pessoas_instrumento = tenant_record!(GPessoasInstrumento, params[:id])
   end
 
   def g_pessoas_instrumento_params

@@ -2,7 +2,7 @@ class MArranjosController < ApplicationController
   before_action :set_m_arranjo, only: %i[show edit update destroy]
 
   def index
-    @q = MArranjo.ransack(params[:q])
+    @q = tenant_scope(MArranjo).ransack(params[:q])
     @m_arranjos = @q.result.order(created_at: :desc)
     @pagy, @m_arranjos = pagy(@m_arranjos, limit: 10)
   end
@@ -43,7 +43,7 @@ class MArranjosController < ApplicationController
   private
 
   def set_m_arranjo
-    @m_arranjo = MArranjo.find(params[:id])
+    @m_arranjo = tenant_record!(MArranjo, params[:id])
   end
 
   def m_arranjo_params

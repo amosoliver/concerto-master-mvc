@@ -13,11 +13,11 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :g_instrumento_naipe_id %>
-      <%= form.collection_select :g_instrumento_naipe_id, GInstrumentoNaipe.all, :id, :to_s, { include_blank: "Selecione um instrumento e naipe..." }, class: "form-control" %>
+      <%= form.collection_select :g_instrumento_naipe_id, tenant_instrumento_scope.sort_by(&:to_s), :id, :to_s, { include_blank: "Selecione um instrumento e naipe..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_arranjo_id %>
-      <%= form.collection_select :m_arranjo_id, MArranjo.all, :id, :to_s, { include_blank: "Selecione um arranjo..." }, class: "form-control" %>
+      <%= form.collection_select :m_arranjo_id, tenant_arranjo_scope, :id, :to_s, { include_blank: "Selecione um arranjo..." }, class: "form-control" %>
     </div>
   </div>
 

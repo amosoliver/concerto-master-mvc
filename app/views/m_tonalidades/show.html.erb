@@ -5,7 +5,7 @@
       <h1><%= MTonalidade.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_tonalidade_path(@m_tonalidade), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_tonalidade_path(@m_tonalidade), class: "primary-button" %>
       <%= link_to "Voltar", m_tonalidades_path, class: "secondary-button" %>
     </div>
   </div>

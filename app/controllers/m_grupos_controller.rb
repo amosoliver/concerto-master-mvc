@@ -2,7 +2,7 @@ class MGruposController < ApplicationController
   before_action :set_m_grupo, only: %i[show edit update destroy]
 
   def index
-    @q = MGrupo.ransack(params[:q])
+    @q = tenant_scope(MGrupo).ransack(params[:q])
     @m_grupos = @q.result.order(created_at: :desc)
     @pagy, @m_grupos = pagy(@m_grupos, limit: 10)
   end
@@ -18,7 +18,7 @@ class MGruposController < ApplicationController
   end
 
   def create
-    @m_grupo = MGrupo.new(m_grupo_params)
+    @m_grupo = MGrupo.new(m_grupo_params.merge(g_entidade_id: tenant_entity_id_for(m_grupo_params[:g_entidade_id])))
 
     if @m_grupo.save
       redirect_to @m_grupo, notice: "#{MGrupo.model_name.human} criado com sucesso."
@@ -43,7 +43,7 @@ class MGruposController < ApplicationController
   private
 
   def set_m_grupo
-    @m_grupo = MGrupo.find(params[:id])
+    @m_grupo = tenant_record!(MGrupo, params[:id])
   end
 
   def m_grupo_params

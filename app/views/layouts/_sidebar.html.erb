@@ -10,20 +10,25 @@
 
   <nav class="sidebar__nav" aria-label="Menu principal">
     <% sidebar_nav_groups.each do |group| %>
-      <div class="sidebar-group">
-        <% if group[:label] %>
-          <p class="sidebar-group__title"><%= group[:label] %></p>
-        <% end %>
+      <% next if Array(group[:items]).blank? %>
 
-        <% if group[:subgroups] %>
-          <% group[:subgroups].each do |subgroup| %>
-            <div class="sidebar-subgroup">
-              <p class="sidebar-subgroup__title"><%= subgroup[:label] %></p>
-              <% subgroup[:items].each do |item| %>
+      <div class="sidebar-group">
+        <% if group[:label] && group[:items] %>
+          <details class="sidebar-module" <%= "open" if group[:expanded] %>>
+            <summary class="sidebar-module__summary">
+              <span class="sidebar-module__title-wrap">
+                <span class="sidebar-module__icon"><%= group[:icon] %></span>
+                <span class="sidebar-module__title"><%= group[:label] %></span>
+              </span>
+              <span class="sidebar-module__chevron" aria-hidden="true">⌄</span>
+            </summary>
+
+            <div class="sidebar-module__content">
+              <% group[:items].each do |item| %>
                 <%= render "layouts/sidebar_item", item: item %>
               <% end %>
             </div>
-          <% end %>
+          </details>
         <% else %>
           <% group[:items].each do |item| %>
             <%= render "layouts/sidebar_item", item: item %>

@@ -29,7 +29,7 @@
     </div>
     <div class="field-group">
       <%= form.label :g_pessoa_id %>
-      <%= form.collection_select :g_pessoa_id, GPessoa.all, :id, :to_s, { include_blank: "Selecione uma pessoa..." }, class: "form-control" %>
+      <%= form.collection_select :g_pessoa_id, tenant_pessoa_scope, :id, :to_s, { include_blank: "Selecione uma pessoa..." }, class: "form-control" %>
     </div>
   </div>
 

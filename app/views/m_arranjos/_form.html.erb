@@ -13,7 +13,7 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :m_musica_id %>
-      <%= form.collection_select :m_musica_id, MMusica.all, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
+      <%= form.collection_select :m_musica_id, tenant_musica_scope, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_arranjador_id %>

@@ -5,7 +5,7 @@
       <h1><%= MCompositor.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_compositor_path(@m_compositor), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_compositor_path(@m_compositor), class: "primary-button" %>
       <%= link_to "Voltar", m_compositores_path, class: "secondary-button" %>
     </div>
   </div>

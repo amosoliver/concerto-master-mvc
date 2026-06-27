@@ -8,7 +8,7 @@
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
         <span aria-hidden="true">🔎</span> Filtros
       </button>
-      <%= link_to "Novo #{GPessoasInstrumento.model_name.human}", new_g_pessoas_instrumento_path, class: "primary-button" %>
+      <%= authorized_link_to "Novo #{GPessoasInstrumento.model_name.human}", new_g_pessoas_instrumento_path, class: "primary-button" %>
     </div>
   </div>
 
@@ -19,14 +19,14 @@
           <label><%= GPessoasInstrumento.human_attribute_name(:g_pessoa_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(GPessoa.all, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GPessoasInstrumento.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
+            <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(tenant_pessoa_scope, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GPessoasInstrumento.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GPessoasInstrumento.human_attribute_name(:g_instrumento_naipe_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :g_instrumento_naipe_id_eq, options_from_collection_for_select(GInstrumentoNaipe.all, :id, :to_s, @q&.send(:g_instrumento_naipe_id_eq)), { include_blank: true }, "aria-label": GPessoasInstrumento.human_attribute_name(:g_instrumento_naipe_id), class: "search-input__field" %>
+            <%= f.select :g_instrumento_naipe_id_eq, options_from_collection_for_select(tenant_instrumento_scope.sort_by(&:to_s), :id, :to_s, @q&.send(:g_instrumento_naipe_id_eq)), { include_blank: true }, "aria-label": GPessoasInstrumento.human_attribute_name(:g_instrumento_naipe_id), class: "search-input__field" %>
           </div>
         </div>
       </div>

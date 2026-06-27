@@ -1,9 +1,13 @@
 class ApplicationController < ActionController::Base
+  include Authenticable
   include Pagy::Method
+  include TenantAccess
 
   before_action :authenticate_g_usuario!, unless: :devise_controller?
   before_action { Pagy::I18n.locale = "pt-BR" }
+  before_action :set_current_context
   before_action :redirect_primeiro_acesso!
+  before_action :authorize_current_request!, unless: :authorization_skipped?
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
@@ -20,6 +24,10 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def set_current_context
+    Current.g_usuario = current_g_usuario if g_usuario_signed_in?
+  end
 
   def redirect_primeiro_acesso!
     return unless g_usuario_signed_in?

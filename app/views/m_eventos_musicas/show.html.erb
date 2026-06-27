@@ -5,7 +5,7 @@
       <h1><%= MEventoMusica.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
-      <%= link_to "Editar", edit_m_evento_musica_path(@m_evento_musica), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_evento_musica_path(@m_evento_musica), class: "primary-button" %>
       <%= link_to "Voltar", m_eventos_musicas_path, class: "secondary-button" %>
     </div>
   </div>
