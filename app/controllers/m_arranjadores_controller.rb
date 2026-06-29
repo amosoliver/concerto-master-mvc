@@ -21,7 +21,7 @@ class MArranjadoresController < ApplicationController
     @m_arranjador = MArranjador.new(m_arranjador_params)
 
     if @m_arranjador.save
-      redirect_to @m_arranjador, notice: "#{MArranjador.model_name.human} criado com sucesso."
+      redirect_to m_arranjadores_path, notice: "#{MArranjador.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MArranjadoresController < ApplicationController
 
   def update
     if @m_arranjador.update(m_arranjador_params)
-      redirect_to @m_arranjador, notice: "#{MArranjador.model_name.human} atualizado com sucesso."
+      redirect_to m_arranjadores_path, notice: "#{MArranjador.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

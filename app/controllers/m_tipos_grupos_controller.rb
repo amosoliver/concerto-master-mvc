@@ -21,7 +21,7 @@ class MTiposGruposController < ApplicationController
     @m_tipo_grupo = MTipoGrupo.new(m_tipo_grupo_params)
 
     if @m_tipo_grupo.save
-      redirect_to @m_tipo_grupo, notice: "#{MTipoGrupo.model_name.human} criado com sucesso."
+      redirect_to m_tipos_grupos_path, notice: "#{MTipoGrupo.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MTiposGruposController < ApplicationController
 
   def update
     if @m_tipo_grupo.update(m_tipo_grupo_params)
-      redirect_to @m_tipo_grupo, notice: "#{MTipoGrupo.model_name.human} atualizado com sucesso."
+      redirect_to m_tipos_grupos_path, notice: "#{MTipoGrupo.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

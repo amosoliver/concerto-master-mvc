@@ -4,16 +4,7 @@
 <%= form_with(model: g_pessoa, local: true, class: "panel-card form-card", data: { controller: "select pessoa-filtros", pessoa_filtros_selected_funcao_ids_value: selected_funcao_ids.join(",") }) do |form| %>
   <%= hidden_field_tag :step, current_step %>
 
-  <% if g_pessoa.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(g_pessoa.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% g_pessoa.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: g_pessoa %>
   <div class="steps-nav">
     <% GPessoasController::STEPS.each_with_index do |step, index| %>
       <%= link_to step_path_for(step), class: "steps-nav__item #{'is-active' if current_step == step}" do %>

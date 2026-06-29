@@ -1,27 +1,75 @@
-<%= form_with(model: m_musica, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
-  <% if m_musica.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(m_musica.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% m_musica.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+<%= form_with(model: m_musica, local: true, class: "panel-card form-card", data: { controller: "select url-preview" }) do |form| %>
+  <%= render "shared/form_errors", record: m_musica %>
+
+  <div class="panel-card__header">
+    <div>
+      <p class="eyebrow">Música</p>
+      <h3>Dados principais</h3>
     </div>
-  <% end %>
+  </div>
 
   <div class="form-grid">
-    <div class="field-group">
+    <div class="field-group field-group--full">
       <%= form.label :descricao %>
       <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
     </div>
-    <div class="field-group">
-      <%= form.label :m_compositor_id %>
-      <%= form.collection_select :m_compositor_id, MCompositor.all, :id, :to_s, { include_blank: "Selecione um compositor..." }, class: "form-control" %>
+
+    <div class="field-group field-group--full">
+      <div class="catalog-choice">
+        <div class="catalog-choice__block">
+          <%= form.label :m_compositor_id %>
+          <%= form.collection_select :m_compositor_id, @m_compositores, :id, :to_s, { include_blank: "Selecione um compositor existente..." }, class: "form-control" %>
+        </div>
+
+        <div class="catalog-choice__divider">
+          <span>ou</span>
+        </div>
+
+        <div class="catalog-choice__block catalog-choice__block--accent">
+          <label for="m_musica_novo_m_compositor">Cadastrar novo compositor</label>
+          <small class="field-hint">Se preencher aqui, o sistema cria o compositor e já usa nesta música.</small>
+          <%= form.text_field :novo_m_compositor, class: "form-control", placeholder: "Digite um novo compositor", data: { controller: "uppercase" } %>
+        </div>
+      </div>
     </div>
-    <div class="field-group">
-      <%= form.label :m_artista_id %>
-      <%= form.collection_select :m_artista_id, MArtista.all, :id, :to_s, { include_blank: "Selecione um artista..." }, class: "form-control" %>
+
+    <div class="field-group field-group--full">
+      <div class="catalog-choice">
+        <div class="catalog-choice__block">
+          <%= form.label :m_artista_id %>
+          <%= form.collection_select :m_artista_id, @m_artistas, :id, :to_s, { include_blank: "Selecione um artista existente..." }, class: "form-control" %>
+        </div>
+
+        <div class="catalog-choice__divider">
+          <span>ou</span>
+        </div>
+
+        <div class="catalog-choice__block catalog-choice__block--accent">
+          <label for="m_musica_novo_m_artista">Cadastrar novo artista</label>
+          <small class="field-hint">Se preencher aqui, o sistema cria o artista e já usa nesta música.</small>
+          <%= form.text_field :novo_m_artista, class: "form-control", placeholder: "Digite um novo artista", data: { controller: "uppercase" } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group field-group--full">
+      <%= form.label :url_referencia, "Link da versão" %>
+      <%= form.url_field :url_referencia, class: "form-control", placeholder: "https://...", data: { url_preview_target: "input", action: "input->url-preview#render change->url-preview#render" } %>
+      <small class="field-hint">A prévia automática funciona melhor com links de YouTube e Vimeo.</small>
+      <div class="url-preview" data-url-preview-target="wrapper" hidden>
+        <div class="url-preview__unsupported" data-url-preview-target="unsupported" hidden>
+          Este link não permite frame automático aqui. Você ainda pode abrir:
+          <a href="#" target="_blank" rel="noopener" data-url-preview-target="link"></a>
+        </div>
+        <iframe
+          class="url-preview__frame"
+          data-url-preview-target="frame"
+          title="Prévia da versão"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+          allowfullscreen
+          hidden
+        ></iframe>
+      </div>
     </div>
   </div>
 

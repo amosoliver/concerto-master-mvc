@@ -21,7 +21,7 @@ class MArtistasController < ApplicationController
     @m_artista = MArtista.new(m_artista_params)
 
     if @m_artista.save
-      redirect_to @m_artista, notice: "#{MArtista.model_name.human} criado com sucesso."
+      redirect_to m_artistas_path, notice: "#{MArtista.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MArtistasController < ApplicationController
 
   def update
     if @m_artista.update(m_artista_params)
-      redirect_to @m_artista, notice: "#{MArtista.model_name.human} atualizado com sucesso."
+      redirect_to m_artistas_path, notice: "#{MArtista.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

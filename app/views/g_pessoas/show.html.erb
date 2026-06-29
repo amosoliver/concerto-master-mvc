@@ -10,40 +10,114 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= GPessoa.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Pessoa</p>
+        <h2 class="show-summary__title"><%= @g_pessoa.nome %></h2>
+        <p class="show-summary__text">Pessoa vinculada a <%= @g_pessoa.g_entidade %> com perfil musical e funcional no sistema.</p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Atuação</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Instrumentos</span>
+            <span class="show-stat__value"><%= @g_pessoa.g_instrumentos_naipes.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Funções</span>
+            <span class="show-stat__value"><%= @g_pessoa.u_funcoes.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Grupos</span>
+            <span class="show-stat__value"><%= @g_pessoa.m_grupos.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Usuários</span>
+            <span class="show-stat__value"><%= @g_pessoa.g_usuarios.count %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoa.human_attribute_name(:nome) %></span>
-        <span class="detail-value"><%= @g_pessoa.nome %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= GPessoa.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoa.human_attribute_name(:email) %></span>
-        <span class="detail-value"><%= @g_pessoa.email %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoa.human_attribute_name(:cpf) %></span>
-        <span class="detail-value"><%= format_cpf(@g_pessoa.cpf) %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoa.human_attribute_name(:g_entidade_id) %></span>
-        <span class="detail-value"><%= @g_pessoa.g_entidade %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoa.human_attribute_name(:g_sexo_id) %></span>
-        <span class="detail-value"><%= @g_pessoa.g_sexo %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@g_pessoa.created_at) %></span>
-      <span>Atualizado em <%= l(@g_pessoa.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoa.human_attribute_name(:nome) %></span>
+          <span class="detail-value"><%= @g_pessoa.nome %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoa.human_attribute_name(:email) %></span>
+          <span class="detail-value"><%= @g_pessoa.email %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoa.human_attribute_name(:cpf) %></span>
+          <span class="detail-value"><%= format_cpf(@g_pessoa.cpf) %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoa.human_attribute_name(:g_entidade_id) %></span>
+          <span class="detail-value"><%= @g_pessoa.g_entidade %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoa.human_attribute_name(:g_sexo_id) %></span>
+          <span class="detail-value"><%= @g_pessoa.g_sexo %></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Instrumentação</p>
+          <h3>Instrumentos e naipes</h3>
+        </div>
+        <span class="show-section__count"><%= @g_pessoa.g_instrumentos_naipes.count %></span>
+      </div>
+      <% if @g_pessoa.g_instrumentos_naipes.any? %>
+        <div class="tag-cloud">
+          <% @g_pessoa.g_instrumentos_naipes.each do |instrumento| %>
+            <%= link_to instrumento.to_s, g_instrumento_naipe_path(instrumento), class: "tag-cloud__item tag-cloud__item--link" %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum instrumento vinculado a esta pessoa.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Participação</p>
+          <h3>Grupos e funções</h3>
+        </div>
+      </div>
+      <div class="related-grid">
+        <article class="related-card">
+          <span class="related-card__label">Grupos</span>
+          <span class="related-card__value"><%= @g_pessoa.m_grupos.map(&:descricao).presence&.join(", ") || "Nenhum grupo" %></span>
+        </article>
+        <article class="related-card">
+          <span class="related-card__label">Funções</span>
+          <span class="related-card__value"><%= @g_pessoa.u_funcoes.map(&:descricao).presence&.join(", ") || "Nenhuma função" %></span>
+        </article>
+        <article class="related-card">
+          <span class="related-card__label">Usuário principal</span>
+          <span class="related-card__value"><%= @g_pessoa.g_usuario_principal&.email || "Sem usuário" %></span>
+        </article>
+      </div>
+    </section>
+  </div>
 </div>

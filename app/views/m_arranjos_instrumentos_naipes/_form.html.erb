@@ -1,14 +1,5 @@
 <%= form_with(model: m_arranjo_instrumento_naipe, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
-  <% if m_arranjo_instrumento_naipe.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(m_arranjo_instrumento_naipe.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% m_arranjo_instrumento_naipe.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: m_arranjo_instrumento_naipe %>
 
   <div class="form-grid">
     <div class="field-group">

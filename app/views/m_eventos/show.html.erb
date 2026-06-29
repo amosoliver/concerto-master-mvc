@@ -10,36 +10,83 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= MEvento.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Evento</p>
+        <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
+        <p class="show-summary__text">Evento realizado em <%= @m_evento.g_predio %> com repertório associado para preparação musical.</p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Planejamento</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Músicas</span>
+            <span class="show-stat__value"><%= @m_evento.m_musicas.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Início</span>
+            <span class="show-stat__value"><%= @m_evento.data_inicio.present? ? l(@m_evento.data_inicio) : "-" %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= MEvento.human_attribute_name(:descricao) %></span>
-        <span class="detail-value"><%= @m_evento.descricao %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= MEvento.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MEvento.human_attribute_name(:data_inicio) %></span>
-        <span class="detail-value"><%= @m_evento.data_inicio %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
-        <span class="detail-value"><%= @m_evento.data_fim %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
-        <span class="detail-value"><%= @m_evento.g_predio %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@m_evento.created_at) %></span>
-      <span>Atualizado em <%= l(@m_evento.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEvento.human_attribute_name(:descricao) %></span>
+          <span class="detail-value"><%= @m_evento.descricao %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEvento.human_attribute_name(:data_inicio) %></span>
+          <span class="detail-value"><%= @m_evento.data_inicio.present? ? l(@m_evento.data_inicio) : "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
+          <span class="detail-value"><%= @m_evento.data_fim.present? ? l(@m_evento.data_fim) : "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
+          <span class="detail-value"><%= @m_evento.g_predio %></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Repertório</p>
+          <h3>Músicas do evento</h3>
+        </div>
+        <span class="show-section__count"><%= @m_evento.m_eventos_musicas.count %></span>
+      </div>
+      <% if @m_evento.m_eventos_musicas.any? %>
+        <div class="related-grid">
+          <% @m_evento.m_eventos_musicas.each do |evento_musica| %>
+            <article class="related-card">
+              <span class="related-card__label">Música</span>
+              <%= link_to evento_musica.m_musica.descricao, m_musica_path(evento_musica.m_musica), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [evento_musica.m_musica.m_artista, evento_musica.m_musica.m_compositor].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhuma música foi vinculada a este evento.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

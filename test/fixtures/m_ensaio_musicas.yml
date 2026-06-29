@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  m_ensaio: one
+  m_evento_musica: one
+  g_entidade: one
+  observacao: MyString
+  deleted_at: 2026-06-29 10:11:10
+
+two:
+  m_ensaio: two
+  m_evento_musica: two
+  g_entidade: two
+  observacao: MyString
+  deleted_at: 2026-06-29 10:11:10

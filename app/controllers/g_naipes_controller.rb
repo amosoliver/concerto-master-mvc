@@ -21,7 +21,7 @@ class GNaipesController < ApplicationController
     @g_naipe = GNaipe.new(g_naipe_params)
 
     if @g_naipe.save
-      redirect_to @g_naipe, notice: "#{GNaipe.model_name.human} criado com sucesso."
+      redirect_to g_naipes_path, notice: "#{GNaipe.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GNaipesController < ApplicationController
 
   def update
     if @g_naipe.update(g_naipe_params)
-      redirect_to @g_naipe, notice: "#{GNaipe.model_name.human} atualizado com sucesso."
+      redirect_to g_naipes_path, notice: "#{GNaipe.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

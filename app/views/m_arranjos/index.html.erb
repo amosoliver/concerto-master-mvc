@@ -16,10 +16,24 @@
     <%= search_form_for @q, url: m_arranjos_path, method: :get do |f| %>
       <div class="search-grid">
         <div class="search-field">
+          <label><%= MArranjo.human_attribute_name(:descricao) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :descricao_cont, placeholder: MArranjo.human_attribute_name(:descricao), "aria-label": MArranjo.human_attribute_name(:descricao), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
           <label><%= MArranjo.human_attribute_name(:m_musica_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
             <%= f.select :m_musica_id_eq, options_from_collection_for_select(tenant_musica_scope, :id, :to_s, @q&.send(:m_musica_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_musica_id), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :m_tipo_arranjo_id_eq, options_from_collection_for_select(MTipoArranjo.all, :id, :to_s, @q&.send(:m_tipo_arranjo_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_tipo_arranjo_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
@@ -60,7 +74,9 @@
       <table class="data-table">
         <thead>
           <tr>
+            <th scope="col"><%= MArranjo.human_attribute_name(:descricao) %></th>
             <th scope="col"><%= MArranjo.human_attribute_name(:m_musica_id) %></th>
+            <th scope="col"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></th>
             <th scope="col"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></th>
             <th scope="col"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></th>
             <th scope="col">Ações</th>
@@ -69,7 +85,9 @@
         <tbody>
           <% @m_arranjos.each do |m_arranjo| %>
             <tr>
+              <td><%= m_arranjo.descricao %></td>
               <td><%= m_arranjo.m_musica %></td>
+              <td><%= m_arranjo.m_tipo_arranjo %></td>
               <td><%= m_arranjo.m_arranjador %></td>
               <td><%= m_arranjo.m_tonalidade %></td>
               <td>
@@ -85,8 +103,12 @@
       <% @m_arranjos.each do |m_arranjo| %>
         <article class="record-card">
           <div class="record-card__body">
+            <span class="detail-label"><%= MArranjo.human_attribute_name(:descricao) %></span>
+            <span class="detail-value"><%= m_arranjo.descricao %></span>
             <span class="detail-label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
             <span class="detail-value"><%= m_arranjo.m_musica %></span>
+            <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></span>
+            <span class="detail-value"><%= m_arranjo.m_tipo_arranjo %></span>
             <span class="detail-label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
             <span class="detail-value"><%= m_arranjo.m_arranjador %></span>
             <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>

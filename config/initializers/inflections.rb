@@ -34,12 +34,16 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
 
   inflect.irregular 'm_evento', 'm_eventos'
   inflect.irregular 'm_evento_musica', 'm_eventos_musicas'
+  inflect.irregular 'm_ensaio', 'm_ensaios'
+  inflect.irregular 'm_ensaio_evento', 'm_ensaios_eventos'
+  inflect.irregular 'm_ensaio_musica', 'm_ensaio_musicas'
 
   inflect.irregular 'm_musica', 'm_musicas'
   inflect.irregular 'm_compositor', 'm_compositores'
   inflect.irregular 'm_artista', 'm_artistas'
 
   inflect.irregular 'm_arranjo', 'm_arranjos'
+  inflect.irregular 'm_tipo_arranjo', 'm_tipos_arranjos'
   inflect.irregular 'm_arranjador', 'm_arranjadores'
   inflect.irregular 'm_tonalidade', 'm_tonalidades'
   inflect.irregular 'm_arranjo_instrumento_naipe', 'm_arranjos_instrumentos_naipes'

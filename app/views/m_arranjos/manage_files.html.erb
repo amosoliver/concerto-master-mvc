@@ -1,0 +1,152 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Arquivos</p>
+      <h1><%= @m_arranjo.descricao.presence || "Arranjo ##{@m_arranjo.id}" %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= authorized_link_to "Ver arranjo", m_arranjo_path(@m_arranjo), class: "secondary-button" %>
+      <%= authorized_link_to "Voltar para música", manage_arranjos_m_musica_path(@m_arranjo.m_musica), class: "secondary-button" %>
+    </div>
+  </div>
+
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Arranjo</p>
+        <h2 class="show-summary__title"><%= @m_arranjo.descricao.presence || @m_arranjo.m_musica %></h2>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Controle de anexos</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Arquivos</span>
+            <span class="show-stat__value"><%= @m_arranjo.audio.attachments.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Instrumentos</span>
+            <span class="show-stat__value"><%= @instrumentos_do_arranjo.count %></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <%= form_with model: @m_arranjo, url: update_files_m_arranjo_path(@m_arranjo), method: :patch, local: true, class: "panel-card form-card" do |form| %>
+      <%= hidden_field_tag :return_to, params[:return_to].presence || manage_arranjos_m_musica_path(@m_arranjo.m_musica) %>
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Upload</p>
+          <h3>Arquivos do arranjo</h3>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group field-group--full">
+          <%= form.label :audio, "Arquivos do arranjo" %>
+          <%= form.file_field :audio, direct_upload: false, class: "form-control", multiple: true %>
+        </div>
+      </div>
+
+      <% if @m_arranjo.audio.attached? %>
+        <section class="show-section">
+          <div class="panel-card__header">
+            <div>
+              <p class="eyebrow">Arranjo</p>
+              <h3>Arquivos anexados</h3>
+            </div>
+          </div>
+          <div class="attachment-stack">
+            <% @m_arranjo.audio.each do |arquivo| %>
+              <% if audio_attachment_file?(arquivo) %>
+                <div class="attachment-audio-card">
+                  <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
+                  <div class="attachment-actions">
+                    <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+                    <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+                  </div>
+                </div>
+              <% else %>
+                <div class="attachment-file-card">
+                  <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
+                  <span class="attachment-file-card__meta"><%= attachment_label(arquivo) %></span>
+                  <div class="attachment-actions attachment-actions--stacked">
+                    <% if previewable_attachment_file?(arquivo) %>
+                      <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+                    <% end %>
+                    <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+
+      <section class="show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Instrumentos</p>
+            <h3>Arquivos por instrumento do arranjo</h3>
+          </div>
+        </div>
+
+        <% if @instrumentos_do_arranjo.any? %>
+          <div class="related-grid">
+            <% @instrumentos_do_arranjo.each do |instrumento_arranjo| %>
+              <article class="related-card related-card--stack">
+                <span class="related-card__label">Instrumento</span>
+                <span class="related-card__value"><%= instrumento_arranjo.g_instrumento_naipe %></span>
+                <div class="field-group">
+                  <label for="instrumento_arquivos_<%= instrumento_arranjo.id %>">Anexar arquivo</label>
+                  <%= file_field_tag "instrumento_arquivos[#{instrumento_arranjo.id}][]", class: "form-control", id: "instrumento_arquivos_#{instrumento_arranjo.id}", multiple: true %>
+                </div>
+
+                <% if instrumento_arranjo.arquivo.attached? %>
+                  <div class="attachment-stack">
+                    <% instrumento_arranjo.arquivo.each do |arquivo| %>
+                      <% if audio_attachment_file?(arquivo) %>
+                        <div class="attachment-audio-card">
+                          <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
+                          <div class="attachment-actions">
+                            <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+                            <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+                          </div>
+                        </div>
+                      <% else %>
+                        <div class="attachment-file-card">
+                          <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
+                          <span class="attachment-file-card__meta"><%= attachment_label(arquivo) %></span>
+                          <div class="attachment-actions attachment-actions--stacked">
+                            <% if previewable_attachment_file?(arquivo) %>
+                              <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+                            <% end %>
+                            <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+                          </div>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="empty-card">Nenhum arquivo enviado para este instrumento ainda.</div>
+                <% end %>
+              </article>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="empty-card">Este arranjo ainda não possui instrumentos vinculados. Edite o arranjo primeiro para definir os instrumentos e depois envie os arquivos.</div>
+        <% end %>
+      </section>
+
+      <div class="form-actions">
+        <%= form.submit "Salvar arquivos", class: "primary-button" %>
+        <%= link_to "Cancelar", manage_arranjos_m_musica_path(@m_arranjo.m_musica), class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

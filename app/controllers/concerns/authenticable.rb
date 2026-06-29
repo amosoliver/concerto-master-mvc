@@ -9,14 +9,28 @@ module Authenticable
     "new" => "criar",
     "create" => "criar",
     "edit" => "editar",
+    "manage" => "editar",
+    "manage_arranjos" => "editar",
+    "manage_files" => "editar",
     "update" => "editar",
+    "update_files" => "editar",
+    "update_management" => "editar",
     "destroy" => "excluir",
     "atualizar" => "atualizar permissões"
   }.freeze
 
+  PERMISSION_ACTION_ALIASES = {
+    "manage" => "edit",
+    "manage_arranjos" => "edit",
+    "manage_files" => "edit",
+    "update_files" => "edit",
+    "update_management" => "edit"
+  }.freeze
+
   PUBLIC_PERMISSIONS = Set.new(
     [
-      ["home", "index"]
+      ["home", "index"],
+      ["tenants", "update"]
     ]
   ).freeze
 
@@ -39,13 +53,14 @@ module Authenticable
   def allowed_action?(controller_name = controller_path, action = action_name)
     controller_name = controller_name.to_s
     action = action.to_s
+    permission_action = PERMISSION_ACTION_ALIASES.fetch(action, action)
 
     return true if devise_controller?
     return true if permissions_bootstrap_mode?
-    return true if PUBLIC_PERMISSIONS.include?([controller_name, action])
+    return true if PUBLIC_PERMISSIONS.include?([controller_name, permission_action])
     return false unless current_g_usuario
 
-    current_g_usuario.allowed_to?(controller_name, action)
+    current_g_usuario.allowed_to?(controller_name, permission_action)
   end
 
   def allowed_path?(target, method: :get)

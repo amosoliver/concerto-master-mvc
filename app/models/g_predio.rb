@@ -7,8 +7,10 @@ class GPredio < ApplicationRecord
   belongs_to :g_entidade
 
   has_many :m_eventos
+  has_many :m_ensaios
 
   before_validation { self.cep = cep.gsub(/\D/, "") if cep.present? }
+  before_validation :assign_g_entidade
 
   def to_s
     nome_fantasia
@@ -20,5 +22,11 @@ class GPredio < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+
+  private
+
+  def assign_g_entidade
+    self.g_entidade_id ||= Current.g_entidade&.id
   end
 end

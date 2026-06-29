@@ -10,36 +10,122 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= GEntidade.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Visão geral</p>
+        <h2 class="show-summary__title"><%= @g_entidade.descricao %></h2>
+        <p class="show-summary__text">
+          Entidade localizada em <%= [@g_entidade.g_municipio, @g_entidade.g_estado].compact.join(" / ") %>
+          <%= "vinculada a #{@g_entidade.g_entidade}" if @g_entidade.g_entidade.present? %>.
+        </p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Relacionamentos</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Prédios</span>
+            <span class="show-stat__value"><%= @g_entidade.g_predios.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Pessoas</span>
+            <span class="show-stat__value"><%= @g_entidade.g_pessoas.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Grupos</span>
+            <span class="show-stat__value"><%= @g_entidade.m_grupos.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Entidades filhas</span>
+            <span class="show-stat__value"><%= @g_entidade.g_entidades.count %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= GEntidade.human_attribute_name(:descricao) %></span>
-        <span class="detail-value"><%= @g_entidade.descricao %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= GEntidade.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GEntidade.human_attribute_name(:g_estado_id) %></span>
-        <span class="detail-value"><%= @g_entidade.g_estado %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GEntidade.human_attribute_name(:g_municipio_id) %></span>
-        <span class="detail-value"><%= @g_entidade.g_municipio %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GEntidade.human_attribute_name(:g_entidade_id) %></span>
-        <span class="detail-value"><%= @g_entidade.g_entidade %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@g_entidade.created_at) %></span>
-      <span>Atualizado em <%= l(@g_entidade.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= GEntidade.human_attribute_name(:descricao) %></span>
+          <span class="detail-value"><%= @g_entidade.descricao %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GEntidade.human_attribute_name(:g_estado_id) %></span>
+          <span class="detail-value"><%= @g_entidade.g_estado %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GEntidade.human_attribute_name(:g_municipio_id) %></span>
+          <span class="detail-value"><%= @g_entidade.g_municipio %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GEntidade.human_attribute_name(:g_entidade_id) %></span>
+          <span class="detail-value"><%= @g_entidade.g_entidade || "Sem entidade pai" %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@g_entidade.created_at) %></span>
+        <span>Atualizado em <%= l(@g_entidade.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Estrutura</p>
+          <h3>Prédios da entidade</h3>
+        </div>
+        <span class="show-section__count"><%= @g_entidade.g_predios.count %></span>
+      </div>
+      <% if @g_entidade.g_predios.any? %>
+        <div class="related-grid">
+          <% @g_entidade.g_predios.each do |predio| %>
+            <article class="related-card">
+              <span class="related-card__label">Prédio</span>
+              <%= link_to predio.nome_fantasia, g_predio_path(predio), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [format_cep(predio.cep), predio.bairro].compact.reject(&:blank?).join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum prédio vinculado a esta entidade.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Organização</p>
+          <h3>Grupos cadastrados</h3>
+        </div>
+        <span class="show-section__count"><%= @g_entidade.m_grupos.count %></span>
+      </div>
+      <% if @g_entidade.m_grupos.any? %>
+        <div class="related-grid">
+          <% @g_entidade.m_grupos.each do |grupo| %>
+            <article class="related-card">
+              <span class="related-card__label"><%= grupo.m_tipo_grupo %></span>
+              <%= link_to grupo.descricao, m_grupo_path(grupo), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= pluralize(grupo.g_pessoas.count, "pessoa") %> • <%= pluralize(grupo.g_instrumentos_naipes.count, "instrumento") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum grupo cadastrado para esta entidade.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

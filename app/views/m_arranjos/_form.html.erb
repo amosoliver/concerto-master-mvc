@@ -1,27 +1,59 @@
 <%= form_with(model: m_arranjo, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
-  <% if m_arranjo.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(m_arranjo.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% m_arranjo.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: m_arranjo %>
+
+  <%= form.hidden_field :from_musica_management, value: params[:from_musica_management] %>
+  <% lock_musica = params[:m_musica_id].present? || params[:from_musica_management] == "1" %>
+  <% musica_id = params[:m_musica_id].presence || params.dig(:m_arranjo, :m_musica_id).presence || m_arranjo.m_musica_id %>
+  <% selected_instrumento_ids = Array(params.dig(:m_arranjo, :g_instrumento_naipe_ids) || m_arranjo.g_instrumento_naipe_ids).reject(&:blank?).map(&:to_i) %>
 
   <div class="form-grid">
+    <div class="field-group field-group--full">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+    </div>
     <div class="field-group">
       <%= form.label :m_musica_id %>
-      <%= form.collection_select :m_musica_id, tenant_musica_scope, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
+      <% if lock_musica && musica_id.present? %>
+        <%= form.hidden_field :m_musica_id, value: musica_id %>
+        <div class="form-control form-control--static"><%= @m_musicas.find { |musica| musica.id == musica_id.to_i } || m_arranjo.m_musica %></div>
+      <% else %>
+        <%= form.collection_select :m_musica_id, @m_musicas, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
+      <% end %>
+    </div>
+    <div class="field-group">
+      <%= form.label :m_tipo_arranjo_id %>
+      <%= form.collection_select :m_tipo_arranjo_id, @m_tipos_arranjos, :id, :to_s, { include_blank: "Selecione um tipo de arranjo..." }, class: "form-control" %>
     </div>
     <div class="field-group">
       <%= form.label :m_arranjador_id %>
-      <%= form.collection_select :m_arranjador_id, MArranjador.all, :id, :to_s, { include_blank: "Selecione um arranjador..." }, class: "form-control" %>
+      <%= form.collection_select :m_arranjador_id, @m_arranjadores, :id, :to_s, { include_blank: "Selecione um arranjador existente..." }, class: "form-control" %>
+      <details class="field-toggle" <%= "open" if m_arranjo.novo_m_arranjador.present? %>>
+        <summary class="secondary-button">Cadastrar novo arranjador</summary>
+        <div class="field-toggle__content">
+          <small class="field-hint">Se preencher aqui, o sistema cria o arranjador e já usa neste arranjo.</small>
+          <%= form.text_field :novo_m_arranjador, class: "form-control", placeholder: "Digite um novo arranjador", data: { controller: "uppercase" } %>
+        </div>
+      </details>
     </div>
     <div class="field-group">
       <%= form.label :m_tonalidade_id %>
-      <%= form.collection_select :m_tonalidade_id, MTonalidade.all, :id, :to_s, { include_blank: "Selecione uma tonalidade..." }, class: "form-control" %>
+      <%= form.collection_select :m_tonalidade_id, @m_tonalidades, :id, :to_s, { include_blank: "Selecione uma tonalidade..." }, class: "form-control" %>
+    </div>
+    <div class="field-group field-group--full">
+      <label>Instrumentos do arranjo</label>
+      <p class="selection-help">Marque todos os instrumentos e naipes usados neste arranjo.</p>
+      <div class="selection-panel">
+        <div class="selection-group">
+          <div class="selection-group__items">
+            <% @g_instrumentos_naipes.each do |g_instrumento_naipe| %>
+              <label class="selection-item">
+                <%= check_box_tag "m_arranjo[g_instrumento_naipe_ids][]", g_instrumento_naipe.id, selected_instrumento_ids.include?(g_instrumento_naipe.id) %>
+                <span><%= g_instrumento_naipe %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -4,6 +4,7 @@ class MArranjoInstrumentoNaipe < ApplicationRecord
   belongs_to :g_entidade
   belongs_to :g_instrumento_naipe
   belongs_to :m_arranjo
+  has_many_attached :arquivo
 
   before_validation :assign_g_entidade
 

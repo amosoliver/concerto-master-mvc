@@ -9,6 +9,8 @@ namespace :db do
       g_instrumentos:populate
       g_naipes:populate
       g_instrumentos_naipes:populate
+      m_tonalidades:populate
+      m_tipos_arranjos:populate
       u_tipos_funcoes:populate
       u_funcoes:populate
       u_perfis:populate

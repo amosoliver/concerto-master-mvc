@@ -7,16 +7,7 @@
   </div>
 
   <%= form_for(resource, as: resource_name, url: g_usuario_registration_path, html: { method: :put, class: "panel-card form-card" }) do |f| %>
-    <% if resource.errors.any? %>
-      <div class="alert alert-danger">
-        <h2><%= pluralize(resource.errors.count, "erro") %> impediram o salvamento:</h2>
-        <ul>
-          <% resource.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
+    <%= render "shared/form_errors", record: resource %>
 
     <div class="form-grid">
       <div class="field-group">

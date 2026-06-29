@@ -1,14 +1,5 @@
 <%= form_with(model: m_pessoa_funcao, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
-  <% if m_pessoa_funcao.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(m_pessoa_funcao.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% m_pessoa_funcao.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: m_pessoa_funcao %>
 
   <div class="form-grid">
     <div class="field-group">

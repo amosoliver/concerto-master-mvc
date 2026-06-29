@@ -1,16 +1,7 @@
 <%= form_with(model: g_entidade, local: true, class: "panel-card form-card", data: { controller: "select grupo-builder", grupo_builder_index_value: @group_rows.size }) do |form| %>
   <%= hidden_field_tag :step, current_step %>
 
-  <% if g_entidade.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(g_entidade.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% g_entidade.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: g_entidade %>
 
   <div class="steps-nav">
     <% GEntidadesController::STEPS.each_with_index do |step, index| %>

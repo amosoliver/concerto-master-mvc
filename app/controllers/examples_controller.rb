@@ -19,7 +19,7 @@ class ExamplesController < ApplicationController
     @example = Example.new(example_params)
 
     if @example.save
-      redirect_to @example, notice: "#{Example.model_name.human} criado com sucesso."
+      redirect_to examples_path, notice: "#{Example.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class ExamplesController < ApplicationController
 
   def update
     if @example.update(example_params)
-      redirect_to @example, notice: "#{Example.model_name.human} atualizado com sucesso."
+      redirect_to examples_path, notice: "#{Example.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

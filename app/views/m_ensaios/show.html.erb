@@ -1,0 +1,132 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Detalhes</p>
+      <h1><%= MEnsaio.model_name.human %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Editar", edit_m_ensaio_path(@m_ensaio), class: "primary-button" %>
+      <%= link_to "Voltar", m_ensaios_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Ensaio</p>
+        <h2 class="show-summary__title"><%= @m_ensaio.descricao %></h2>
+        <p class="show-summary__text">
+          Ensaio realizado em <%= @m_ensaio.g_predio %> para preparar repertórios até a data do evento.
+        </p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Planejamento</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Músicas</span>
+            <span class="show-stat__value"><%= @m_ensaio.m_musicas.distinct.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Eventos</span>
+            <span class="show-stat__value"><%= @m_ensaio.m_evento_musicas.map(&:m_evento_id).uniq.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Início</span>
+            <span class="show-stat__value"><%= @m_ensaio.data_inicio.present? ? l(@m_ensaio.data_inicio) : "-" %></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= MEnsaio.model_name.human %></h3>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEnsaio.human_attribute_name(:descricao) %></span>
+          <span class="detail-value"><%= @m_ensaio.descricao %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_inicio) %></span>
+          <span class="detail-value"><%= @m_ensaio.data_inicio.present? ? l(@m_ensaio.data_inicio) : "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_fim) %></span>
+          <span class="detail-value"><%= @m_ensaio.data_fim.present? ? l(@m_ensaio.data_fim) : "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_predio_id) %></span>
+          <span class="detail-value"><%= @m_ensaio.g_predio %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
+          <span class="detail-value"><%= @m_ensaio.g_entidade %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@m_ensaio.created_at) %></span>
+        <span>Atualizado em <%= l(@m_ensaio.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Eventos</p>
+          <h3>Eventos trabalhados neste ensaio</h3>
+        </div>
+        <span class="show-section__count"><%= @m_ensaio.m_evento_musicas.map(&:m_evento_id).uniq.count %></span>
+      </div>
+      <% eventos = @m_ensaio.m_evento_musicas.includes(:m_evento).map(&:m_evento).compact.uniq %>
+      <% if eventos.any? %>
+        <div class="related-grid">
+          <% eventos.each do |evento| %>
+            <article class="related-card">
+              <span class="related-card__label">Evento</span>
+              <%= link_to evento.descricao, m_evento_path(evento), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [evento.data_inicio.present? ? l(evento.data_inicio) : nil, evento.g_predio].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum evento foi relacionado a este ensaio.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Repertório</p>
+          <h3>Músicas ensaiadas</h3>
+        </div>
+        <span class="show-section__count"><%= @m_ensaio.m_ensaio_musicas.count %></span>
+      </div>
+      <% if @m_ensaio.m_ensaio_musicas.any? %>
+        <div class="related-grid">
+          <% @m_ensaio.m_ensaio_musicas.includes(m_evento_musica: [:m_evento, :m_musica]).each do |ensaio_musica| %>
+            <% evento_musica = ensaio_musica.m_evento_musica %>
+            <article class="related-card">
+              <span class="related-card__label"><%= evento_musica&.m_evento || "Evento" %></span>
+              <%= link_to(evento_musica&.m_musica&.descricao || "Música não informada", m_ensaio_musica_path(ensaio_musica), class: "related-card__value related-card__value--link") %>
+              <span class="related-card__meta"><%= ensaio_musica.observacao.presence || "Sem observação registrada" %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhuma música foi vinculada a este ensaio.</div>
+      <% end %>
+    </section>
+  </div>
+</div>

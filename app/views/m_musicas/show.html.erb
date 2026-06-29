@@ -5,37 +5,122 @@
       <h1><%= MMusica.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
+      <%= authorized_link_to "Gerenciar arranjos", manage_arranjos_m_musica_path(@m_musica), class: "primary-button" %>
       <%= authorized_link_to "Editar", edit_m_musica_path(@m_musica), class: "primary-button" %>
       <%= link_to "Voltar", m_musicas_path, class: "secondary-button" %>
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= MMusica.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Música</p>
+        <h2 class="show-summary__title"><%= @m_musica.descricao %></h2>
+        <p class="show-summary__text">Interpretação de <%= @m_musica.m_artista %> com composição de <%= @m_musica.m_compositor %>.</p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Uso no sistema</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Arranjos</span>
+            <span class="show-stat__value"><%= @m_musica.m_arranjos.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Eventos</span>
+            <span class="show-stat__value"><%= @m_musica.m_eventos.count %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= MMusica.human_attribute_name(:descricao) %></span>
-        <span class="detail-value"><%= @m_musica.descricao %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= MMusica.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MMusica.human_attribute_name(:m_compositor_id) %></span>
-        <span class="detail-value"><%= @m_musica.m_compositor %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MMusica.human_attribute_name(:m_artista_id) %></span>
-        <span class="detail-value"><%= @m_musica.m_artista %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@m_musica.created_at) %></span>
-      <span>Atualizado em <%= l(@m_musica.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= MMusica.human_attribute_name(:descricao) %></span>
+          <span class="detail-value"><%= @m_musica.descricao %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MMusica.human_attribute_name(:m_compositor_id) %></span>
+          <span class="detail-value"><%= @m_musica.m_compositor %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MMusica.human_attribute_name(:m_artista_id) %></span>
+          <span class="detail-value"><%= @m_musica.m_artista %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label">Link da versão</span>
+          <span class="detail-value">
+            <% if @m_musica.url_referencia.present? %>
+              <%= link_to @m_musica.url_referencia, @m_musica.url_referencia, target: "_blank", rel: "noopener", class: "related-card__value--link" %>
+            <% else %>
+              -
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <% if @m_musica.url_referencia.present? %>
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Versão</p>
+            <h3>Prévia da referência</h3>
+          </div>
+        </div>
+        <% if @m_musica.url_referencia_embeddable? %>
+          <div class="url-preview">
+            <iframe
+              class="url-preview__frame"
+              src="<%= @m_musica.url_referencia_embed %>"
+              title="Prévia da versão de <%= @m_musica.descricao %>"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        <% else %>
+          <div class="empty-card">
+            Não foi possível incorporar esta referência automaticamente.
+            <%= link_to "Abrir link", @m_musica.url_referencia, target: "_blank", rel: "noopener", class: "related-card__value--link" %>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Arranjos</p>
+          <h3>Arranjos vinculados</h3>
+        </div>
+        <span class="show-section__count"><%= @m_musica.m_arranjos.count %></span>
+      </div>
+      <% if @m_musica.m_arranjos.any? %>
+        <div class="related-grid">
+          <% @m_musica.m_arranjos.each do |arranjo| %>
+            <article class="related-card">
+              <span class="related-card__label"><%= arranjo.m_tonalidade %></span>
+              <span class="related-card__value"><%= "Arranjo ##{arranjo.id}" %></span>
+              <span class="related-card__meta"><%= [arranjo.m_arranjador, pluralize(arranjo.g_instrumentos_naipes.count, "instrumento")].join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum arranjo cadastrado para esta música.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

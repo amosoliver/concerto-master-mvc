@@ -73,7 +73,7 @@
               <td><%= m_grupo.g_entidade %></td>
               <td><%= m_grupo.m_tipo_grupo %></td>
               <td>
-                <%= render "shared/actions_menu", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo) %>
+                <%= render "shared/actions_menu", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo), config_path: manage_m_grupo_path(m_grupo) %>
               </td>
             </tr>
           <% end %>
@@ -93,7 +93,7 @@
             <span class="detail-value"><%= m_grupo.m_tipo_grupo %></span>
           </div>
           <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo) %>
+            <%= render "shared/actions_menu", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo), config_path: manage_m_grupo_path(m_grupo) %>
           </div>
         </article>
       <% end %>

@@ -1,14 +1,5 @@
 <%= form_with(model: g_naipe, local: true, class: "panel-card form-card") do |form| %>
-  <% if g_naipe.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(g_naipe.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% g_naipe.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: g_naipe %>
 
   <div class="form-grid">
     <div class="field-group">

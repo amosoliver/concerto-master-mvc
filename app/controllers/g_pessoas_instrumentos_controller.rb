@@ -21,7 +21,7 @@ class GPessoasInstrumentosController < ApplicationController
     @g_pessoas_instrumento = GPessoasInstrumento.new(g_pessoas_instrumento_params)
 
     if @g_pessoas_instrumento.save
-      redirect_to @g_pessoas_instrumento, notice: "#{GPessoasInstrumento.model_name.human} criado com sucesso."
+      redirect_to g_pessoas_instrumentos_path, notice: "#{GPessoasInstrumento.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GPessoasInstrumentosController < ApplicationController
 
   def update
     if @g_pessoas_instrumento.update(g_pessoas_instrumento_params)
-      redirect_to @g_pessoas_instrumento, notice: "#{GPessoasInstrumento.model_name.human} atualizado com sucesso."
+      redirect_to g_pessoas_instrumentos_path, notice: "#{GPessoasInstrumento.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

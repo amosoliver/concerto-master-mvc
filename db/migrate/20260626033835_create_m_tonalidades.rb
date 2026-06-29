@@ -7,5 +7,12 @@ class CreateMTonalidades < ActiveRecord::Migration[8.1]
       t.timestamps
     end
     add_index :m_tonalidades, :deleted_at
+
+    reversible do |dir|
+      dir.up do
+        Rake::Task["m_tonalidades:populate"].reenable
+        Rake::Task["m_tonalidades:populate"].invoke
+      end
+    end
   end
 end

@@ -10,28 +10,126 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= GInstrumentoNaipe.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Instrumentação</p>
+        <h2 class="show-summary__title"><%= @g_instrumento_naipe %></h2>
+        <p class="show-summary__text">Combinação disponível para pessoas, grupos e arranjos musicais.</p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Uso atual</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Pessoas</span>
+            <span class="show-stat__value"><%= @g_instrumento_naipe.g_pessoas.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Grupos</span>
+            <span class="show-stat__value"><%= @g_instrumento_naipe.m_grupos.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Arranjos</span>
+            <span class="show-stat__value"><%= @g_instrumento_naipe.m_arranjos.count %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_instrumento_id) %></span>
-        <span class="detail-value"><%= @g_instrumento_naipe.g_instrumento %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= GInstrumentoNaipe.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></span>
-        <span class="detail-value"><%= @g_instrumento_naipe.g_naipe %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@g_instrumento_naipe.created_at) %></span>
-      <span>Atualizado em <%= l(@g_instrumento_naipe.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_instrumento_id) %></span>
+          <span class="detail-value"><%= @g_instrumento_naipe.g_instrumento %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></span>
+          <span class="detail-value"><%= @g_instrumento_naipe.g_naipe %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@g_instrumento_naipe.created_at) %></span>
+        <span>Atualizado em <%= l(@g_instrumento_naipe.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Pessoas</p>
+          <h3>Quem toca este instrumento</h3>
+        </div>
+        <span class="show-section__count"><%= @g_instrumento_naipe.g_pessoas.count %></span>
+      </div>
+      <% if @g_instrumento_naipe.g_pessoas.any? %>
+        <div class="related-grid">
+          <% @g_instrumento_naipe.g_pessoas.each do |pessoa| %>
+            <article class="related-card">
+              <span class="related-card__label"><%= pessoa.g_entidade %></span>
+              <%= link_to pessoa.nome, g_pessoa_path(pessoa), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [pessoa.email.presence, pluralize(pessoa.m_grupos.count, "grupo")].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhuma pessoa vinculada a este instrumento e naipe.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Grupos</p>
+          <h3>Grupos que permitem este instrumento</h3>
+        </div>
+        <span class="show-section__count"><%= @g_instrumento_naipe.m_grupos.count %></span>
+      </div>
+      <% if @g_instrumento_naipe.m_grupos.any? %>
+        <div class="related-grid">
+          <% @g_instrumento_naipe.m_grupos.each do |grupo| %>
+            <article class="related-card">
+              <span class="related-card__label"><%= grupo.m_tipo_grupo %></span>
+              <%= link_to grupo.descricao, m_grupo_path(grupo), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= pluralize(grupo.g_pessoas.count, "pessoa") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Este instrumento ainda não foi liberado em nenhum grupo.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Repertório</p>
+          <h3>Arranjos relacionados</h3>
+        </div>
+        <span class="show-section__count"><%= @g_instrumento_naipe.m_arranjos.count %></span>
+      </div>
+      <% if @g_instrumento_naipe.m_arranjos.any? %>
+        <div class="tag-cloud">
+          <% @g_instrumento_naipe.m_arranjos.each do |arranjo| %>
+            <%= link_to arranjo.to_s, m_arranjo_path(arranjo), class: "tag-cloud__item tag-cloud__item--link" %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum arranjo usa esta combinação ainda.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

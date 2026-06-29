@@ -73,7 +73,7 @@
               <td><%= m_musica.m_compositor %></td>
               <td><%= m_musica.m_artista %></td>
               <td>
-                <%= render "shared/actions_menu", show_path: m_musica_path(m_musica), edit_path: edit_m_musica_path(m_musica), delete_path: m_musica_path(m_musica) %>
+                <%= render "shared/actions_menu", show_path: m_musica_path(m_musica), edit_path: edit_m_musica_path(m_musica), delete_path: m_musica_path(m_musica), config_path: manage_arranjos_m_musica_path(m_musica), config_label: "Arranjos" %>
               </td>
             </tr>
           <% end %>
@@ -93,7 +93,7 @@
             <span class="detail-value"><%= m_musica.m_artista %></span>
           </div>
           <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: m_musica_path(m_musica), edit_path: edit_m_musica_path(m_musica), delete_path: m_musica_path(m_musica) %>
+            <%= render "shared/actions_menu", show_path: m_musica_path(m_musica), edit_path: edit_m_musica_path(m_musica), delete_path: m_musica_path(m_musica), config_path: manage_arranjos_m_musica_path(m_musica), config_label: "Arranjos" %>
           </div>
         </article>
       <% end %>

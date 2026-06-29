@@ -1,16 +1,7 @@
 <%= form_with(model: u_perfil, local: true, class: "form-card") do |form| %>
   <% current_section = params[:section] %>
 
-  <% if u_perfil.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(u_perfil.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% u_perfil.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: u_perfil %>
 
   <div class="form-grid">
     <% unless current_section == "funcoes" || current_section == "permissoes" %>

@@ -1,14 +1,5 @@
 <%= form_with(model: u_permissao, local: true, class: "panel-card form-card") do |form| %>
-  <% if u_permissao.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(u_permissao.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% u_permissao.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: u_permissao %>
 
   <div class="form-grid">
     <div class="field-group">

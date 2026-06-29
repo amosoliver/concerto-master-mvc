@@ -21,7 +21,7 @@ class MGruposPessoasController < ApplicationController
     @m_grupo_pessoa = MGrupoPessoa.new(m_grupo_pessoa_params)
 
     if @m_grupo_pessoa.save
-      redirect_to @m_grupo_pessoa, notice: "#{MGrupoPessoa.model_name.human} criado com sucesso."
+      redirect_to m_grupos_pessoas_path, notice: "#{MGrupoPessoa.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MGruposPessoasController < ApplicationController
 
   def update
     if @m_grupo_pessoa.update(m_grupo_pessoa_params)
-      redirect_to @m_grupo_pessoa, notice: "#{MGrupoPessoa.model_name.human} atualizado com sucesso."
+      redirect_to m_grupos_pessoas_path, notice: "#{MGrupoPessoa.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

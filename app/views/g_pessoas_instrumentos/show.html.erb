@@ -10,28 +10,81 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= GPessoasInstrumento.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Instrumento da pessoa</p>
+        <h2 class="show-summary__title"><%= @g_pessoas_instrumento.g_instrumento_naipe %></h2>
+        <p class="show-summary__text">Vínculo do instrumento com <%= @g_pessoas_instrumento.g_pessoa %>.</p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Participação</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Grupos</span>
+            <span class="show-stat__value"><%= @g_pessoas_instrumento.g_pessoa.m_grupos.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Instrumentos</span>
+            <span class="show-stat__value"><%= @g_pessoas_instrumento.g_pessoa.g_instrumentos_naipes.count %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoasInstrumento.human_attribute_name(:g_pessoa_id) %></span>
-        <span class="detail-value"><%= @g_pessoas_instrumento.g_pessoa %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= GPessoasInstrumento.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPessoasInstrumento.human_attribute_name(:g_instrumento_naipe_id) %></span>
-        <span class="detail-value"><%= @g_pessoas_instrumento.g_instrumento_naipe %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@g_pessoas_instrumento.created_at) %></span>
-      <span>Atualizado em <%= l(@g_pessoas_instrumento.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoasInstrumento.human_attribute_name(:g_pessoa_id) %></span>
+          <span class="detail-value"><%= @g_pessoas_instrumento.g_pessoa %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPessoasInstrumento.human_attribute_name(:g_instrumento_naipe_id) %></span>
+          <span class="detail-value"><%= @g_pessoas_instrumento.g_instrumento_naipe %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@g_pessoas_instrumento.created_at) %></span>
+        <span>Atualizado em <%= l(@g_pessoas_instrumento.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Contexto</p>
+          <h3>Outros vínculos da pessoa</h3>
+        </div>
+      </div>
+      <div class="related-grid">
+        <article class="related-card">
+          <span class="related-card__label">Pessoa</span>
+          <%= link_to @g_pessoas_instrumento.g_pessoa, g_pessoa_path(@g_pessoas_instrumento.g_pessoa), class: "related-card__value related-card__value--link" %>
+          <span class="related-card__meta"><%= [@g_pessoas_instrumento.g_pessoa.g_entidade, @g_pessoas_instrumento.g_pessoa.email.presence].compact.join(" • ") %></span>
+        </article>
+
+        <% @g_pessoas_instrumento.g_pessoa.m_grupos.each do |grupo| %>
+          <article class="related-card">
+            <span class="related-card__label">Grupo</span>
+            <%= link_to grupo, m_grupo_path(grupo), class: "related-card__value related-card__value--link" %>
+            <span class="related-card__meta"><%= grupo.m_tipo_grupo %></span>
+          </article>
+        <% end %>
+      </div>
+    </section>
+  </div>
 </div>

@@ -10,28 +10,76 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= MGrupoPessoa.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Participação</p>
+        <h2 class="show-summary__title"><%= @m_grupo_pessoa.g_pessoa %></h2>
+        <p class="show-summary__text">Pessoa vinculada ao grupo <%= @m_grupo_pessoa.m_grupo %>.</p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Relacionamentos</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Instrumentos</span>
+            <span class="show-stat__value"><%= @m_grupo_pessoa.g_pessoa.g_instrumentos_naipes.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Outros grupos</span>
+            <span class="show-stat__value"><%= @m_grupo_pessoa.g_pessoa.m_grupos.where.not(id: @m_grupo_pessoa.m_grupo_id).count %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:g_pessoa_id) %></span>
-        <span class="detail-value"><%= @m_grupo_pessoa.g_pessoa %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= MGrupoPessoa.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:m_grupo_id) %></span>
-        <span class="detail-value"><%= @m_grupo_pessoa.m_grupo %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@m_grupo_pessoa.created_at) %></span>
-      <span>Atualizado em <%= l(@m_grupo_pessoa.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:g_pessoa_id) %></span>
+          <span class="detail-value"><%= @m_grupo_pessoa.g_pessoa %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MGrupoPessoa.human_attribute_name(:m_grupo_id) %></span>
+          <span class="detail-value"><%= @m_grupo_pessoa.m_grupo %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@m_grupo_pessoa.created_at) %></span>
+        <span>Atualizado em <%= l(@m_grupo_pessoa.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Instrumentação</p>
+          <h3>Instrumentos da pessoa</h3>
+        </div>
+        <span class="show-section__count"><%= @m_grupo_pessoa.g_pessoa.g_instrumentos_naipes.count %></span>
+      </div>
+      <% if @m_grupo_pessoa.g_pessoa.g_instrumentos_naipes.any? %>
+        <div class="tag-cloud">
+          <% @m_grupo_pessoa.g_pessoa.g_instrumentos_naipes.each do |instrumento| %>
+            <%= link_to instrumento.to_s, g_instrumento_naipe_path(instrumento), class: "tag-cloud__item tag-cloud__item--link" %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Esta pessoa ainda não possui instrumentos vinculados.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

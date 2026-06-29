@@ -87,6 +87,7 @@ pt-BR:
     g_usuario_id: "Usuário"
     m_musica_id: "Música"
     m_arranjador_id: "Arranjador"
+    m_tipo_arranjo_id: "Tipo de Arranjo"
     m_tonalidade_id: "Tonalidade"
     m_arranjo_id: "Arranjo"
     m_evento_id: "Evento"
@@ -146,6 +147,9 @@ pt-BR:
       m_arranjo:
         one: "Arranjo"
         other: "Arranjos"
+      m_tipo_arranjo:
+        one: "Tipo de Arranjo"
+        other: "Tipos de Arranjo"
       m_arranjo_instrumento_naipe:
         one: "Instrumento do Arranjo"
         other: "Instrumentos do Arranjo"

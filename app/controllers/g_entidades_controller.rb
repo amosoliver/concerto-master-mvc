@@ -159,7 +159,7 @@ class GEntidadesController < ApplicationController
     @g_municipios = GMunicipio.order(:descricao)
     @g_entidades_pai = @g_entidade&.persisted? ? tenant_entity_scope.where.not(id: @g_entidade.id) : tenant_entity_scope
     @m_tipos_grupos = MTipoGrupo.order(:descricao)
-    @g_instrumentos_naipes = tenant_instrumento_scope.sort_by(&:to_s)
+    @g_instrumentos_naipes = GInstrumentoNaipe.includes(:g_instrumento, :g_naipe).sort_by(&:to_s)
     @g_predio ||= @g_entidade&.g_predio_principal || GPredio.new
   end
 

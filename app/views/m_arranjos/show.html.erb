@@ -6,36 +6,123 @@
     </div>
     <div class="page-header__actions">
       <%= authorized_link_to "Editar", edit_m_arranjo_path(@m_arranjo), class: "primary-button" %>
+      <%= authorized_link_to "Ver música", m_musica_path(@m_arranjo.m_musica), class: "secondary-button" %>
       <%= link_to "Voltar", m_arranjos_path, class: "secondary-button" %>
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= MArranjo.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Arranjo</p>
+        <h2 class="show-summary__title"><%= @m_arranjo.descricao.presence || "#{@m_arranjo.m_musica} - #{@m_arranjo.m_arranjador}" %></h2>
+        <p class="show-summary__text"><%= [@m_arranjo.m_tipo_arranjo, @m_arranjo.m_arranjador, @m_arranjo.m_tonalidade].compact.join(" • ") %></p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Instrumentação</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Instrumentos</span>
+            <span class="show-stat__value"><%= @m_arranjo.g_instrumentos_naipes.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Música</span>
+            <span class="show-stat__value">#<%= @m_arranjo.m_musica_id %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
-        <span class="detail-value"><%= @m_arranjo.m_musica %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= MArranjo.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
-        <span class="detail-value"><%= @m_arranjo.m_arranjador %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>
-        <span class="detail-value"><%= @m_arranjo.m_tonalidade %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@m_arranjo.created_at) %></span>
-      <span>Atualizado em <%= l(@m_arranjo.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= MArranjo.human_attribute_name(:descricao) %></span>
+          <span class="detail-value"><%= @m_arranjo.descricao.presence || "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
+          <span class="detail-value"><%= @m_arranjo.m_musica %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></span>
+          <span class="detail-value"><%= @m_arranjo.m_tipo_arranjo %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
+          <span class="detail-value"><%= @m_arranjo.m_arranjador %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>
+          <span class="detail-value"><%= @m_arranjo.m_tonalidade %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@m_arranjo.created_at) %></span>
+        <span>Atualizado em <%= l(@m_arranjo.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Instrumentos</p>
+          <h3>Instrumentos do arranjo</h3>
+        </div>
+        <span class="show-section__count"><%= @m_arranjo.g_instrumentos_naipes.count %></span>
+      </div>
+      <% if @instrumentos_do_arranjo.any? %>
+        <div class="related-grid">
+          <% @instrumentos_do_arranjo.each do |instrumento_arranjo| %>
+            <article class="related-card">
+              <span class="related-card__label">Instrumento</span>
+              <%= link_to instrumento_arranjo.g_instrumento_naipe.to_s, g_instrumento_naipe_path(instrumento_arranjo.g_instrumento_naipe), class: "related-card__value related-card__value--link" %>
+              <% if instrumento_arranjo.arquivo.attached? %>
+                <div class="attachment-stack">
+                  <% instrumento_arranjo.arquivo.each do |arquivo| %>
+                    <% if audio_attachment_file?(arquivo) %>
+                      <div class="attachment-audio-card">
+                        <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
+                        <div class="attachment-actions">
+                          <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+                          <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+                        </div>
+                      </div>
+                    <% else %>
+                      <div class="attachment-file-card">
+                        <span class="attachment-file-card__meta"><%= attachment_label(arquivo) %></span>
+                        <div class="attachment-actions attachment-actions--stacked">
+                          <% if previewable_attachment_file?(arquivo) %>
+                            <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+                          <% end %>
+                          <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+                        </div>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% else %>
+                <span class="related-card__meta">Sem anexo</span>
+              <% end %>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum instrumento foi vinculado a este arranjo.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

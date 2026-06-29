@@ -1,23 +1,28 @@
 <%= form_with(model: g_instrumento_naipe, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
-  <% if g_instrumento_naipe.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%= pluralize(g_instrumento_naipe.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <% g_instrumento_naipe.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: g_instrumento_naipe %>
 
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :g_instrumento_id %>
-      <%= form.collection_select :g_instrumento_id, GInstrumento.all, :id, :to_s, { include_blank: "Selecione um instrumento..." }, class: "form-control" %>
+      <%= form.collection_select :g_instrumento_id, @g_instrumentos, :id, :to_s, { include_blank: "Selecione um instrumento existente..." }, class: "form-control" %>
+      <details class="field-toggle" <%= "open" if g_instrumento_naipe.novo_g_instrumento.present? %>>
+        <summary class="secondary-button">Cadastrar novo instrumento</summary>
+        <div class="field-toggle__content">
+          <small class="field-hint">Se preencher aqui, o sistema cria o instrumento e usa ele neste vinculo.</small>
+          <%= form.text_field :novo_g_instrumento, class: "form-control", placeholder: "Digite um novo instrumento", data: { controller: "uppercase" } %>
+        </div>
+      </details>
     </div>
     <div class="field-group">
       <%= form.label :g_naipe_id %>
-      <%= form.collection_select :g_naipe_id, GNaipe.all, :id, :to_s, { include_blank: "Selecione um naipe..." }, class: "form-control" %>
+      <%= form.collection_select :g_naipe_id, @g_naipes, :id, :to_s, { include_blank: "Selecione um naipe existente..." }, class: "form-control" %>
+      <details class="field-toggle" <%= "open" if g_instrumento_naipe.novo_g_naipe.present? %>>
+        <summary class="secondary-button">Cadastrar novo naipe</summary>
+        <div class="field-toggle__content">
+          <small class="field-hint">Se preencher aqui, o sistema cria o naipe e usa ele neste vinculo.</small>
+          <%= form.text_field :novo_g_naipe, class: "form-control", placeholder: "Digite um novo naipe", data: { controller: "uppercase" } %>
+        </div>
+      </details>
     </div>
   </div>
 

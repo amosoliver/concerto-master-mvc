@@ -1,0 +1,126 @@
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciamento</p>
+      <h1><%= model_plural_human_name(MEnsaioMusica) %></h1>
+    </div>
+    <div class="page-header__actions">
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
+      <%= link_to "Novo #{MEnsaioMusica.model_name.human}", new_m_ensaio_musica_path, class: "primary-button" %>
+    </div>
+  </div>
+
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%= search_form_for @q, url: m_ensaio_musicas_path, method: :get do |f| %>
+      <div class="search-grid">
+        <div class="search-field">
+          <label><%= MEnsaioMusica.human_attribute_name(:m_ensaio_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :m_ensaio_id_eq, options_from_collection_for_select(MEnsaio.all, :id, :to_s, @q&.send(:m_ensaio_id_eq)), { include_blank: true }, "aria-label": MEnsaioMusica.human_attribute_name(:m_ensaio_id), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaioMusica.human_attribute_name(:m_evento_musica_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :m_evento_musica_id_eq, options_from_collection_for_select(MEventoMusica.all, :id, :to_s, @q&.send(:m_evento_musica_id_eq)), { include_blank: true }, "aria-label": MEnsaioMusica.human_attribute_name(:m_evento_musica_id), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaioMusica.human_attribute_name(:g_entidade_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :g_entidade_id_eq, options_from_collection_for_select(GEntidade.all, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": MEnsaioMusica.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaioMusica.human_attribute_name(:observacao) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :observacao_cont, placeholder: MEnsaioMusica.human_attribute_name(:observacao), "aria-label": MEnsaioMusica.human_attribute_name(:observacao), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaioMusica.human_attribute_name(:deleted_at) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :deleted_at_cont, placeholder: MEnsaioMusica.human_attribute_name(:deleted_at), "aria-label": MEnsaioMusica.human_attribute_name(:deleted_at), class: "search-input__field" %>
+          </div>
+        </div>
+      </div>
+      <div class="search-panel__actions">
+        <%= f.submit "Filtrar", class: "primary-button" %>
+        <%= link_to "Limpar", m_ensaio_musicas_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <section class="panel-card" data-controller="view-toggle">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Listagem</p>
+        <h3><%= pluralize(@m_ensaio_musicas.size, "registro") %></h3>
+      </div>
+      <div class="view-switch">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper" data-view-toggle-target="table">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col"><%= MEnsaioMusica.human_attribute_name(:m_ensaio_id) %></th>
+            <th scope="col"><%= MEnsaioMusica.human_attribute_name(:m_evento_musica_id) %></th>
+            <th scope="col"><%= MEnsaioMusica.human_attribute_name(:g_entidade_id) %></th>
+            <th scope="col"><%= MEnsaioMusica.human_attribute_name(:observacao) %></th>
+            <th scope="col"><%= MEnsaioMusica.human_attribute_name(:deleted_at) %></th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @m_ensaio_musicas.each do |m_ensaio_musica| %>
+            <tr>
+              <td><%= m_ensaio_musica.m_ensaio %></td>
+              <td><%= m_ensaio_musica.m_evento_musica %></td>
+              <td><%= m_ensaio_musica.g_entidade %></td>
+              <td><%= m_ensaio_musica.observacao %></td>
+              <td><%= m_ensaio_musica.deleted_at %></td>
+              <td>
+                <%= render "shared/actions_menu", show_path: m_ensaio_musica_path(m_ensaio_musica), edit_path: edit_m_ensaio_musica_path(m_ensaio_musica), delete_path: m_ensaio_musica_path(m_ensaio_musica) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" data-view-toggle-target="cards" hidden>
+      <% @m_ensaio_musicas.each do |m_ensaio_musica| %>
+        <article class="record-card">
+          <div class="record-card__body">
+            <span class="detail-label"><%= MEnsaioMusica.human_attribute_name(:m_ensaio_id) %></span>
+            <span class="detail-value"><%= m_ensaio_musica.m_ensaio %></span>
+            <span class="detail-label"><%= MEnsaioMusica.human_attribute_name(:m_evento_musica_id) %></span>
+            <span class="detail-value"><%= m_ensaio_musica.m_evento_musica %></span>
+            <span class="detail-label"><%= MEnsaioMusica.human_attribute_name(:g_entidade_id) %></span>
+            <span class="detail-value"><%= m_ensaio_musica.g_entidade %></span>
+            <span class="detail-label"><%= MEnsaioMusica.human_attribute_name(:observacao) %></span>
+            <span class="detail-value"><%= m_ensaio_musica.observacao %></span>
+            <span class="detail-label"><%= MEnsaioMusica.human_attribute_name(:deleted_at) %></span>
+            <span class="detail-value"><%= m_ensaio_musica.deleted_at %></span>
+          </div>
+          <div class="record-card__footer">
+            <%= render "shared/actions_menu", show_path: m_ensaio_musica_path(m_ensaio_musica), edit_path: edit_m_ensaio_musica_path(m_ensaio_musica), delete_path: m_ensaio_musica_path(m_ensaio_musica) %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+
+    <%= render "layouts/pagination", pagy: @pagy %>
+  </section>
+</div>

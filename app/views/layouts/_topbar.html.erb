@@ -1,29 +1,63 @@
 <header class="topbar">
   <div class="topbar__primary">
     <button type="button" class="sidebar-toggle" data-sidebar-target="toggle" data-action="click->sidebar#toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
-    <label class="searchbox" aria-label="Buscar">
-      <span>🔎</span>
-      <input type="search" placeholder="Buscar músicas, eventos, usuários..." />
-    </label>
+    <div class="topbar__accent" aria-hidden="true"></div>
   </div>
 
   <div class="topbar__actions">
-    <button class="icon-button" aria-label="Notificações">🔔</button>
     <button class="icon-button" data-action="click->theme#toggle" aria-label="Alternar tema">
       <span data-theme-target="themeIcon">🌙</span>
     </button>
-    <button class="icon-button" aria-label="Ajuda">❓</button>
     <% if g_usuario_signed_in? %>
       <div class="actions-menu" data-controller="dropdown">
         <button type="button" class="avatar-pill" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false">
           <div class="avatar"><%= current_g_usuario.g_pessoa.nome.to_s.first(2).upcase %></div>
           <div>
             <strong><%= current_g_usuario.g_pessoa.nome %></strong>
-            <small><%= current_g_usuario.email %></small>
+            <small><%= current_context_entidade || "Sem entidade ativa" %></small>
           </div>
         </button>
         <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-          <%= button_to destroy_g_usuario_session_path, method: :delete, class: "actions-menu__item" do %><span aria-hidden="true">🚪</span> Sair<% end %>
+          <div class="tenant-menu">
+            <div class="tenant-menu__header">
+              <strong><%= current_g_usuario.g_pessoa.nome %></strong>
+              <small><%= current_g_usuario.email %></small>
+            </div>
+
+            <% if current_context_entidade_base.present? %>
+              <div class="tenant-menu__section">
+                <p class="tenant-menu__label">Tenant ativo</p>
+                <div class="tenant-menu__current">
+                  <strong><%= current_context_entidade %></strong>
+                  <% if current_context_entidade_base != current_context_entidade %>
+                    <small>Base do usuario: <%= current_context_entidade_base %></small>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="tenant-menu__section">
+                <p class="tenant-menu__label">Trocar entidade</p>
+                <div class="tenant-menu__list">
+                  <% current_context_entidades_hierarquia.each do |row| %>
+                    <%= button_to tenant_path, method: :patch, params: { tenant: { g_entidade_id: row[:entidade].id } }, class: "tenant-menu__item #{'is-active' if row[:active]}" do %>
+                      <span class="tenant-menu__name"><%= "#{'- ' * row[:level]}#{row[:entidade]}" %></span>
+                      <% if row[:active] %>
+                        <span class="tenant-menu__badge">Ativa</span>
+                      <% elsif row[:level].zero? %>
+                        <span class="tenant-menu__meta">Pai</span>
+                      <% else %>
+                        <span class="tenant-menu__meta">Filha</span>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="tenant-menu__section tenant-menu__section--footer">
+              <%= button_to destroy_g_usuario_session_path, method: :delete, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🚪</span> Sair<% end %>
+            </div>
+          </div>
         </div>
       </div>
     <% end %>

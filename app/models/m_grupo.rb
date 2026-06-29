@@ -12,6 +12,8 @@ class MGrupo < ApplicationRecord
   has_many :m_grupos_instrumentos_naipes, class_name: "MGrupoInstrumentoNaipe"
   has_many :g_instrumentos_naipes, through: :m_grupos_instrumentos_naipes
 
+  before_validation :assign_g_entidade
+
   def to_s
     descricao
   end
@@ -22,5 +24,11 @@ class MGrupo < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+
+  private
+
+  def assign_g_entidade
+    self.g_entidade_id ||= Current.g_entidade&.id
   end
 end

@@ -37,15 +37,15 @@ module TenantAccess
   end
 
   def current_tenant_entity
-    current_g_usuario&.g_pessoa&.g_entidade
+    Current.g_entidade
   end
 
   def current_tenant_entity_ids
-    @current_tenant_entity_ids ||= current_tenant_entity ? current_tenant_entity.self_and_descendant_ids : []
+    Current.g_entidade_ids || []
   end
 
   def current_tenant_instrument_ids
-    @current_tenant_instrument_ids ||= current_g_usuario&.g_pessoa&.g_instrumento_naipe_ids.to_a.uniq
+    Current.g_instrumento_naipe_ids || []
   end
 
   def tenant_entity_scope

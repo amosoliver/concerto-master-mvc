@@ -3,8 +3,6 @@ class TenantScopeResolver
     GPessoasInstrumento
     MGrupoInstrumentoNaipe
     MGrupoPessoa
-    MMusica
-    MArranjo
     MArranjoInstrumentoNaipe
     MPessoaFuncao
     MEventoMusica

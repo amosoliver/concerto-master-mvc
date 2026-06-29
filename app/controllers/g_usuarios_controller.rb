@@ -22,7 +22,7 @@ class GUsuariosController < ApplicationController
     normalize_g_usuario_password!(@g_usuario, creating: true)
 
     if @g_usuario.save
-      redirect_to @g_usuario, notice: "#{GUsuario.model_name.human} criado com sucesso."
+      redirect_to g_usuarios_path, notice: "#{GUsuario.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -32,7 +32,7 @@ class GUsuariosController < ApplicationController
     normalize_g_usuario_password!(@g_usuario, creating: false)
 
     if @g_usuario.update(g_usuario_params)
-      redirect_to @g_usuario, notice: "#{GUsuario.model_name.human} atualizado com sucesso."
+      redirect_to g_usuarios_path, notice: "#{GUsuario.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

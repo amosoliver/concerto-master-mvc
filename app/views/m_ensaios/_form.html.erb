@@ -1,0 +1,32 @@
+<%= form_with(model: m_ensaio, local: true, class: "panel-card form-card") do |form| %>
+  <%= render "shared/form_errors", record: m_ensaio %>
+
+  <div class="form-grid">
+    <div class="field-group">
+      <%= form.label :descricao %>
+      <%= form.text_field :descricao, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :data_inicio %>
+      <%= form.datetime_field :data_inicio, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :data_fim %>
+      <%= form.datetime_field :data_fim, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <%= form.label :g_predio_id %>
+      <%= form.collection_select :g_predio_id, @g_predios, :id, :to_s, { include_blank: true }, class: "form-control" %>
+    </div>
+    <div class="field-group">
+      <label>Entidade</label>
+      <div class="form-control form-control--static"><%= current_context_entidade || "Sem entidade vinculada" %></div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancelar", m_ensaio_path(@m_ensaio), class: "secondary-button" if m_ensaio.persisted? %>
+    <%= link_to "Cancelar", m_ensaios_path, class: "secondary-button" unless m_ensaio.persisted? %>
+  </div>
+<% end %>

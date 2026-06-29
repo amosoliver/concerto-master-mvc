@@ -21,7 +21,7 @@ class UTiposFuncoesController < ApplicationController
     @u_tipo_funcao = UTipoFuncao.new(u_tipo_funcao_params)
 
     if @u_tipo_funcao.save
-      redirect_to @u_tipo_funcao, notice: "#{UTipoFuncao.model_name.human} criado com sucesso."
+      redirect_to u_tipos_funcoes_path, notice: "#{UTipoFuncao.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class UTiposFuncoesController < ApplicationController
 
   def update
     if @u_tipo_funcao.update(u_tipo_funcao_params)
-      redirect_to @u_tipo_funcao, notice: "#{UTipoFuncao.model_name.human} atualizado com sucesso."
+      redirect_to u_tipos_funcoes_path, notice: "#{UTipoFuncao.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

@@ -1,17 +1,35 @@
 Rails.application.routes.draw do
+  resource :tenant, only: :update
+  resources :m_ensaio_musicas
+  resources :m_ensaios
   devise_for :g_usuarios, controllers: { sessions: "g_usuarios/sessions", registrations: "g_usuarios/registrations" }
 
   resources :m_eventos_musicas
   resources :m_eventos
   resources :m_arranjos_instrumentos_naipes
-  resources :m_arranjos
+  resources :m_tipos_arranjos
+  resources :m_arranjos do
+    member do
+      get :manage_files
+      patch :update_files
+    end
+  end
   resources :m_arranjadores
   resources :m_tonalidades
-  resources :m_musicas
+  resources :m_musicas do
+    member do
+      get :manage_arranjos
+    end
+  end
   resources :m_artistas
   resources :m_compositores
   resources :m_grupos_pessoas
-  resources :m_grupos
+  resources :m_grupos do
+    member do
+      get :manage
+      patch :update_management
+    end
+  end
   resources :m_tipos_grupos
   resources :g_pessoas_instrumentos
   resources :g_instrumentos_naipes

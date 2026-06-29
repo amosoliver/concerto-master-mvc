@@ -1,0 +1,137 @@
+<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciamento</p>
+      <h1><%= model_plural_human_name(MEnsaio) %></h1>
+    </div>
+    <div class="page-header__actions">
+      <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
+        <span aria-hidden="true">🔎</span> Filtros
+      </button>
+      <%= link_to "Novo #{MEnsaio.model_name.human}", new_m_ensaio_path, class: "primary-button" %>
+    </div>
+  </div>
+
+  <div class="search-panel" data-filters-target="panel" hidden>
+    <%= search_form_for @q, url: m_ensaios_path, method: :get do |f| %>
+      <div class="search-grid">
+        <div class="search-field">
+          <label><%= MEnsaio.human_attribute_name(:descricao) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :descricao_cont, placeholder: MEnsaio.human_attribute_name(:descricao), "aria-label": MEnsaio.human_attribute_name(:descricao), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaio.human_attribute_name(:data_inicio) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :data_inicio_cont, placeholder: MEnsaio.human_attribute_name(:data_inicio), "aria-label": MEnsaio.human_attribute_name(:data_inicio), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaio.human_attribute_name(:data_fim) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :data_fim_cont, placeholder: MEnsaio.human_attribute_name(:data_fim), "aria-label": MEnsaio.human_attribute_name(:data_fim), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaio.human_attribute_name(:g_predio_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :g_predio_id_eq, options_from_collection_for_select(GPredio.all, :id, :to_s, @q&.send(:g_predio_id_eq)), { include_blank: true }, "aria-label": MEnsaio.human_attribute_name(:g_predio_id), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaio.human_attribute_name(:g_entidade_id) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.select :g_entidade_id_eq, options_from_collection_for_select(GEntidade.all, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": MEnsaio.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
+          </div>
+        </div>
+        <div class="search-field">
+          <label><%= MEnsaio.human_attribute_name(:deleted_at) %></label>
+          <div class="search-input">
+            <span aria-hidden="true">🔎</span>
+            <%= f.search_field :deleted_at_cont, placeholder: MEnsaio.human_attribute_name(:deleted_at), "aria-label": MEnsaio.human_attribute_name(:deleted_at), class: "search-input__field" %>
+          </div>
+        </div>
+      </div>
+      <div class="search-panel__actions">
+        <%= f.submit "Filtrar", class: "primary-button" %>
+        <%= link_to "Limpar", m_ensaios_path, class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <section class="panel-card" data-controller="view-toggle">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Listagem</p>
+        <h3><%= pluralize(@m_ensaios.size, "registro") %></h3>
+      </div>
+      <div class="view-switch">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper" data-view-toggle-target="table">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col"><%= MEnsaio.human_attribute_name(:descricao) %></th>
+            <th scope="col"><%= MEnsaio.human_attribute_name(:data_inicio) %></th>
+            <th scope="col"><%= MEnsaio.human_attribute_name(:data_fim) %></th>
+            <th scope="col"><%= MEnsaio.human_attribute_name(:g_predio_id) %></th>
+            <th scope="col"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></th>
+            <th scope="col"><%= MEnsaio.human_attribute_name(:deleted_at) %></th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @m_ensaios.each do |m_ensaio| %>
+            <tr>
+              <td><%= m_ensaio.descricao %></td>
+              <td><%= m_ensaio.data_inicio %></td>
+              <td><%= m_ensaio.data_fim %></td>
+              <td><%= m_ensaio.g_predio %></td>
+              <td><%= m_ensaio.g_entidade %></td>
+              <td><%= m_ensaio.deleted_at %></td>
+              <td>
+                <%= render "shared/actions_menu", show_path: m_ensaio_path(m_ensaio), edit_path: edit_m_ensaio_path(m_ensaio), delete_path: m_ensaio_path(m_ensaio) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" data-view-toggle-target="cards" hidden>
+      <% @m_ensaios.each do |m_ensaio| %>
+        <article class="record-card">
+          <div class="record-card__body">
+            <span class="detail-label"><%= MEnsaio.human_attribute_name(:descricao) %></span>
+            <span class="detail-value"><%= m_ensaio.descricao %></span>
+            <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_inicio) %></span>
+            <span class="detail-value"><%= m_ensaio.data_inicio %></span>
+            <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_fim) %></span>
+            <span class="detail-value"><%= m_ensaio.data_fim %></span>
+            <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_predio_id) %></span>
+            <span class="detail-value"><%= m_ensaio.g_predio %></span>
+            <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
+            <span class="detail-value"><%= m_ensaio.g_entidade %></span>
+            <span class="detail-label"><%= MEnsaio.human_attribute_name(:deleted_at) %></span>
+            <span class="detail-value"><%= m_ensaio.deleted_at %></span>
+          </div>
+          <div class="record-card__footer">
+            <%= render "shared/actions_menu", show_path: m_ensaio_path(m_ensaio), edit_path: edit_m_ensaio_path(m_ensaio), delete_path: m_ensaio_path(m_ensaio) %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+
+    <%= render "layouts/pagination", pagy: @pagy %>
+  </section>
+</div>

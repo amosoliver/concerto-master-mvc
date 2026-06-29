@@ -21,7 +21,7 @@ class MEventosMusicasController < ApplicationController
     @m_evento_musica = MEventoMusica.new(m_evento_musica_params)
 
     if @m_evento_musica.save
-      redirect_to @m_evento_musica, notice: "#{MEventoMusica.model_name.human} criado com sucesso."
+      redirect_to m_eventos_musicas_path, notice: "#{MEventoMusica.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class MEventosMusicasController < ApplicationController
 
   def update
     if @m_evento_musica.update(m_evento_musica_params)
-      redirect_to @m_evento_musica, notice: "#{MEventoMusica.model_name.human} atualizado com sucesso."
+      redirect_to m_eventos_musicas_path, notice: "#{MEventoMusica.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

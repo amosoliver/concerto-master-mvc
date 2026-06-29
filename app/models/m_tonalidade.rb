@@ -1,8 +1,5 @@
 class MTonalidade < ApplicationRecord
   include SoftDeletable
-  include Uppercasable
-
-  upcases :descricao
 
   has_many :m_arranjos
 

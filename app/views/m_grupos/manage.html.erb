@@ -1,0 +1,110 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Configuração</p>
+      <h1>Gerenciar <%= @m_grupo.descricao %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= authorized_link_to "Ver grupo", m_grupo_path(@m_grupo), class: "secondary-button" %>
+      <%= authorized_link_to "Editar dados", edit_m_grupo_path(@m_grupo), class: "secondary-button" %>
+      <%= link_to "Voltar", m_grupos_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Grupo</p>
+        <h2 class="show-summary__title"><%= @m_grupo.descricao %></h2>
+        <p class="show-summary__text">
+          Aqui você define separadamente quem participa do grupo e quais instrumentos e naipes são permitidos.
+        </p>
+        <div class="page-header__actions">
+          <%= link_to "Gerenciar pessoas", "#gestao-pessoas", class: "secondary-button" %>
+          <%= link_to "Gerenciar instrumentos", "#gestao-instrumentos", class: "secondary-button" %>
+        </div>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Composição atual</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Entidade</span>
+            <span class="show-stat__value"><%= @m_grupo.g_entidade %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Pessoas</span>
+            <span class="show-stat__value"><%= @m_grupo.g_pessoas.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Instrumentos</span>
+            <span class="show-stat__value"><%= @m_grupo.g_instrumentos_naipes.count %></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <%= form_with model: @m_grupo, url: update_management_m_grupo_path(@m_grupo), method: :patch, local: true, class: "panel-card form-card" do |form| %>
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Gerenciamento</p>
+          <h3>Pessoas e instrumentos permitidos</h3>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div id="gestao-pessoas" class="field-group field-group--full">
+          <label>Pessoas do grupo</label>
+          <p class="selection-help">Escolha abaixo quem faz parte deste grupo.</p>
+          <div class="selection-panel">
+            <div class="selection-group">
+              <div class="selection-group__items">
+                <% selected_pessoa_ids = @m_grupo.g_pessoa_ids.map(&:to_i) %>
+                <% @available_pessoas.each do |pessoa| %>
+                  <label class="selection-item">
+                    <%= check_box_tag "m_grupo[g_pessoa_ids][]", pessoa.id, selected_pessoa_ids.include?(pessoa.id) %>
+                    <span><%= pessoa.nome %></span>
+                  </label>
+                <% end %>
+              </div>
+              <% if @available_pessoas.blank? %>
+                <p class="empty-hint">Nenhuma pessoa disponível na entidade deste grupo.</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div id="gestao-instrumentos" class="field-group field-group--full">
+          <label>Instrumentos permitidos</label>
+          <p class="selection-help">Escolha quais instrumentos e naipes podem ser usados neste grupo.</p>
+          <div class="selection-panel">
+            <div class="selection-group">
+              <div class="selection-group__items">
+                <% selected_instrumento_ids = @m_grupo.g_instrumento_naipe_ids.map(&:to_i) %>
+                <% @available_instrumentos.each do |instrumento| %>
+                  <label class="selection-item">
+                    <%= check_box_tag "m_grupo[g_instrumento_naipe_ids][]", instrumento.id, selected_instrumento_ids.include?(instrumento.id) %>
+                    <span><%= instrumento %></span>
+                  </label>
+                <% end %>
+              </div>
+              <% if @available_instrumentos.blank? %>
+                <p class="empty-hint">Nenhum instrumento e naipe cadastrado.</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="steps-actions">
+        <%= form.submit "Salvar configuração", class: "primary-button" %>
+        <%= link_to "Voltar para o grupo", m_grupo_path(@m_grupo), class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

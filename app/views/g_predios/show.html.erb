@@ -10,40 +10,122 @@
     </div>
   </div>
 
-  <section class="panel-card detail-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Informações</p>
-        <h3><%= GPredio.model_name.human %></h3>
-      </div>
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Local</p>
+        <h2 class="show-summary__title"><%= @g_predio.nome_fantasia %></h2>
+        <p class="show-summary__text">
+          Espaço da entidade <%= @g_predio.g_entidade %> localizado em
+          <%= [@g_predio.logradouro, @g_predio.bairro].compact.reject(&:blank?).join(" • ") %>.
+        </p>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Movimentação</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Eventos</span>
+            <span class="show-stat__value"><%= @g_predio.m_eventos.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Ensaios</span>
+            <span class="show-stat__value"><%= @g_predio.m_ensaios.count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">CEP</span>
+            <span class="show-stat__value"><%= format_cep(@g_predio.cep).presence || "-" %></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="detail-grid">
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPredio.human_attribute_name(:nome_fantasia) %></span>
-        <span class="detail-value"><%= @g_predio.nome_fantasia %></span>
+    <section class="panel-card detail-card">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Informações</p>
+          <h3><%= GPredio.model_name.human %></h3>
+        </div>
       </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPredio.human_attribute_name(:cep) %></span>
-        <span class="detail-value"><%= format_cep(@g_predio.cep) %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPredio.human_attribute_name(:logradouro) %></span>
-        <span class="detail-value"><%= @g_predio.logradouro %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPredio.human_attribute_name(:bairro) %></span>
-        <span class="detail-value"><%= @g_predio.bairro %></span>
-      </div>
-      <div class="detail-tile">
-        <span class="detail-label"><%= GPredio.human_attribute_name(:g_entidade_id) %></span>
-        <span class="detail-value"><%= @g_predio.g_entidade %></span>
-      </div>
-    </div>
 
-    <div class="detail-meta">
-      <span>Criado em <%= l(@g_predio.created_at) %></span>
-      <span>Atualizado em <%= l(@g_predio.updated_at) %></span>
-    </div>
-  </section>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPredio.human_attribute_name(:nome_fantasia) %></span>
+          <span class="detail-value"><%= @g_predio.nome_fantasia %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPredio.human_attribute_name(:cep) %></span>
+          <span class="detail-value"><%= format_cep(@g_predio.cep).presence || "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPredio.human_attribute_name(:logradouro) %></span>
+          <span class="detail-value"><%= @g_predio.logradouro.presence || "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPredio.human_attribute_name(:bairro) %></span>
+          <span class="detail-value"><%= @g_predio.bairro.presence || "-" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label"><%= GPredio.human_attribute_name(:g_entidade_id) %></span>
+          <span class="detail-value"><%= @g_predio.g_entidade %></span>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <span>Criado em <%= l(@g_predio.created_at) %></span>
+        <span>Atualizado em <%= l(@g_predio.updated_at) %></span>
+      </div>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Agenda</p>
+          <h3>Eventos no prédio</h3>
+        </div>
+        <span class="show-section__count"><%= @g_predio.m_eventos.count %></span>
+      </div>
+      <% if @g_predio.m_eventos.any? %>
+        <div class="related-grid">
+          <% @g_predio.m_eventos.order(:data_inicio).each do |evento| %>
+            <article class="related-card">
+              <span class="related-card__label">Evento</span>
+              <%= link_to evento.descricao, m_evento_path(evento), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [evento.data_inicio.present? ? l(evento.data_inicio) : nil, pluralize(evento.m_musicas.count, "música")].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum evento cadastrado para este prédio.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Preparação</p>
+          <h3>Ensaios realizados</h3>
+        </div>
+        <span class="show-section__count"><%= @g_predio.m_ensaios.count %></span>
+      </div>
+      <% if @g_predio.m_ensaios.any? %>
+        <div class="related-grid">
+          <% @g_predio.m_ensaios.order(:data_inicio).each do |ensaio| %>
+            <article class="related-card">
+              <span class="related-card__label">Ensaio</span>
+              <%= link_to ensaio.descricao, m_ensaio_path(ensaio), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [ensaio.data_inicio.present? ? l(ensaio.data_inicio) : nil, pluralize(ensaio.m_musicas.distinct.count, "música")].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhum ensaio cadastrado para este prédio.</div>
+      <% end %>
+    </section>
+  </div>
 </div>

@@ -21,7 +21,7 @@ class GPaisesController < ApplicationController
     @g_pais = GPais.new(g_pais_params)
 
     if @g_pais.save
-      redirect_to @g_pais, notice: "#{GPais.model_name.human} criado com sucesso."
+      redirect_to g_paises_path, notice: "#{GPais.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class GPaisesController < ApplicationController
 
   def update
     if @g_pais.update(g_pais_params)
-      redirect_to @g_pais, notice: "#{GPais.model_name.human} atualizado com sucesso."
+      redirect_to g_paises_path, notice: "#{GPais.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end

@@ -25,7 +25,7 @@ class UUsuariosPerfisController < ApplicationController
     @u_usuario_perfil = UUsuarioPerfil.new(u_usuario_perfil_params)
 
     if @u_usuario_perfil.save
-      redirect_to @u_usuario_perfil, notice: "#{UUsuarioPerfil.model_name.human} criado com sucesso."
+      redirect_to u_usuarios_perfis_path, notice: "#{UUsuarioPerfil.model_name.human} criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class UUsuariosPerfisController < ApplicationController
 
   def update
     if @u_usuario_perfil.update(u_usuario_perfil_params)
-      redirect_to @u_usuario_perfil, notice: "#{UUsuarioPerfil.model_name.human} atualizado com sucesso."
+      redirect_to u_usuarios_perfis_path, notice: "#{UUsuarioPerfil.model_name.human} atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
