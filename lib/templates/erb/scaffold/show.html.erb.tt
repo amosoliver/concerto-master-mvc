@@ -28,8 +28,8 @@
     </div>
 
     <div class="detail-meta">
-      <span>Criado em <%%= l(@<%= singular_table_name %>.created_at) %></span>
-      <span>Atualizado em <%%= l(@<%= singular_table_name %>.updated_at) %></span>
+      <span>Criado em <%%= format_timestamp(@<%= singular_table_name %>.created_at) %></span>
+      <span>Atualizado em <%%= format_timestamp(@<%= singular_table_name %>.updated_at) %></span>
     </div>
   </section>
 </div>

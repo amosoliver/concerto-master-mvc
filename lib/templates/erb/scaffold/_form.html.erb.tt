@@ -1,14 +1,5 @@
 <%%= form_with(model: <%= model_resource_name %>, local: true, class: "panel-card form-card") do |form| %>
-  <%% if <%= singular_table_name %>.errors.any? %>
-    <div class="alert alert-danger">
-      <h2><%%= pluralize(<%= singular_table_name %>.errors.count, "erro") %> impediram o salvamento:</h2>
-      <ul>
-        <%% <%= singular_table_name %>.errors.full_messages.each do |message| %>
-          <li><%%= message %></li>
-        <%% end %>
-      </ul>
-    </div>
-  <%% end %>
+  <%%= render "shared/form_errors", record: <%= singular_table_name %> %>
 
   <div class="form-grid">
 <% attributes.each do |attribute| -%>
