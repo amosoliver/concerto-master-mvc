@@ -5,9 +5,9 @@ class MEventoMusica < ApplicationRecord
   belongs_to :m_evento
   belongs_to :m_musica
   belongs_to :m_arranjo, optional: true
-  has_many :m_ensaio_musicas
-  has_many :m_evento_musica_grupos
-  has_many :m_grupos, through: :m_evento_musica_grupos
+  has_many :m_ensaio_musicas, class_name: "MEnsaioMusica", foreign_key: :m_evento_musica_id, dependent: :destroy
+  has_many :m_evento_musica_grupos, class_name: "MEventoMusicaGrupo", foreign_key: :m_evento_musica_id, dependent: :destroy
+  has_many :m_grupos, through: :m_evento_musica_grupos, source: :m_grupo
 
   before_validation :assign_g_entidade
   validate :unique_active_event_song

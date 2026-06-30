@@ -1,6 +1,8 @@
 class MEnsaioEvento < ApplicationRecord
   include SoftDeletable
 
+  self.table_name = "m_ensaio_eventos"
+
   belongs_to :m_ensaio
   belongs_to :m_evento
   belongs_to :g_entidade

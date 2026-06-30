@@ -14,10 +14,10 @@ class MEvento < ApplicationRecord
   belongs_to :g_entidade
   belongs_to :g_predio
 
-  has_many :m_eventos_musicas
+  has_many :m_eventos_musicas, class_name: "MEventoMusica", foreign_key: :m_evento_id, dependent: :destroy
   has_many :m_musicas, through: :m_eventos_musicas
-  has_many :m_ensaio_eventos
-  has_many :m_ensaios, through: :m_ensaio_eventos
+  has_many :m_ensaio_eventos, class_name: "MEnsaioEvento", foreign_key: :m_evento_id, dependent: :destroy
+  has_many :m_ensaios, through: :m_ensaio_eventos, source: :m_ensaio
 
   before_validation :assign_g_entidade
 

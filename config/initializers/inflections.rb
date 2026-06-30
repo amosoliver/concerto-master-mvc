@@ -35,8 +35,10 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'm_evento', 'm_eventos'
   inflect.irregular 'm_evento_musica', 'm_eventos_musicas'
   inflect.irregular 'm_ensaio', 'm_ensaios'
-  inflect.irregular 'm_ensaio_evento', 'm_ensaios_eventos'
+  inflect.irregular 'm_ensaio_evento', 'm_ensaio_eventos'
+  inflect.irregular 'm_ensaio_grupo', 'm_ensaio_grupos'
   inflect.irregular 'm_ensaio_musica', 'm_ensaio_musicas'
+  inflect.irregular 'm_evento_musica_grupo', 'm_evento_musica_grupos'
 
   inflect.irregular 'm_musica', 'm_musicas'
   inflect.irregular 'm_compositor', 'm_compositores'

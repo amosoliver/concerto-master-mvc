@@ -1,6 +1,8 @@
 class MEventoMusicaGrupo < ApplicationRecord
   include SoftDeletable
 
+  self.table_name = "m_evento_musica_grupos"
+
   belongs_to :m_evento_musica
   belongs_to :m_grupo
   belongs_to :g_entidade

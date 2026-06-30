@@ -6,13 +6,13 @@ class MEnsaio < ApplicationRecord
   belongs_to :g_predio
   belongs_to :g_entidade
 
-  has_many :m_ensaio_musicas
-  has_many :m_evento_musicas, through: :m_ensaio_musicas
+  has_many :m_ensaio_musicas, class_name: "MEnsaioMusica", foreign_key: :m_ensaio_id, dependent: :destroy
+  has_many :m_evento_musicas, through: :m_ensaio_musicas, source: :m_evento_musica
   has_many :m_musicas, through: :m_evento_musicas
-  has_many :m_ensaio_eventos
-  has_many :m_eventos, through: :m_ensaio_eventos
-  has_many :m_ensaio_grupos
-  has_many :m_grupos, through: :m_ensaio_grupos
+  has_many :m_ensaio_eventos, class_name: "MEnsaioEvento", foreign_key: :m_ensaio_id, dependent: :destroy
+  has_many :m_eventos, through: :m_ensaio_eventos, source: :m_evento
+  has_many :m_ensaio_grupos, class_name: "MEnsaioGrupo", foreign_key: :m_ensaio_id, dependent: :destroy
+  has_many :m_grupos, through: :m_ensaio_grupos, source: :m_grupo
 
   before_validation :assign_g_entidade
   validates :descricao, :data_inicio, :data_fim, :g_predio_id, presence: true
