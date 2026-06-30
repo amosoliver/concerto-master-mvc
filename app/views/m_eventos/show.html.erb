@@ -5,6 +5,7 @@
       <h1><%= MEvento.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
+      <%= authorized_link_to "Gerenciar", manage_m_evento_path(@m_evento), class: "primary-button" %>
       <%= authorized_link_to "Editar", edit_m_evento_path(@m_evento), class: "primary-button" %>
       <%= link_to "Voltar", m_eventos_path, class: "secondary-button" %>
     </div>
@@ -15,7 +16,7 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Evento</p>
         <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
-        <p class="show-summary__text">Evento realizado em <%= @m_evento.g_predio %> com repertório associado para preparação musical.</p>
+        <p class="show-summary__text">Evento realizado em <%= @m_evento.g_predio %> com repertório, arranjos e distribuição por naipes organizados em um único lugar.</p>
       </section>
 
       <section class="panel-card show-section">
@@ -28,7 +29,11 @@
         <div class="show-stats">
           <div class="show-stat">
             <span class="show-stat__label">Músicas</span>
-            <span class="show-stat__value"><%= @m_evento.m_musicas.count %></span>
+            <span class="show-stat__value"><%= @m_evento.repertorio_count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Arranjos definidos</span>
+            <span class="show-stat__value"><%= @m_evento.arranjos_definidos_count %></span>
           </div>
           <div class="show-stat">
             <span class="show-stat__label">Início</span>
@@ -70,17 +75,56 @@
       <div class="panel-card__header">
         <div>
           <p class="eyebrow">Repertório</p>
-          <h3>Músicas do evento</h3>
+          <h3>Músicas, arranjos e naipes</h3>
         </div>
-        <span class="show-section__count"><%= @m_evento.m_eventos_musicas.count %></span>
+        <span class="show-section__count"><%= @evento_repertorio.count %></span>
       </div>
-      <% if @m_evento.m_eventos_musicas.any? %>
-        <div class="related-grid">
-          <% @m_evento.m_eventos_musicas.each do |evento_musica| %>
-            <article class="related-card">
-              <span class="related-card__label">Música</span>
-              <%= link_to evento_musica.m_musica.descricao, m_musica_path(evento_musica.m_musica), class: "related-card__value related-card__value--link" %>
-              <span class="related-card__meta"><%= [evento_musica.m_musica.m_artista, evento_musica.m_musica.m_compositor].compact.join(" • ") %></span>
+      <% if @evento_repertorio.any? %>
+        <div class="evento-showcase">
+          <% @evento_repertorio.each do |evento_musica| %>
+            <% musica = evento_musica.m_musica %>
+            <% arranjo = evento_musica.m_arranjo %>
+            <% naipes = arranjo&.m_arranjos_instrumentos_naipes&.map(&:g_instrumento_naipe).to_a %>
+            <article class="evento-showcase__card">
+              <div class="evento-showcase__header">
+                <div>
+                  <span class="related-card__label">Música</span>
+                  <%= link_to musica.descricao, m_musica_path(musica), class: "related-card__value related-card__value--link" %>
+                </div>
+                <span class="show-section__count">#<%= evento_musica.id %></span>
+              </div>
+
+              <div class="evento-showcase__meta">
+                <span><strong>Artista:</strong> <%= musica.m_artista %></span>
+                <span><strong>Compositor:</strong> <%= musica.m_compositor.presence || "-" %></span>
+              </div>
+
+              <div class="evento-showcase__section">
+                <span class="related-card__label">Arranjo em uso</span>
+                <% if arranjo.present? %>
+                  <div class="evento-showcase__arranjo">
+                    <%= link_to(arranjo.descricao.presence || "Arranjo ##{arranjo.id}", m_arranjo_path(arranjo), class: "related-card__value related-card__value--link") %>
+                    <span class="related-card__meta"><%= [arranjo.m_tipo_arranjo, arranjo.m_arranjador, arranjo.m_tonalidade].compact.join(" • ") %></span>
+                  </div>
+                <% else %>
+                  <div class="empty-card">Nenhum arranjo definido para esta música ainda.</div>
+                <% end %>
+              </div>
+
+              <div class="evento-showcase__section">
+                <span class="related-card__label">Vozes, instrumentos e naipes</span>
+                <% if naipes.any? %>
+                  <div class="tag-cloud">
+                    <% naipes.each do |instrumento_naipe| %>
+                      <%= link_to instrumento_naipe.to_s, g_instrumento_naipe_path(instrumento_naipe), class: "tag-cloud__item tag-cloud__item--link" %>
+                    <% end %>
+                  </div>
+                <% elsif arranjo.present? %>
+                  <div class="empty-card">Este arranjo ainda não tem vozes ou naipes vinculados.</div>
+                <% else %>
+                  <div class="empty-card">Defina um arranjo para exibir os naipes deste item.</div>
+                <% end %>
+              </div>
             </article>
           <% end %>
         </div>

@@ -1,0 +1,112 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Configuração</p>
+      <h1>Gerenciar <%= @m_evento.descricao %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= authorized_link_to "Ver evento", m_evento_path(@m_evento), class: "secondary-button" %>
+      <%= authorized_link_to "Editar dados", edit_m_evento_path(@m_evento), class: "secondary-button" %>
+      <%= link_to "Voltar", m_eventos_path, class: "secondary-button" %>
+    </div>
+  </div>
+
+  <div class="show-stack">
+    <div class="show-hero">
+      <section class="panel-card show-summary">
+        <p class="eyebrow">Evento</p>
+        <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
+        <p class="show-summary__text">Gerencie separadamente o repertório do evento e defina qual arranjo será usado em cada música.</p>
+        <div class="page-header__actions">
+          <%= link_to "Ir para repertório", "#gestao-repertorio", class: "secondary-button" %>
+        </div>
+      </section>
+
+      <section class="panel-card show-section">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Resumo</p>
+            <h3>Configuração atual</h3>
+          </div>
+        </div>
+        <div class="show-stats">
+          <div class="show-stat">
+            <span class="show-stat__label">Prédio</span>
+            <span class="show-stat__value"><%= @m_evento.g_predio %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Músicas</span>
+            <span class="show-stat__value"><%= @m_evento.repertorio_count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Arranjos definidos</span>
+            <span class="show-stat__value"><%= @m_evento.arranjos_definidos_count %></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <%= form_with model: @m_evento, url: update_management_m_evento_path(@m_evento), method: :patch, local: true, class: "panel-card form-card" do |form| %>
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Gerenciamento</p>
+          <h3 id="gestao-repertorio">Músicas do evento e arranjos</h3>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <%= form.label :data_inicio %>
+          <%= form.datetime_field :data_inicio, class: "form-control" %>
+        </div>
+        <div class="field-group">
+          <%= form.label :data_fim %>
+          <%= form.datetime_field :data_fim, class: "form-control" %>
+        </div>
+      </div>
+
+      <p class="selection-help">Selecione somente o que deve fazer parte deste evento. O arranjo é opcional para cada música.</p>
+
+      <% if @m_musicas.any? %>
+        <div class="wizard-repertorio">
+          <% @m_musicas.each_with_index do |musica, index| %>
+            <% selected_entry = @selected_repertorio[musica.id] || {} %>
+            <% arranjos = Array(@arranjos_por_musica[musica.id]) %>
+            <% checked = selected_entry.present? %>
+            <article class="wizard-repertorio__item">
+              <div class="wizard-repertorio__header">
+                <label class="selection-item">
+                  <%= check_box_tag "m_evento[repertorio][#{index}][selecionada]", "1", checked %>
+                  <span><strong><%= musica.descricao %></strong></span>
+                </label>
+                <%= hidden_field_tag "m_evento[repertorio][#{index}][m_musica_id]", musica.id %>
+              </div>
+
+              <div class="wizard-repertorio__meta">
+                <span><%= musica.m_artista %></span>
+                <span><%= musica.m_compositor.presence || "Sem compositor informado" %></span>
+                <span><%= pluralize(arranjos.count, "arranjo") %></span>
+              </div>
+
+              <div class="field-group">
+                <label>Arranjo do evento</label>
+                <%= select_tag "m_evento[repertorio][#{index}][m_arranjo_id]",
+                               options_from_collection_for_select(arranjos, :id, :to_s, selected_entry[:m_arranjo_id]),
+                               include_blank: arranjos.any? ? "Definir depois" : "Nenhum arranjo cadastrado",
+                               class: "form-control",
+                               disabled: arranjos.empty? %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhuma música disponível para gerenciar neste evento.</div>
+      <% end %>
+
+      <div class="steps-actions">
+        <%= form.submit "Salvar configuração", class: "primary-button" %>
+        <%= link_to "Voltar para o evento", m_evento_path(@m_evento), class: "secondary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

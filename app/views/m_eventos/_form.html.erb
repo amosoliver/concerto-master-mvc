@@ -1,28 +1,157 @@
 <%= form_with(model: m_evento, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
+  <%= hidden_field_tag :step, current_step %>
+
   <%= render "shared/form_errors", record: m_evento %>
 
-  <div class="form-grid">
-    <div class="field-group">
-      <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
-    </div>
-    <div class="field-group">
-      <%= form.label :data_inicio %>
-      <%= form.datetime_field :data_inicio, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :data_fim %>
-      <%= form.datetime_field :data_fim, class: "form-control" %>
-    </div>
-    <div class="field-group">
-      <%= form.label :g_predio_id %>
-      <%= form.collection_select :g_predio_id, tenant_predio_scope, :id, :to_s, { include_blank: "Selecione um prédio..." }, class: "form-control" %>
-    </div>
+  <div class="steps-nav">
+    <% MEventosController::STEPS.each_with_index do |step, index| %>
+      <%= link_to step_path_for(step), class: "steps-nav__item #{'is-active' if current_step == step}" do %>
+        <%= "#{index + 1}. #{step.titleize}" %>
+      <% end %>
+    <% end %>
   </div>
 
+  <% if current_step == "dados" %>
+    <div class="panel-card panel-card--embedded">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Etapa 1</p>
+          <h3>Dados principais do evento</h3>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <%= form.label :descricao %>
+          <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+        </div>
+        <div class="field-group">
+          <%= form.label :g_predio_id %>
+          <%= form.collection_select :g_predio_id, @g_predios, :id, :to_s, { include_blank: "Selecione um prédio..." }, class: "form-control" %>
+        </div>
+        <div class="field-group">
+          <%= form.label :data_inicio %>
+          <%= form.datetime_field :data_inicio, class: "form-control" %>
+        </div>
+        <div class="field-group">
+          <%= form.label :data_fim %>
+          <%= form.datetime_field :data_fim, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <details class="field-toggle" <%= "open" if m_evento.g_predio.blank? || m_evento.novo_g_predio_nome_fantasia.present? %>>
+      <summary class="secondary-button">Cadastrar prédio no fluxo do evento</summary>
+      <div class="field-toggle__content">
+        <p class="selection-help">Se o prédio ainda não existir, preencha abaixo. Se você escolher um prédio já cadastrado, estes dados serão ignorados.</p>
+        <div class="form-grid">
+          <div class="field-group">
+            <%= form.label :novo_g_predio_nome_fantasia, "Nome do prédio" %>
+            <%= form.text_field :novo_g_predio_nome_fantasia, class: "form-control", data: { controller: "uppercase" } %>
+          </div>
+          <div class="field-group">
+            <%= form.label :novo_g_predio_cep, "CEP" %>
+            <%= form.text_field :novo_g_predio_cep, class: "form-control", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep" } %>
+          </div>
+          <div class="field-group">
+            <%= form.label :novo_g_predio_logradouro, "Logradouro" %>
+            <%= form.text_field :novo_g_predio_logradouro, class: "form-control", data: { controller: "uppercase" } %>
+          </div>
+          <div class="field-group">
+            <%= form.label :novo_g_predio_bairro, "Bairro" %>
+            <%= form.text_field :novo_g_predio_bairro, class: "form-control", data: { controller: "uppercase" } %>
+          </div>
+        </div>
+      </div>
+    </details>
+  <% elsif current_step == "repertorio" %>
+    <div class="panel-card panel-card--embedded">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Etapa 2</p>
+          <h3>Músicas e arranjos do evento</h3>
+        </div>
+      </div>
+
+      <p class="selection-help">Este passo é opcional. Você pode salvar o evento agora e completar o repertório depois em Gerenciar.</p>
+
+      <% if @m_musicas.any? %>
+        <div class="wizard-repertorio">
+          <% @m_musicas.each_with_index do |musica, index| %>
+            <% selected_entry = @selected_repertorio[musica.id] || {} %>
+            <% arranjos = Array(@arranjos_por_musica[musica.id]) %>
+            <% checked = selected_entry.present? %>
+            <article class="wizard-repertorio__item">
+              <div class="wizard-repertorio__header">
+                <label class="selection-item">
+                  <%= check_box_tag "m_evento[repertorio][#{index}][selecionada]", "1", checked %>
+                  <span><strong><%= musica.descricao %></strong></span>
+                </label>
+                <%= hidden_field_tag "m_evento[repertorio][#{index}][m_musica_id]", musica.id %>
+              </div>
+
+              <div class="wizard-repertorio__meta">
+                <span><%= musica.m_artista %></span>
+                <span><%= musica.m_compositor.presence || "Sem compositor informado" %></span>
+                <span><%= pluralize(arranjos.count, "arranjo") %></span>
+              </div>
+
+              <div class="field-group">
+                <label>Arranjo do evento</label>
+                <%= select_tag "m_evento[repertorio][#{index}][m_arranjo_id]",
+                               options_from_collection_for_select(arranjos, :id, :to_s, selected_entry[:m_arranjo_id]),
+                               include_blank: arranjos.any? ? "Definir depois" : "Nenhum arranjo cadastrado",
+                               class: "form-control",
+                               disabled: arranjos.empty? %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Nenhuma música disponível na entidade atual para compor o repertório.</div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="panel-card panel-card--embedded">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Etapa 3</p>
+          <h3>Revisão antes de salvar</h3>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <span class="detail-label">Evento</span>
+          <span class="detail-value"><%= m_evento.descricao.presence || "Preencha a descrição no passo 1" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label">Prédio</span>
+          <span class="detail-value"><%= m_evento.g_predio || m_evento.novo_g_predio_nome_fantasia.presence || "Selecione ou cadastre um prédio" %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label">Período</span>
+          <span class="detail-value">
+            <%= [m_evento.data_inicio.present? ? l(m_evento.data_inicio) : nil, m_evento.data_fim.present? ? l(m_evento.data_fim) : nil].compact.presence&.join(" até ") || "Pode definir depois" %>
+          </span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label">Repertório</span>
+          <span class="detail-value"><%= pluralize(@selected_repertorio.size, "música") %> selecionada(s) até agora</span>
+        </div>
+      </div>
+
+      <div class="empty-card">
+        O repertório não é obrigatório. Se preferir, salve o evento agora e complete as músicas e arranjos depois pela área de gerenciamento.
+      </div>
+    </div>
+  <% end %>
+
   <div class="form-actions">
-    <%= form.submit class: "primary-button" %>
-    <%= link_to "Cancelar", m_evento_path(@m_evento), class: "secondary-button" if m_evento.persisted? %>
-    <%= link_to "Cancelar", m_eventos_path, class: "secondary-button" unless m_evento.persisted? %>
+    <% unless first_step? %>
+      <%= button_tag "Voltar", name: :navigation, value: "previous", class: "secondary-button" %>
+    <% end %>
+    <%= form.submit(last_step? ? (m_evento.persisted? ? "Atualizar evento" : "Criar evento") : "Próximo", class: "primary-button") %>
+    <%= link_to "Cancelar", m_evento.persisted? ? m_evento_path(m_evento) : m_eventos_path, class: "secondary-button" %>
   </div>
 <% end %>

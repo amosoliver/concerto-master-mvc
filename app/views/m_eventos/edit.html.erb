@@ -2,7 +2,11 @@
   <div class="page-header">
     <div>
       <p class="eyebrow">Editar</p>
-      <h1>Editar <%= MEvento.model_name.human %></h1>
+      <h1>Editar <%= MEvento.model_name.human %> - <%= current_step.titleize %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= authorized_link_to "Gerenciar", manage_m_evento_path(@m_evento), class: "secondary-button" %>
+      <%= authorized_link_to "Ver evento", m_evento_path(@m_evento), class: "secondary-button" %>
     </div>
   </div>
 

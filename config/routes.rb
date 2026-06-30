@@ -5,7 +5,12 @@ Rails.application.routes.draw do
   devise_for :g_usuarios, controllers: { sessions: "g_usuarios/sessions", registrations: "g_usuarios/registrations" }
 
   resources :m_eventos_musicas
-  resources :m_eventos
+  resources :m_eventos do
+    member do
+      get :manage
+      patch :update_management
+    end
+  end
   resources :m_arranjos_instrumentos_naipes
   resources :m_tipos_arranjos
   resources :m_arranjos do

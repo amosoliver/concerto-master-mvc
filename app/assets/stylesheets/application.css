@@ -281,6 +281,18 @@ button, input { font: inherit; }
   min-height: 0;
   overflow-y: auto;
 }
+.content-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  padding: 18px 20px 22px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.96)), var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
 .hero-card, .stat-card, .panel-card, .record-card, .detail-tile, .selection-group, .selection-panel {
   position: relative;
   isolation: isolate;
@@ -316,7 +328,8 @@ button, input { font: inherit; }
 }
 :root[data-theme="dark"] .hero-card,
 :root[data-theme="dark"] .stat-card,
-:root[data-theme="dark"] .panel-card {
+:root[data-theme="dark"] .panel-card,
+:root[data-theme="dark"] .content-frame {
   background: linear-gradient(180deg, rgba(20, 35, 56, 0.92), rgba(13, 24, 40, 0.98)), var(--panel);
   border-color: rgba(53, 80, 111, 0.44);
 }
@@ -502,6 +515,12 @@ button, input { font: inherit; }
     radial-gradient(circle at top right, rgba(13, 148, 136, 0.08), transparent 22%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.98)),
     var(--panel);
+}
+.panel-card--embedded {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
 }
 :root[data-theme="dark"] .form-card {
   background:
@@ -791,6 +810,12 @@ button, input { font: inherit; }
 .record-card__footer {
   display: flex; justify-content: flex-end; padding-top: 12px;
   border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+.record-card__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
 }
 .actions-inline { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .secondary-button--sm, .danger-button--sm { padding: 8px 12px; font-size: 0.85rem; }
@@ -1191,11 +1216,78 @@ button, input { font: inherit; }
   background: rgba(148, 163, 184, 0.06);
   color: var(--muted);
 }
+.wizard-repertorio {
+  display: grid;
+  gap: 14px;
+}
+.wizard-repertorio__item,
+.evento-showcase__card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(248, 250, 252, 0.98));
+  box-shadow: var(--shadow-soft);
+}
+.wizard-repertorio__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.wizard-repertorio__header .selection-item {
+  flex: 1;
+}
+.wizard-repertorio__meta,
+.evento-showcase__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.wizard-repertorio__meta span,
+.evento-showcase__meta span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.08);
+}
+.evento-showcase {
+  display: grid;
+  gap: 14px;
+}
+.evento-showcase__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.evento-showcase__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.evento-showcase__arranjo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 :root[data-theme="dark"] .show-stat,
 :root[data-theme="dark"] .related-card,
 :root[data-theme="dark"] .tag-cloud__item {
   background: linear-gradient(180deg, rgba(25, 42, 64, 0.92), rgba(15, 27, 45, 0.98));
   border-color: rgba(53, 80, 111, 0.44);
+}
+:root[data-theme="dark"] .wizard-repertorio__item,
+:root[data-theme="dark"] .evento-showcase__card {
+  background: linear-gradient(180deg, rgba(25, 42, 64, 0.92), rgba(15, 27, 45, 0.98));
+  border-color: rgba(53, 80, 111, 0.44);
+}
+:root[data-theme="dark"] .wizard-repertorio__meta span,
+:root[data-theme="dark"] .evento-showcase__meta span {
+  background: rgba(53, 80, 111, 0.18);
 }
 :root[data-theme="dark"] .empty-card {
   background: rgba(53, 80, 111, 0.12);
@@ -1251,6 +1343,7 @@ button, input { font: inherit; }
   .sidebar-overlay { display: block; }
   .sidebar-overlay.is-open { opacity: 1; pointer-events: auto; }
   .main-panel { padding: 16px; }
+  .content-frame { padding: 16px; border-radius: 24px; }
   .hero-card, .page-header { flex-direction: column; align-items: stretch; }
   .topbar { flex-direction: column; align-items: stretch; }
   .catalog-choice { grid-template-columns: 1fr; }

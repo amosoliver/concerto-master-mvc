@@ -82,7 +82,7 @@
               <td><%= m_evento.data_fim %></td>
               <td><%= m_evento.g_predio %></td>
               <td>
-                <%= render "shared/actions_menu", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento) %>
+                <%= render "shared/actions_menu", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento), config_path: manage_m_evento_path(m_evento) %>
               </td>
             </tr>
           <% end %>
@@ -102,9 +102,18 @@
             <span class="detail-value"><%= m_evento.data_fim %></span>
             <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
             <span class="detail-value"><%= m_evento.g_predio %></span>
+            <span class="detail-label">Repertório</span>
+            <span class="detail-value"><%= pluralize(m_evento.repertorio_count, "música") %></span>
           </div>
+          <% if m_evento.m_eventos_musicas.any? %>
+            <div class="record-card__summary">
+              <% m_evento.m_eventos_musicas.first(3).each do |evento_musica| %>
+                <span class="tag-cloud__item"><%= evento_musica.m_musica.descricao %></span>
+              <% end %>
+            </div>
+          <% end %>
           <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento) %>
+            <%= render "shared/actions_menu", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento), config_path: manage_m_evento_path(m_evento) %>
           </div>
         </article>
       <% end %>

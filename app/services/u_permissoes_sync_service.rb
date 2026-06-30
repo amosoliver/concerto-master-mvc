@@ -7,7 +7,9 @@ class UPermissoesSyncService
     "new" => "Novo",
     "create" => "Salvar",
     "edit" => "Editar",
+    "manage" => "Gerenciar",
     "update" => "Atualizar",
+    "update_management" => "Atualizar gerenciamento",
     "destroy" => "Remover"
   }.freeze
 

@@ -2,6 +2,8 @@ class MEvento < ApplicationRecord
   include SoftDeletable
   include Uppercasable
 
+  attr_accessor :novo_g_predio_nome_fantasia, :novo_g_predio_cep, :novo_g_predio_logradouro, :novo_g_predio_bairro
+
   upcases :descricao
 
   belongs_to :g_entidade
@@ -22,6 +24,22 @@ class MEvento < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+
+  def repertorio_count
+    if association(:m_eventos_musicas).loaded?
+      m_eventos_musicas.count { |evento_musica| evento_musica.deleted_at.nil? }
+    else
+      m_eventos_musicas.count
+    end
+  end
+
+  def arranjos_definidos_count
+    if association(:m_eventos_musicas).loaded?
+      m_eventos_musicas.count { |evento_musica| evento_musica.deleted_at.nil? && evento_musica.m_arranjo_id.present? }
+    else
+      m_eventos_musicas.where.not(m_arranjo_id: nil).count
+    end
   end
 
   private

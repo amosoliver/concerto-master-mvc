@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_29_181000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_29_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -286,11 +286,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_29_181000) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.bigint "g_entidade_id", null: false
+    t.bigint "m_arranjo_id"
     t.bigint "m_evento_id", null: false
     t.bigint "m_musica_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_eventos_musicas_on_deleted_at"
     t.index ["g_entidade_id"], name: "index_m_eventos_musicas_on_g_entidade_id"
+    t.index ["m_arranjo_id"], name: "index_m_eventos_musicas_on_m_arranjo_id"
     t.index ["m_evento_id"], name: "index_m_eventos_musicas_on_m_evento_id"
     t.index ["m_musica_id"], name: "index_m_eventos_musicas_on_m_musica_id"
   end
@@ -488,6 +490,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_29_181000) do
   add_foreign_key "m_eventos", "g_entidades"
   add_foreign_key "m_eventos", "g_predios"
   add_foreign_key "m_eventos_musicas", "g_entidades"
+  add_foreign_key "m_eventos_musicas", "m_arranjos"
   add_foreign_key "m_eventos_musicas", "m_eventos"
   add_foreign_key "m_eventos_musicas", "m_musicas"
   add_foreign_key "m_grupos", "g_entidades"
