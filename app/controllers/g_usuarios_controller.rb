@@ -1,5 +1,5 @@
 class GUsuariosController < ApplicationController
-  before_action :set_g_usuario, only: %i[show edit update destroy]
+  before_action :set_g_usuario, only: %i[show edit update destroy manage_perfis update_perfis]
 
   def index
     @q = tenant_scope(GUsuario).ransack(params[:q])
@@ -41,6 +41,33 @@ class GUsuariosController < ApplicationController
   def destroy
     @g_usuario.discard
     redirect_to g_usuarios_path, notice: "#{GUsuario.model_name.human} removido com sucesso."
+  end
+
+  def manage_perfis
+    @u_perfis = UPerfil.kept.order(:descricao)
+    @selected_ids = @g_usuario.u_perfil_ids.to_set
+  end
+
+  def update_perfis
+    target_ids = Array(params[:u_perfil_ids]).reject(&:blank?).map(&:to_i).uniq
+    existing = UUsuarioPerfil.with_discarded.where(g_usuario_id: @g_usuario.id).index_by(&:u_perfil_id)
+
+    target_ids.each do |perfil_id|
+      record = existing[perfil_id] || UUsuarioPerfil.new(g_usuario_id: @g_usuario.id, u_perfil_id: perfil_id)
+      next if record.persisted? && record.deleted_at.nil?
+
+      record.deleted_at = nil
+      record.save!
+    end
+
+    existing.each do |perfil_id, record|
+      next if target_ids.include?(perfil_id)
+      next if record.deleted_at.present?
+
+      record.update!(deleted_at: Time.current)
+    end
+
+    redirect_to manage_perfis_g_usuario_path(@g_usuario), notice: "Perfis atualizados com sucesso."
   end
 
   private

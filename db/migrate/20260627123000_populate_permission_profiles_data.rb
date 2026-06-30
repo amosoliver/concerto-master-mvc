@@ -35,7 +35,7 @@ class PopulatePermissionProfilesData < ActiveRecord::Migration[8.1]
   def populate_permissoes!
     return unless table_exists?(:u_permissoes)
 
-    UPermissoesSyncService.call
+    SincronizadorPermissoesService.call
   end
 
   def sync_perfis_funcoes!

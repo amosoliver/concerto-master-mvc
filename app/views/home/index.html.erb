@@ -1,108 +1,42 @@
 <section class="hero-card">
   <div>
-    <p class="eyebrow">Painel de comando</p>
-    <h2>Gestão musical moderna para sua igreja</h2>
-    <p>Organize eventos, ensaios, escalas e repertórios em uma experiência premium, rápida e elegante.</p>
+    <p class="eyebrow">Painel da entidade</p>
+    <h2><%= current_context_entidade || "Agenda musical" %></h2>
+    <p>O painel principal mostra somente a agenda da entidade, com o calendário do mês e os próximos compromissos logo ao lado.</p>
   </div>
-  <button class="primary-button">+ Novo evento</button>
+  <div class="page-header__actions">
+    <div class="view-switch">
+      <%= link_to "Agenda", root_path, class: "view-switch__btn is-active" %>
+      <%= link_to "Pessoal", dashboard_grupos_path, class: "view-switch__btn" %>
+    </div>
+    <%= authorized_link_to "Novo evento", new_m_evento_path, class: "primary-button" %>
+  </div>
 </section>
 
-<section class="stats-grid">
-  <% [
-    ["Eventos", "125", "#7C3AED"],
-    ["Grupos", "18", "#4F46E5"],
-    ["Músicas", "1.254", "#22C55E"],
-    ["Áudios", "980", "#3B82F6"],
-    ["Ensaios", "42", "#F59E0B"],
-    ["Escalas", "30", "#EF4444"]
-  ].each do |label, value, color| %>
-    <article class="stat-card" style="--accent:<%= color %>">
-      <div class="stat-card__dot"></div>
-      <div>
-        <p><%= label %></p>
-        <h3><%= value %></h3>
-      </div>
-    </article>
-  <% end %>
-</section>
+<div class="dashboard-layout">
+  <%= render "shared/entity_calendar", snapshot: @dashboard_snapshot, base_path: root_path, base_params: request.query_parameters.except("month", "view", "date").symbolize_keys %>
 
-<section class="panel-grid">
-  <article class="panel-card chart-card">
+  <section class="panel-card dashboard-sidecard">
     <div class="panel-card__header">
       <div>
-        <p class="eyebrow">Evolução</p>
-        <h3>Evolução dos eventos</h3>
-      </div>
-      <span class="pill">Últimos 30 dias</span>
-    </div>
-    <div class="chart-area">
-      <div class="chart-line"></div>
-    </div>
-  </article>
-
-  <article class="panel-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Distribuição</p>
-        <h3>Por grupo</h3>
+        <p class="eyebrow">Próximos eventos</p>
+        <h3>Agenda imediata</h3>
       </div>
     </div>
-    <ul class="stack-list">
-      <li><span>Bandas</span><strong>42%</strong></li>
-      <li><span>Corais</span><strong>31%</strong></li>
-      <li><span>Ministérios</span><strong>27%</strong></li>
-    </ul>
-  </article>
-</section>
-
-<section class="panel-grid lower-grid">
-  <article class="panel-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Próximos</p>
-        <h3>Próximos eventos</h3>
-      </div>
-    </div>
-    <ul class="event-list">
-      <li><span>Ensaio Geral</span><strong>Hoje · 19:00</strong></li>
-      <li><span>Louvor Jovem</span><strong>Qua · 20:00</strong></li>
-      <li><span>Ministração</span><strong>Sex · 18:30</strong></li>
-    </ul>
-  </article>
-
-  <article class="panel-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Repertório</p>
-        <h3>Últimos ensaios</h3>
-      </div>
-    </div>
-    <ul class="event-list">
-      <li><span>Hino da promessa</span><strong>2h · 04/06</strong></li>
-      <li><span>Teu amor me alcança</span><strong>1h30 · 01/06</strong></li>
-      <li><span>O Senhor é Rei</span><strong>45m · 28/05</strong></li>
-    </ul>
-  </article>
-
-  <article class="panel-card player-card">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Tocando agora</p>
-        <h3>Mini player</h3>
-      </div>
-    </div>
-    <div class="player-card__body">
-      <div class="player-cover">♪</div>
-      <div>
-        <strong>Nova Esperança</strong>
-        <p>Coral Unidos</p>
-      </div>
-    </div>
-    <div class="player-controls">
-      <button>⏮</button>
-      <button>▶</button>
-      <button>⏭</button>
-      <button>🔊</button>
-    </div>
-  </article>
-</section>
+    <% if @dashboard_snapshot[:upcoming_events].any? %>
+      <ul class="event-list">
+        <% @dashboard_snapshot[:upcoming_events].each do |evento| %>
+          <li>
+            <span>
+              <strong><%= evento.descricao %></strong><br>
+              <small><%= evento.g_predio %></small>
+            </span>
+            <strong><%= format_datetime(evento.data_inicio) %></strong>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="empty-card">Nenhum evento futuro cadastrado para esta entidade.</div>
+    <% end %>
+  </section>
+</div>

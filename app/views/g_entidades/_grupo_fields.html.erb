@@ -18,7 +18,7 @@
     <div class="form-grid">
       <div class="field-group">
         <label>Descrição</label>
-        <%= text_field_tag "g_entidade[grupos_attributes][#{index}][descricao]", (group[:descricao] || group["descricao"] || group.try(:descricao)), class: "form-control", data: { controller: "uppercase" } %>
+        <%= text_field_tag "g_entidade[grupos_attributes][#{index}][descricao]", (group[:descricao] || group["descricao"] || group.try(:descricao)), class: "form-control", required: true, data: { controller: "uppercase" } %>
       </div>
 
       <div class="field-group">
@@ -26,7 +26,8 @@
         <%= select_tag "g_entidade[grupos_attributes][#{index}][m_tipo_grupo_id]",
           options_from_collection_for_select(@m_tipos_grupos, :id, :to_s, (group[:m_tipo_grupo_id] || group["m_tipo_grupo_id"] || group.try(:m_tipo_grupo_id))),
           include_blank: "Selecione um tipo...",
-          class: "form-control" %>
+          class: "form-control",
+          required: true %>
       </div>
 
       <div class="field-group field-group--full">

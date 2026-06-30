@@ -13,6 +13,8 @@ class GEntidade < ApplicationRecord
   has_many :g_pessoas
   has_many :m_grupos
 
+  validates :descricao, :g_estado, :g_municipio, presence: true
+
   def self_and_descendant_ids
     ids = [id]
     queue = [id]
@@ -50,5 +52,14 @@ class GEntidade < ApplicationRecord
 
   def g_entidade_nao_pode_ser_a_propria_entidade
     errors.add(:g_entidade_id, :invalid) if g_entidade_id.present? && g_entidade_id == id
+  end
+
+  validate :g_municipio_deve_pertencer_ao_estado
+
+  def g_municipio_deve_pertencer_ao_estado
+    return if g_estado.blank? || g_municipio.blank?
+    return if g_municipio.g_estado_id == g_estado_id
+
+    errors.add(:g_municipio_id, "deve pertencer ao estado selecionado")
   end
 end

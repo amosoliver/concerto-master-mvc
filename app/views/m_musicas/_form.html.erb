@@ -11,7 +11,7 @@
   <div class="form-grid">
     <div class="field-group field-group--full">
       <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+      <%= form.text_field :descricao, class: "form-control", required: true, data: { controller: "uppercase" } %>
     </div>
 
     <div class="field-group field-group--full">
@@ -54,7 +54,7 @@
 
     <div class="field-group field-group--full">
       <%= form.label :url_referencia, "Link da versão" %>
-      <%= form.url_field :url_referencia, class: "form-control", placeholder: "https://...", data: { url_preview_target: "input", action: "input->url-preview#render change->url-preview#render" } %>
+      <%= form.url_field :url_referencia, class: "form-control", required: true, placeholder: "https://...", data: { url_preview_target: "input", action: "input->url-preview#render change->url-preview#render" } %>
       <small class="field-hint">A prévia automática funciona melhor com links de YouTube e Vimeo.</small>
       <div class="url-preview" data-url-preview-target="wrapper" hidden>
         <div class="url-preview__unsupported" data-url-preview-target="unsupported" hidden>

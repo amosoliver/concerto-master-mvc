@@ -6,7 +6,6 @@
     </div>
     <div class="page-header__actions">
       <%= authorized_link_to "Editar", edit_m_arranjo_path(@m_arranjo), class: "primary-button" %>
-      <%= authorized_link_to "Ver música", m_musica_path(@m_arranjo.m_musica), class: "secondary-button" %>
       <%= link_to "Voltar", m_arranjos_path, class: "secondary-button" %>
     </div>
   </div>
@@ -71,8 +70,8 @@
       </div>
 
       <div class="detail-meta">
-        <span>Criado em <%= l(@m_arranjo.created_at) %></span>
-        <span>Atualizado em <%= l(@m_arranjo.updated_at) %></span>
+        <span>Criado em <%= format_timestamp(@m_arranjo.created_at) %></span>
+        <span>Atualizado em <%= format_timestamp(@m_arranjo.updated_at) %></span>
       </div>
     </section>
 
@@ -89,7 +88,7 @@
           <% @instrumentos_do_arranjo.each do |instrumento_arranjo| %>
             <article class="related-card">
               <span class="related-card__label">Instrumento</span>
-              <%= link_to instrumento_arranjo.g_instrumento_naipe.to_s, g_instrumento_naipe_path(instrumento_arranjo.g_instrumento_naipe), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__value"><%= instrumento_arranjo.g_instrumento_naipe.to_s %></span>
               <% if instrumento_arranjo.arquivo.attached? %>
                 <div class="attachment-stack">
                   <% instrumento_arranjo.arquivo.each do |arquivo| %>

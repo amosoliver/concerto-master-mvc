@@ -3,7 +3,9 @@
 one:
   g_pessoa: one
   g_instrumento_naipe: one
+  g_entidade: one
 
 two:
   g_pessoa: two
   g_instrumento_naipe: two
+  g_entidade: two

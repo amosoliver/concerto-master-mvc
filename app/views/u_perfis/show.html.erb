@@ -26,8 +26,8 @@
     </div>
 
     <div class="detail-meta">
-      <span>Criado em <%= l(@u_perfil.created_at) %></span>
-      <span>Atualizado em <%= l(@u_perfil.updated_at) %></span>
+      <span>Criado em <%= format_timestamp(@u_perfil.created_at) %></span>
+      <span>Atualizado em <%= format_timestamp(@u_perfil.updated_at) %></span>
     </div>
   </section>
 </div>

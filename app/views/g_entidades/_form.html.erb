@@ -1,4 +1,9 @@
-<%= form_with(model: g_entidade, local: true, class: "panel-card form-card", data: { controller: "select grupo-builder", grupo_builder_index_value: @group_rows.size }) do |form| %>
+<%= form_with(model: g_entidade, local: true, class: "panel-card form-card", data: {
+  controller: "select grupo-builder entidade-form",
+  grupo_builder_index_value: @group_rows.size,
+  entidade_form_estado_label_value: @g_entidade.g_estado&.to_s,
+  entidade_form_municipio_label_value: @g_entidade.g_municipio&.to_s
+}) do |form| %>
   <%= hidden_field_tag :step, current_step %>
 
   <%= render "shared/form_errors", record: g_entidade %>
@@ -22,15 +27,15 @@
     <div class="form-grid">
       <div class="field-group">
         <%= form.label :descricao %>
-        <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+        <%= form.text_field :descricao, class: "form-control", required: true, data: { controller: "uppercase" } %>
       </div>
       <div class="field-group">
         <%= form.label :g_estado_id %>
-        <%= form.collection_select :g_estado_id, @g_estados, :id, :to_s, { include_blank: "Selecione um estado..." }, class: "form-control" %>
+        <%= form.collection_select :g_estado_id, @g_estados, :id, :to_s, { include_blank: "Selecione um estado..." }, class: "form-control", required: true, data: { entidade_form_target: "estado", action: "change->entidade-form#estadoChanged" } %>
       </div>
       <div class="field-group">
         <%= form.label :g_municipio_id %>
-        <%= form.collection_select :g_municipio_id, @g_municipios, :id, :to_s, { include_blank: "Selecione um município..." }, class: "form-control" %>
+        <%= form.collection_select :g_municipio_id, @g_municipios, :id, :to_s, { include_blank: "Selecione um município..." }, class: "form-control", required: true, disabled: @g_municipios.empty?, data: { entidade_form_target: "municipio", placeholder: "Selecione um município...", action: "change->entidade-form#addressChanged" } %>
       </div>
       <div class="field-group">
         <%= form.label :g_entidade_id %>
@@ -48,19 +53,52 @@
     <div class="form-grid">
       <div class="field-group">
         <label>Nome fantasia</label>
-        <%= text_field_tag "g_entidade[predio_attributes][nome_fantasia]", @g_predio&.nome_fantasia, class: "form-control", data: { controller: "uppercase" } %>
+        <%= text_field_tag "g_entidade[predio_attributes][nome_fantasia]", @g_predio&.nome_fantasia, class: "form-control", required: true, data: { controller: "uppercase" } %>
       </div>
       <div class="field-group">
         <label>CEP</label>
-        <%= text_field_tag "g_entidade[predio_attributes][cep]", @g_predio&.cep, class: "form-control", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep" } %>
+        <%= text_field_tag "g_entidade[predio_attributes][cep]", @g_predio&.cep, class: "form-control", required: true, inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep", entidade_form_target: "cep", action: "input->entidade-form#addressChanged" } %>
       </div>
       <div class="field-group">
         <label>Logradouro</label>
-        <%= text_field_tag "g_entidade[predio_attributes][logradouro]", @g_predio&.logradouro, class: "form-control", data: { controller: "uppercase" } %>
+        <%= text_field_tag "g_entidade[predio_attributes][logradouro]", @g_predio&.logradouro, class: "form-control", required: true, data: { controller: "uppercase", entidade_form_target: "logradouro", action: "input->entidade-form#addressChanged" } %>
       </div>
       <div class="field-group">
         <label>Bairro</label>
-        <%= text_field_tag "g_entidade[predio_attributes][bairro]", @g_predio&.bairro, class: "form-control", data: { controller: "uppercase" } %>
+        <%= text_field_tag "g_entidade[predio_attributes][bairro]", @g_predio&.bairro, class: "form-control", required: true, data: { controller: "uppercase", entidade_form_target: "bairro", action: "input->entidade-form#addressChanged" } %>
+      </div>
+      <%= hidden_field_tag "g_entidade[predio_attributes][latitude]", @g_predio&.latitude, data: { entidade_form_target: "latitude" } %>
+      <%= hidden_field_tag "g_entidade[predio_attributes][longitude]", @g_predio&.longitude, data: { entidade_form_target: "longitude" } %>
+      <div class="field-group field-group--full">
+        <div class="map-card">
+          <div class="map-card__header">
+            <div>
+              <h4>Mapa do endereço</h4>
+              <p data-entidade-form-target="mapStatus">
+                <% if @g_predio&.latitude.present? && @g_predio&.longitude.present? %>
+                  Endereço localizado com sucesso.
+                <% else %>
+                  Preencha o endereço para marcar a localização automaticamente.
+                <% end %>
+              </p>
+            </div>
+            <a href="<%= @g_predio&.latitude.present? && @g_predio&.longitude.present? ? "https://www.openstreetmap.org/?mlat=#{@g_predio.latitude}&mlon=#{@g_predio.longitude}#map=16/#{@g_predio.latitude}/#{@g_predio.longitude}" : "#" %>" target="_blank" rel="noopener" class="secondary-button" data-entidade-form-target="mapLink">Abrir mapa</a>
+          </div>
+          <iframe
+            title="Mapa do endereço"
+            class="map-card__frame"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="<%= if @g_predio&.latitude.present? && @g_predio&.longitude.present?
+              lat = @g_predio.latitude.to_f
+              lng = @g_predio.longitude.to_f
+              delta = 0.01
+              bbox = [lng - delta, lat - delta, lng + delta, lat + delta].join('%2C')
+              marker = "#{lat}%2C#{lng}"
+              "https://www.openstreetmap.org/export/embed.html?bbox=#{bbox}&layer=mapnik&marker=#{marker}"
+            end %>"
+            data-entidade-form-target="mapFrame"></iframe>
+        </div>
       </div>
     </div>
   <% else %>

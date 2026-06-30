@@ -3,8 +3,8 @@ class GPaisesController < ApplicationController
 
   def index
     @q = GPais.ransack(params[:q])
-    @g_paises = @q.result.order(created_at: :desc)
-    @pagy, @g_paises = pagy(@g_paises, limit: 10)
+    @g_paises = @q.result.order(:descricao)
+    @pagy, @g_paises = pagy(@g_paises, limit: 50)
   end
 
   def show

@@ -22,7 +22,7 @@ class GInstrumentosNaipesController < ApplicationController
     @g_instrumento_naipe = GInstrumentoNaipe.new(g_instrumento_naipe_params)
     assign_virtual_attributes
 
-    if GInstrumentosNaipes::CreateService.new(g_instrumento_naipe: @g_instrumento_naipe, params: g_instrumento_naipe_params).call
+    if GInstrumentosNaipes::ServicoCriacao.new(g_instrumento_naipe: @g_instrumento_naipe, params: g_instrumento_naipe_params).call
       redirect_to g_instrumentos_naipes_path, notice: "#{GInstrumentoNaipe.model_name.human} criado com sucesso."
     end
   rescue ActiveRecord::RecordInvalid
@@ -33,7 +33,7 @@ class GInstrumentosNaipesController < ApplicationController
     @g_instrumento_naipe.assign_attributes(g_instrumento_naipe_params)
     assign_virtual_attributes
 
-    if GInstrumentosNaipes::UpdateService.new(g_instrumento_naipe: @g_instrumento_naipe, params: g_instrumento_naipe_params).call
+    if GInstrumentosNaipes::ServicoAtualizacao.new(g_instrumento_naipe: @g_instrumento_naipe, params: g_instrumento_naipe_params).call
       redirect_to g_instrumentos_naipes_path, notice: "#{GInstrumentoNaipe.model_name.human} atualizado com sucesso."
     end
   rescue ActiveRecord::RecordInvalid

@@ -38,8 +38,8 @@
     </div>
 
     <div class="detail-meta">
-      <span>Criado em <%= l(@g_estado.created_at) %></span>
-      <span>Atualizado em <%= l(@g_estado.updated_at) %></span>
+      <span>Criado em <%= format_timestamp(@g_estado.created_at) %></span>
+      <span>Atualizado em <%= format_timestamp(@g_estado.updated_at) %></span>
     </div>
   </section>
 </div>

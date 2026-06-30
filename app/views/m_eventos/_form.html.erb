@@ -1,4 +1,8 @@
-<%= form_with(model: m_evento, local: true, class: "panel-card form-card", data: { controller: "select" }) do |form| %>
+<%= form_with(model: m_evento, local: true, class: "panel-card form-card", data: {
+  controller: "select entidade-form",
+  entidade_form_estado_label_value: current_context_entidade&.g_estado&.to_s,
+  entidade_form_municipio_label_value: current_context_entidade&.g_municipio&.to_s
+}) do |form| %>
   <%= hidden_field_tag :step, current_step %>
 
   <%= render "shared/form_errors", record: m_evento %>
@@ -51,15 +55,48 @@
           </div>
           <div class="field-group">
             <%= form.label :novo_g_predio_cep, "CEP" %>
-            <%= form.text_field :novo_g_predio_cep, class: "form-control", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep" } %>
+            <%= form.text_field :novo_g_predio_cep, class: "form-control", inputmode: "numeric", maxlength: 9, data: { controller: "mask", mask_pattern_value: "cep", entidade_form_target: "cep", action: "input->entidade-form#addressChanged" } %>
           </div>
           <div class="field-group">
             <%= form.label :novo_g_predio_logradouro, "Logradouro" %>
-            <%= form.text_field :novo_g_predio_logradouro, class: "form-control", data: { controller: "uppercase" } %>
+            <%= form.text_field :novo_g_predio_logradouro, class: "form-control", data: { controller: "uppercase", entidade_form_target: "logradouro", action: "input->entidade-form#addressChanged" } %>
           </div>
           <div class="field-group">
             <%= form.label :novo_g_predio_bairro, "Bairro" %>
-            <%= form.text_field :novo_g_predio_bairro, class: "form-control", data: { controller: "uppercase" } %>
+            <%= form.text_field :novo_g_predio_bairro, class: "form-control", data: { controller: "uppercase", entidade_form_target: "bairro", action: "input->entidade-form#addressChanged" } %>
+          </div>
+          <%= form.hidden_field :novo_g_predio_latitude, data: { entidade_form_target: "latitude" } %>
+          <%= form.hidden_field :novo_g_predio_longitude, data: { entidade_form_target: "longitude" } %>
+          <div class="field-group field-group--full">
+            <div class="map-card">
+              <div class="map-card__header">
+                <div>
+                  <h4>Mapa do prédio do evento</h4>
+                  <p data-entidade-form-target="mapStatus">
+                    <% if m_evento.novo_g_predio_latitude.present? && m_evento.novo_g_predio_longitude.present? %>
+                      Endereço localizado com sucesso.
+                    <% else %>
+                      Preencha o endereço do prédio para marcar a localização automaticamente.
+                    <% end %>
+                  </p>
+                </div>
+                <a href="<%= m_evento.novo_g_predio_latitude.present? && m_evento.novo_g_predio_longitude.present? ? "https://www.openstreetmap.org/?mlat=#{m_evento.novo_g_predio_latitude}&mlon=#{m_evento.novo_g_predio_longitude}#map=16/#{m_evento.novo_g_predio_latitude}/#{m_evento.novo_g_predio_longitude}" : "#" %>" target="_blank" rel="noopener" class="secondary-button" data-entidade-form-target="mapLink">Abrir mapa</a>
+              </div>
+              <iframe
+                title="Mapa do prédio do evento"
+                class="map-card__frame"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="<%= if m_evento.novo_g_predio_latitude.present? && m_evento.novo_g_predio_longitude.present?
+                  lat = m_evento.novo_g_predio_latitude.to_f
+                  lng = m_evento.novo_g_predio_longitude.to_f
+                  delta = 0.01
+                  bbox = [lng - delta, lat - delta, lng + delta, lat + delta].join('%2C')
+                  marker = "#{lat}%2C#{lng}"
+                  "https://www.openstreetmap.org/export/embed.html?bbox=#{bbox}&layer=mapnik&marker=#{marker}"
+                end %>"
+                data-entidade-form-target="mapFrame"></iframe>
+            </div>
           </div>
         </div>
       </div>
@@ -132,7 +169,7 @@
         <div class="detail-tile">
           <span class="detail-label">Período</span>
           <span class="detail-value">
-            <%= [m_evento.data_inicio.present? ? l(m_evento.data_inicio) : nil, m_evento.data_fim.present? ? l(m_evento.data_fim) : nil].compact.presence&.join(" até ") || "Pode definir depois" %>
+            <%= format_datetime_range(m_evento.data_inicio, m_evento.data_fim) %>
           </span>
         </div>
         <div class="detail-tile">

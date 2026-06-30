@@ -15,6 +15,8 @@ class GPessoa < ApplicationRecord
   has_many :m_grupos_pessoas
   has_many :m_grupos, through: :m_grupos_pessoas
 
+  validates :nome, :email, :cpf, :g_entidade, :g_sexo, presence: true
+
   before_validation { self.cpf = cpf.gsub(/\D/, "") if cpf.present? }
 
   def g_usuario_principal

@@ -12,6 +12,12 @@ class MEventosController < ApplicationController
     @q = tenant_scope(MEvento).ransack(params[:q])
     @m_eventos = @q.result.includes(:g_predio, m_eventos_musicas: { m_musica: :m_artista }).order(created_at: :desc)
     @pagy, @m_eventos = pagy(@m_eventos, limit: 10)
+    @dashboard_snapshot = DashboardResumoService.new(
+      event_scope: tenant_scope(MEvento),
+      pessoa_scope: tenant_scope(GPessoa),
+      group_scope: tenant_scope(MGrupo),
+      month_param: params[:month]
+    ).call
   end
 
   def show
@@ -40,7 +46,7 @@ class MEventosController < ApplicationController
     if navigating_previous?
       redirect_to new_m_evento_path(step: previous_step, resume: 1)
     elsif last_step?
-      MEventos::CreateService.new(m_evento: @m_evento, params: wizard_params).call
+      MEventos::ServicoCriacao.new(m_evento: @m_evento, params: wizard_params).call
       clear_new_wizard!
       redirect_to m_evento_path(@m_evento), notice: "#{MEvento.model_name.human} criado com sucesso."
     else
@@ -60,7 +66,7 @@ class MEventosController < ApplicationController
     if navigating_previous?
       redirect_to edit_m_evento_path(@m_evento, step: previous_step, resume: 1)
     elsif last_step?
-      MEventos::UpdateService.new(m_evento: @m_evento, params: wizard_params).call
+      MEventos::ServicoAtualizacao.new(m_evento: @m_evento, params: wizard_params).call
       clear_edit_wizard!
       redirect_to m_evento_path(@m_evento), notice: "#{MEvento.model_name.human} atualizado com sucesso."
     else
@@ -73,7 +79,7 @@ class MEventosController < ApplicationController
   end
 
   def update_management
-    if MEventos::UpdateService.new(m_evento: @m_evento, params: m_evento_management_params).call
+    if MEventos::ServicoAtualizacao.new(m_evento: @m_evento, params: m_evento_management_params).call
       redirect_to manage_m_evento_path(@m_evento), notice: "Configurações do evento atualizadas com sucesso."
     end
   rescue ActiveRecord::RecordInvalid
@@ -101,6 +107,8 @@ class MEventosController < ApplicationController
       :novo_g_predio_cep,
       :novo_g_predio_logradouro,
       :novo_g_predio_bairro,
+      :novo_g_predio_latitude,
+      :novo_g_predio_longitude,
       repertorio: %i[selecionada m_musica_id m_arranjo_id]
     )
   end
@@ -122,7 +130,16 @@ class MEventosController < ApplicationController
 
   def load_management_collections
     @evento_repertorio = @m_evento.m_eventos_musicas
-                                .includes(m_musica: %i[m_artista m_compositor], m_arranjo: [{ m_arranjos_instrumentos_naipes: :g_instrumento_naipe }, :m_tipo_arranjo, :m_arranjador, :m_tonalidade])
+                                .includes(
+                                  m_musica: %i[m_artista m_compositor],
+                                  m_arranjo: [
+                                    :m_tipo_arranjo,
+                                    :m_arranjador,
+                                    :m_tonalidade,
+                                    { audio_attachments: :blob },
+                                    { m_arranjos_instrumentos_naipes: [:g_instrumento_naipe, { arquivo_attachments: :blob }] }
+                                  ]
+                                )
                                 .sort_by { |evento_musica| evento_musica.m_musica.descricao.to_s }
 
     preload_form_state if action_name.in?(%w[manage update_management])
@@ -245,5 +262,7 @@ class MEventosController < ApplicationController
     @m_evento.novo_g_predio_cep = wizard_params.fetch(:novo_g_predio_cep, @m_evento.novo_g_predio_cep)
     @m_evento.novo_g_predio_logradouro = wizard_params.fetch(:novo_g_predio_logradouro, @m_evento.novo_g_predio_logradouro)
     @m_evento.novo_g_predio_bairro = wizard_params.fetch(:novo_g_predio_bairro, @m_evento.novo_g_predio_bairro)
+    @m_evento.novo_g_predio_latitude = wizard_params.fetch(:novo_g_predio_latitude, @m_evento.novo_g_predio_latitude)
+    @m_evento.novo_g_predio_longitude = wizard_params.fetch(:novo_g_predio_longitude, @m_evento.novo_g_predio_longitude)
   end
 end

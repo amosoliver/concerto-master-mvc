@@ -4,7 +4,7 @@
   <div class="form-grid">
     <div class="field-group">
       <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+      <%= form.text_field :descricao, class: "form-control", required: true, data: { controller: "uppercase" } %>
     </div>
     <div class="field-group">
       <label>Entidade</label>
@@ -12,7 +12,7 @@
     </div>
     <div class="field-group">
       <%= form.label :m_tipo_grupo_id %>
-      <%= form.collection_select :m_tipo_grupo_id, MTipoGrupo.all, :id, :to_s, { include_blank: "Selecione um tipo de grupo..." }, class: "form-control" %>
+      <%= form.collection_select :m_tipo_grupo_id, MTipoGrupo.all, :id, :to_s, { include_blank: "Selecione um tipo de grupo..." }, class: "form-control", required: true %>
     </div>
   </div>
 

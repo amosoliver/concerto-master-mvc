@@ -62,8 +62,8 @@
       </div>
 
       <div class="detail-meta">
-        <span>Criado em <%= l(@g_instrumento_naipe.created_at) %></span>
-        <span>Atualizado em <%= l(@g_instrumento_naipe.updated_at) %></span>
+        <span>Criado em <%= format_timestamp(@g_instrumento_naipe.created_at) %></span>
+        <span>Atualizado em <%= format_timestamp(@g_instrumento_naipe.updated_at) %></span>
       </div>
     </section>
 
@@ -80,7 +80,7 @@
           <% @g_instrumento_naipe.g_pessoas.each do |pessoa| %>
             <article class="related-card">
               <span class="related-card__label"><%= pessoa.g_entidade %></span>
-              <%= link_to pessoa.nome, g_pessoa_path(pessoa), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__value"><%= pessoa.nome %></span>
               <span class="related-card__meta"><%= [pessoa.email.presence, pluralize(pessoa.m_grupos.count, "grupo")].compact.join(" • ") %></span>
             </article>
           <% end %>
@@ -103,7 +103,7 @@
           <% @g_instrumento_naipe.m_grupos.each do |grupo| %>
             <article class="related-card">
               <span class="related-card__label"><%= grupo.m_tipo_grupo %></span>
-              <%= link_to grupo.descricao, m_grupo_path(grupo), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__value"><%= grupo.descricao %></span>
               <span class="related-card__meta"><%= pluralize(grupo.g_pessoas.count, "pessoa") %></span>
             </article>
           <% end %>
@@ -124,7 +124,7 @@
       <% if @g_instrumento_naipe.m_arranjos.any? %>
         <div class="tag-cloud">
           <% @g_instrumento_naipe.m_arranjos.each do |arranjo| %>
-            <%= link_to arranjo.to_s, m_arranjo_path(arranjo), class: "tag-cloud__item tag-cloud__item--link" %>
+            <span class="tag-cloud__item"><%= arranjo.to_s %></span>
           <% end %>
         </div>
       <% else %>

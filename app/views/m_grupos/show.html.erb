@@ -74,7 +74,7 @@
       <% if @m_grupo.g_instrumentos_naipes.any? %>
         <div class="tag-cloud">
           <% @m_grupo.g_instrumentos_naipes.each do |instrumento| %>
-            <%= link_to instrumento.to_s, g_instrumento_naipe_path(instrumento), class: "tag-cloud__item tag-cloud__item--link" %>
+            <span class="tag-cloud__item"><%= instrumento.to_s %></span>
           <% end %>
         </div>
       <% else %>
@@ -95,7 +95,7 @@
           <% @m_grupo.g_pessoas.each do |pessoa| %>
             <article class="related-card">
               <span class="related-card__label"><%= pessoa.g_sexo %></span>
-              <%= link_to pessoa.nome, g_pessoa_path(pessoa), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__value"><%= pessoa.nome %></span>
               <span class="related-card__meta"><%= pessoa.email.presence || format_cpf(pessoa.cpf) %></span>
             </article>
           <% end %>

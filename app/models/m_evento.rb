@@ -2,7 +2,12 @@ class MEvento < ApplicationRecord
   include SoftDeletable
   include Uppercasable
 
-  attr_accessor :novo_g_predio_nome_fantasia, :novo_g_predio_cep, :novo_g_predio_logradouro, :novo_g_predio_bairro
+  attr_accessor :novo_g_predio_nome_fantasia,
+                :novo_g_predio_cep,
+                :novo_g_predio_logradouro,
+                :novo_g_predio_bairro,
+                :novo_g_predio_latitude,
+                :novo_g_predio_longitude
 
   upcases :descricao
 

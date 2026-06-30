@@ -14,6 +14,8 @@ class MGrupo < ApplicationRecord
 
   before_validation :assign_g_entidade
 
+  validates :descricao, :m_tipo_grupo, :g_entidade, presence: true
+
   def to_s
     descricao
   end

@@ -65,7 +65,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card" data-controller="view-toggle">
+  <section class="panel-card panel-card--fill" data-controller="view-toggle">
     <div class="panel-card__header">
       <div>
         <p class="eyebrow">Listagem</p>
@@ -94,8 +94,8 @@
           <% @m_ensaios.each do |m_ensaio| %>
             <tr>
               <td><%= m_ensaio.descricao %></td>
-              <td><%= m_ensaio.data_inicio %></td>
-              <td><%= m_ensaio.data_fim %></td>
+              <td><%= format_datetime(m_ensaio.data_inicio) %></td>
+              <td><%= format_datetime(m_ensaio.data_fim) %></td>
               <td><%= m_ensaio.g_predio %></td>
               <td><%= m_ensaio.g_entidade %></td>
               <td><%= m_ensaio.deleted_at %></td>
@@ -115,9 +115,9 @@
             <span class="detail-label"><%= MEnsaio.human_attribute_name(:descricao) %></span>
             <span class="detail-value"><%= m_ensaio.descricao %></span>
             <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_inicio) %></span>
-            <span class="detail-value"><%= m_ensaio.data_inicio %></span>
+            <span class="detail-value"><%= format_datetime(m_ensaio.data_inicio) %></span>
             <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_fim) %></span>
-            <span class="detail-value"><%= m_ensaio.data_fim %></span>
+            <span class="detail-value"><%= format_datetime(m_ensaio.data_fim) %></span>
             <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_predio_id) %></span>
             <span class="detail-value"><%= m_ensaio.g_predio %></span>
             <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>

@@ -3,8 +3,20 @@ class GMunicipiosController < ApplicationController
 
   def index
     @q = GMunicipio.ransack(params[:q])
-    @g_municipios = @q.result.order(created_at: :desc)
-    @pagy, @g_municipios = pagy(@g_municipios, limit: 10)
+    @g_municipios = @q.result
+    @g_municipios = @g_municipios.where(g_estado_id: params[:g_estado_id]) if params[:g_estado_id].present?
+    @g_municipios = @g_municipios.order(:descricao)
+
+    respond_to do |format|
+      format.json do
+        render json: @g_municipios.select(:id, :descricao, :g_estado_id).map { |municipio|
+          { id: municipio.id, descricao: municipio.descricao, g_estado_id: municipio.g_estado_id }
+        }
+      end
+      format.html do
+        @pagy, @g_municipios = pagy(@g_municipios, limit: 50)
+      end
+    end
   end
 
   def show

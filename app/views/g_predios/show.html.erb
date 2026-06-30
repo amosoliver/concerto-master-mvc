@@ -77,8 +77,8 @@
       </div>
 
       <div class="detail-meta">
-        <span>Criado em <%= l(@g_predio.created_at) %></span>
-        <span>Atualizado em <%= l(@g_predio.updated_at) %></span>
+        <span>Criado em <%= format_timestamp(@g_predio.created_at) %></span>
+        <span>Atualizado em <%= format_timestamp(@g_predio.updated_at) %></span>
       </div>
     </section>
 
@@ -92,11 +92,11 @@
       </div>
       <% if @g_predio.m_eventos.any? %>
         <div class="related-grid">
-          <% @g_predio.m_eventos.order(:data_inicio).each do |evento| %>
+          <% @g_predio.m_eventos.order(data_inicio: :desc).each do |evento| %>
             <article class="related-card">
               <span class="related-card__label">Evento</span>
               <%= link_to evento.descricao, m_evento_path(evento), class: "related-card__value related-card__value--link" %>
-              <span class="related-card__meta"><%= [evento.data_inicio.present? ? l(evento.data_inicio) : nil, pluralize(evento.m_musicas.count, "música")].compact.join(" • ") %></span>
+              <span class="related-card__meta"><%= [format_datetime(evento.data_inicio, fallback: nil), pluralize(evento.m_musicas.count, "música")].compact.join(" • ") %></span>
             </article>
           <% end %>
         </div>
@@ -119,7 +119,7 @@
             <article class="related-card">
               <span class="related-card__label">Ensaio</span>
               <%= link_to ensaio.descricao, m_ensaio_path(ensaio), class: "related-card__value related-card__value--link" %>
-              <span class="related-card__meta"><%= [ensaio.data_inicio.present? ? l(ensaio.data_inicio) : nil, pluralize(ensaio.m_musicas.distinct.count, "música")].compact.join(" • ") %></span>
+              <span class="related-card__meta"><%= [format_datetime(ensaio.data_inicio, fallback: nil), pluralize(ensaio.m_musicas.distinct.count, "música")].compact.join(" • ") %></span>
             </article>
           <% end %>
         </div>

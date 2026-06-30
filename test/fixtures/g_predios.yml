@@ -5,6 +5,8 @@ one:
   cep: MyString
   logradouro: MyString
   bairro: MyString
+  latitude: -8.760770
+  longitude: -63.899900
   g_entidade: one
 
 two:
@@ -12,4 +14,6 @@ two:
   cep: MyString
   logradouro: MyString
   bairro: MyString
+  latitude: -8.761770
+  longitude: -63.898900
   g_entidade: two

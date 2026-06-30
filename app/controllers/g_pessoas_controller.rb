@@ -30,12 +30,16 @@ class GPessoasController < ApplicationController
 
     if navigating_previous?
       redirect_to new_g_pessoa_path(step: previous_step, resume: 1)
-    elsif last_step?
-      GPessoas::CreateService.new(g_pessoa: @g_pessoa, params: wizard_params).call
-      clear_new_wizard!
-      redirect_to g_pessoas_path, notice: "#{GPessoa.model_name.human} criado com sucesso."
+    elsif current_step_valid?
+      if last_step?
+        GPessoas::ServicoCriacao.new(g_pessoa: @g_pessoa, params: wizard_params).call
+        clear_new_wizard!
+        redirect_to g_pessoas_path, notice: "#{GPessoa.model_name.human} criado com sucesso."
+      else
+        redirect_to new_g_pessoa_path(step: next_step, resume: 1)
+      end
     else
-      redirect_to new_g_pessoa_path(step: next_step, resume: 1)
+      render :new, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordInvalid
     render :new, status: :unprocessable_entity
@@ -47,12 +51,16 @@ class GPessoasController < ApplicationController
 
     if navigating_previous?
       redirect_to edit_g_pessoa_path(@g_pessoa, step: previous_step, resume: 1)
-    elsif last_step?
-      GPessoas::UpdateService.new(g_pessoa: @g_pessoa, params: wizard_params).call
-      clear_edit_wizard!
-      redirect_to g_pessoas_path, notice: "#{GPessoa.model_name.human} atualizado com sucesso."
+    elsif current_step_valid?
+      if last_step?
+        GPessoas::ServicoAtualizacao.new(g_pessoa: @g_pessoa, params: wizard_params).call
+        clear_edit_wizard!
+        redirect_to g_pessoas_path, notice: "#{GPessoa.model_name.human} atualizado com sucesso."
+      else
+        redirect_to edit_g_pessoa_path(@g_pessoa, step: next_step, resume: 1)
+      end
     else
-      redirect_to edit_g_pessoa_path(@g_pessoa, step: next_step, resume: 1)
+      render :edit, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordInvalid
     render :edit, status: :unprocessable_entity
@@ -263,5 +271,14 @@ class GPessoasController < ApplicationController
     normalized["u_perfil_ids"] = valid_perfil_ids
 
     normalized
+  end
+
+  def current_step_valid?
+    service = GPessoas::ServicoBase.new(g_pessoa: @g_pessoa, params: wizard_params)
+    steps_to_validate = STEPS.first((step_index(current_step) + 1))
+
+    steps_to_validate.each_with_index.all? do |step, index|
+      service.valid_for_step?(step, clear_errors: index.zero?)
+    end
   end
 end

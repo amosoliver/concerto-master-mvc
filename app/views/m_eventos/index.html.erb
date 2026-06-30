@@ -51,7 +51,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card" data-controller="view-toggle">
+  <section class="panel-card panel-card--fill" data-controller="view-toggle">
     <div class="panel-card__header">
       <div>
         <p class="eyebrow">Listagem</p>
@@ -78,8 +78,8 @@
           <% @m_eventos.each do |m_evento| %>
             <tr>
               <td><%= m_evento.descricao %></td>
-              <td><%= m_evento.data_inicio %></td>
-              <td><%= m_evento.data_fim %></td>
+              <td><%= format_datetime(m_evento.data_inicio) %></td>
+              <td><%= format_datetime(m_evento.data_fim) %></td>
               <td><%= m_evento.g_predio %></td>
               <td>
                 <%= render "shared/actions_menu", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento), config_path: manage_m_evento_path(m_evento) %>
@@ -97,9 +97,9 @@
             <span class="detail-label"><%= MEvento.human_attribute_name(:descricao) %></span>
             <span class="detail-value"><%= m_evento.descricao %></span>
             <span class="detail-label"><%= MEvento.human_attribute_name(:data_inicio) %></span>
-            <span class="detail-value"><%= m_evento.data_inicio %></span>
+            <span class="detail-value"><%= format_datetime(m_evento.data_inicio) %></span>
             <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
-            <span class="detail-value"><%= m_evento.data_fim %></span>
+            <span class="detail-value"><%= format_datetime(m_evento.data_fim) %></span>
             <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
             <span class="detail-value"><%= m_evento.g_predio %></span>
             <span class="detail-label">Repertório</span>

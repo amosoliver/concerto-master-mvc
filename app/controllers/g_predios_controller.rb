@@ -47,6 +47,6 @@ class GPrediosController < ApplicationController
   end
 
   def g_predio_params
-    params.require(:g_predio).permit(:nome_fantasia, :cep, :logradouro, :bairro)
+    params.require(:g_predio).permit(:nome_fantasia, :cep, :logradouro, :bairro, :latitude, :longitude)
   end
 end

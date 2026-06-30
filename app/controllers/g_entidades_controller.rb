@@ -28,17 +28,21 @@ class GEntidadesController < ApplicationController
 
   def create
     store_wizard_step!
-    @g_entidade = GEntidade.new(wizard_params.except(:grupos_attributes))
+    @g_entidade = GEntidade.new
     apply_wizard_values
 
     if navigating_previous?
       redirect_to new_g_entidade_path(step: previous_step, resume: 1)
-    elsif last_step?
-      GEntidades::CreateService.new(g_entidade: @g_entidade, params: wizard_params).call
-      clear_new_wizard!
-      redirect_to g_entidades_path, notice: "#{GEntidade.model_name.human} criado com sucesso."
+    elsif current_step_valid?
+      if last_step?
+        GEntidades::ServicoCriacao.new(g_entidade: @g_entidade, params: wizard_params).call
+        clear_new_wizard!
+        redirect_to g_entidades_path, notice: "#{GEntidade.model_name.human} criado com sucesso."
+      else
+        redirect_to new_g_entidade_path(step: next_step, resume: 1)
+      end
     else
-      redirect_to new_g_entidade_path(step: next_step, resume: 1)
+      render :new, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordInvalid
     render :new, status: :unprocessable_entity
@@ -50,12 +54,16 @@ class GEntidadesController < ApplicationController
 
     if navigating_previous?
       redirect_to edit_g_entidade_path(@g_entidade, step: previous_step, resume: 1)
-    elsif last_step?
-      GEntidades::UpdateService.new(g_entidade: @g_entidade, params: wizard_params).call
-      clear_edit_wizard!
-      redirect_to g_entidades_path, notice: "#{GEntidade.model_name.human} atualizado com sucesso."
+    elsif current_step_valid?
+      if last_step?
+        GEntidades::ServicoAtualizacao.new(g_entidade: @g_entidade, params: wizard_params).call
+        clear_edit_wizard!
+        redirect_to g_entidades_path, notice: "#{GEntidade.model_name.human} atualizado com sucesso."
+      else
+        redirect_to edit_g_entidade_path(@g_entidade, step: next_step, resume: 1)
+      end
     else
-      redirect_to edit_g_entidade_path(@g_entidade, step: next_step, resume: 1)
+      render :edit, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordInvalid
     render :edit, status: :unprocessable_entity
@@ -78,7 +86,7 @@ class GEntidadesController < ApplicationController
       :g_estado_id,
       :g_municipio_id,
       :g_entidade_id,
-      predio_attributes: %i[nome_fantasia cep logradouro bairro],
+      predio_attributes: %i[nome_fantasia cep logradouro bairro latitude longitude],
       grupos_attributes: [
         :id,
         :descricao,
@@ -156,7 +164,12 @@ class GEntidadesController < ApplicationController
 
   def load_form_collections
     @g_estados = GEstado.order(:descricao)
-    @g_municipios = GMunicipio.order(:descricao)
+    @g_municipios =
+      if selected_estado_id.present?
+        GMunicipio.where(g_estado_id: selected_estado_id).order(:descricao)
+      else
+        GMunicipio.none
+      end
     @g_entidades_pai = @g_entidade&.persisted? ? tenant_entity_scope.where.not(id: @g_entidade.id) : tenant_entity_scope
     @m_tipos_grupos = MTipoGrupo.order(:descricao)
     @g_instrumentos_naipes = GInstrumentoNaipe.includes(:g_instrumento, :g_naipe).sort_by(&:to_s)
@@ -203,6 +216,26 @@ class GEntidadesController < ApplicationController
 
     @g_predio ||= @g_entidade.g_predio_principal || @g_entidade.g_predios.build
     predio_attrs = wizard_params[:predio_attributes]
-    @g_predio.assign_attributes(predio_attrs.slice(:nome_fantasia, :cep, :logradouro, :bairro)) if predio_attrs.present?
+    @g_predio.assign_attributes(predio_attrs.slice(:nome_fantasia, :cep, :logradouro, :bairro, :latitude, :longitude)) if predio_attrs.present?
+  end
+
+  def current_step_valid?
+    service = GEntidades::ServicoBase.new(g_entidade: @g_entidade, params: wizard_params)
+
+    case current_step
+    when "predio"
+      service.valid_for_step?("dados") && service.valid_for_step?("predio", clear_errors: false)
+    when "grupos"
+      service.valid_for_step?("dados") &&
+        service.valid_for_step?("predio", clear_errors: false) &&
+        service.valid_for_step?("grupos", clear_errors: false)
+    else
+      service.valid_for_step?(current_step)
+    end
+  end
+
+  def selected_estado_id
+    raw_id = wizard_params[:g_estado_id].presence || @g_entidade&.g_estado_id
+    raw_id.presence&.to_i
   end
 end

@@ -44,9 +44,41 @@ export default class extends Controller {
   }
 
   reposition() {
+    const vw = window.innerWidth
+
+    if (vw <= 780) {
+      // Bottom sheet on mobile/tablet: ignore button position entirely.
+      // CSS handles the visual anchoring (see @media max-width:780px rules).
+      this.panel.style.removeProperty("top")
+      this.panel.style.removeProperty("left")
+      this.panel.style.removeProperty("maxHeight")
+      return
+    }
+
     const rect = this.buttonTarget.getBoundingClientRect()
-    this.panel.style.top = `${rect.bottom + 6}px`
-    this.panel.style.left = `${Math.max(8, rect.right - this.panel.offsetWidth)}px`
+    const vh = window.innerHeight
+    const margin = 8
+    const gap = 6
+
+    // Horizontal: align to button's right edge, clamped to viewport.
+    const left = Math.min(
+      Math.max(margin, rect.right - this.panel.offsetWidth),
+      vw - this.panel.offsetWidth - margin
+    )
+
+    // Vertical: prefer below the button; open upward if more space above.
+    const spaceBelow = vh - rect.bottom - gap - margin
+    const spaceAbove = rect.top - gap - margin
+    let top
+    if (spaceBelow >= this.panel.offsetHeight || spaceBelow >= spaceAbove) {
+      top = Math.min(rect.bottom + gap, vh - this.panel.offsetHeight - margin)
+    } else {
+      top = Math.max(margin, rect.top - this.panel.offsetHeight - gap)
+    }
+
+    this.panel.style.top = `${Math.max(margin, top)}px`
+    this.panel.style.left = `${Math.max(margin, left)}px`
+    this.panel.style.maxHeight = `${vh - margin * 2}px`
   }
 
   closeOthers(event) {

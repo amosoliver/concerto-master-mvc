@@ -9,7 +9,7 @@
   <div class="form-grid">
     <div class="field-group field-group--full">
       <%= form.label :descricao %>
-      <%= form.text_field :descricao, class: "form-control", data: { controller: "uppercase" } %>
+      <%= form.text_field :descricao, class: "form-control", required: true, data: { controller: "uppercase" } %>
     </div>
     <div class="field-group">
       <%= form.label :m_musica_id %>
@@ -17,12 +17,12 @@
         <%= form.hidden_field :m_musica_id, value: musica_id %>
         <div class="form-control form-control--static"><%= @m_musicas.find { |musica| musica.id == musica_id.to_i } || m_arranjo.m_musica %></div>
       <% else %>
-        <%= form.collection_select :m_musica_id, @m_musicas, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control" %>
+        <%= form.collection_select :m_musica_id, @m_musicas, :id, :to_s, { include_blank: "Selecione uma música..." }, class: "form-control", required: true %>
       <% end %>
     </div>
     <div class="field-group">
       <%= form.label :m_tipo_arranjo_id %>
-      <%= form.collection_select :m_tipo_arranjo_id, @m_tipos_arranjos, :id, :to_s, { include_blank: "Selecione um tipo de arranjo..." }, class: "form-control" %>
+      <%= form.collection_select :m_tipo_arranjo_id, @m_tipos_arranjos, :id, :to_s, { include_blank: "Selecione um tipo de arranjo..." }, class: "form-control", required: true %>
     </div>
     <div class="field-group">
       <%= form.label :m_arranjador_id %>
@@ -37,7 +37,7 @@
     </div>
     <div class="field-group">
       <%= form.label :m_tonalidade_id %>
-      <%= form.collection_select :m_tonalidade_id, @m_tonalidades, :id, :to_s, { include_blank: "Selecione uma tonalidade..." }, class: "form-control" %>
+      <%= form.collection_select :m_tonalidade_id, @m_tonalidades, :id, :to_s, { include_blank: "Selecione uma tonalidade..." }, class: "form-control", required: true %>
     </div>
     <div class="field-group field-group--full">
       <label>Instrumentos do arranjo</label>

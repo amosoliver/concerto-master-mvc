@@ -6,6 +6,8 @@ class MTipoGrupo < ApplicationRecord
 
   has_many :m_grupos
 
+  validates :descricao, presence: true
+
   def to_s
     descricao
   end

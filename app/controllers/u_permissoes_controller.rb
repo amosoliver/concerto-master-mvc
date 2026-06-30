@@ -4,7 +4,7 @@ class UPermissoesController < ApplicationController
   def index
     @q = UPermissao.ransack(params[:q])
     @u_permissoes = @q.result.order(created_at: :desc)
-    @pagy, @u_permissoes = pagy(@u_permissoes, limit: 10)
+    @pagy, @u_permissoes = pagy(@u_permissoes, limit: 25)
   end
 
   def show
@@ -41,8 +41,8 @@ class UPermissoesController < ApplicationController
   end
 
   def atualizar
-    total = UPermissoesSyncService.call
-    redirect_to u_permissoes_path, notice: "#{total} permissões sincronizadas com sucesso."
+    total = SincronizadorPermissoesService.call
+    redirect_to u_permissoes_path, notice: "#{total} permissões foram criadas, atualizadas ou removidas com sucesso. O perfil Administrador também foi atualizado automaticamente."
   rescue StandardError => error
     redirect_to u_permissoes_path, alert: "Erro ao atualizar permissões: #{error.message}"
   end

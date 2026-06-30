@@ -26,8 +26,8 @@
     </div>
 
     <div class="detail-meta">
-      <span>Criado em <%= l(@g_pais.created_at) %></span>
-      <span>Atualizado em <%= l(@g_pais.updated_at) %></span>
+      <span>Criado em <%= format_timestamp(@g_pais.created_at) %></span>
+      <span>Atualizado em <%= format_timestamp(@g_pais.updated_at) %></span>
     </div>
   </section>
 </div>

@@ -1,0 +1,61 @@
+<div class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Gerenciar</p>
+      <h1>Perfis do usuário</h1>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to "Voltar", g_usuario_path(@g_usuario), class: "secondary-button" %>
+    </div>
+  </div>
+
+  <section class="panel-card detail-card">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Usuário</p>
+        <h3><%= @g_usuario %></h3>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-tile">
+        <span class="detail-label">Pessoa</span>
+        <span class="detail-value"><%= @g_usuario.g_pessoa %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label">Perfis ativos</span>
+        <span class="detail-value"><%= @selected_ids.size %></span>
+      </div>
+    </div>
+  </section>
+
+  <%= form_with url: update_perfis_g_usuario_path(@g_usuario), method: :patch, class: "panel-card form-card" do |form| %>
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Associação</p>
+        <h3>Selecione os perfis</h3>
+      </div>
+    </div>
+
+    <% if @u_perfis.any? %>
+      <div class="selection-panel">
+        <div class="selection-group">
+          <div class="selection-group__items">
+            <% @u_perfis.each do |perfil| %>
+              <label class="selection-item">
+                <%= check_box_tag "u_perfil_ids[]", perfil.id, @selected_ids.include?(perfil.id), id: "perfil_#{perfil.id}" %>
+                <span><%= perfil.descricao %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="empty-card">Nenhum perfil cadastrado. Crie perfis em <%= link_to "Perfis", u_perfis_path %> primeiro.</div>
+    <% end %>
+
+    <div class="form-actions">
+      <%= form.submit "Salvar perfis", class: "primary-button" %>
+      <%= link_to "Cancelar", g_usuario_path(@g_usuario), class: "secondary-button" %>
+    </div>
+  <% end %>
+</div>

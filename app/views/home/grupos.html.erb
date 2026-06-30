@@ -1,0 +1,64 @@
+<section class="hero-card">
+  <div>
+    <p class="eyebrow">Dashboard pessoal</p>
+    <h2><%= current_context_entidade || "Pessoal da entidade" %></h2>
+    <p>Este painel mostra somente as pessoas de cada grupo, organizadas em cards por naipe ou instrumento.</p>
+  </div>
+  <div class="page-header__actions">
+    <div class="view-switch">
+      <%= link_to "Agenda", root_path, class: "view-switch__btn" %>
+      <%= link_to "Pessoal", dashboard_grupos_path, class: "view-switch__btn is-active" %>
+    </div>
+    <%= authorized_link_to "Gerenciar grupos", m_grupos_path, class: "primary-button" %>
+  </div>
+</section>
+
+<section class="panel-card">
+  <div class="panel-card__header">
+    <div>
+      <p class="eyebrow">Pessoal por grupo</p>
+      <h3>Quem é cada naipe e instrumento</h3>
+    </div>
+  </div>
+
+  <% if @dashboard_snapshot[:group_sections].any? %>
+    <div class="people-dashboard">
+      <% @dashboard_snapshot[:group_sections].each do |group| %>
+        <article class="people-dashboard__group">
+          <header class="people-dashboard__group-header">
+            <div>
+              <h3><%= group[:group_name] %></h3>
+              <p><%= [group[:group_type], "#{group[:people_count]} pessoa(s) no grupo"].compact.join(" • ") %></p>
+            </div>
+            <span class="show-section__count"><%= group[:items].size %></span>
+          </header>
+
+          <% if group[:items].any? %>
+            <div class="people-dashboard__cards">
+              <% group[:items].each do |item| %>
+                <article class="people-dashboard__card">
+                  <div class="people-dashboard__card-header">
+                    <div class="people-dashboard__card-meta">
+                      <h4>Quem é <%= item[:card_label] %></h4>
+                      <span><%= item[:count] %></span>
+                    </div>
+                  </div>
+
+                  <div class="tag-cloud">
+                    <% item[:people_names].each do |name| %>
+                      <span class="tag-cloud__item"><%= name %></span>
+                    <% end %>
+                  </div>
+                </article>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="empty-card">Este grupo ainda não tem pessoas com instrumento/naipe vinculados.</div>
+          <% end %>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-card">Nenhum grupo da entidade com pessoas e naipes configurados.</div>
+  <% end %>
+</section>

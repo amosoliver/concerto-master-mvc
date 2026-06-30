@@ -18,7 +18,7 @@ module TenantAccess
   private
 
   def tenant_scope(scope)
-    TenantScopeResolver.call(
+    ResolvedorEscopoEntidade.call(
       scope: scope,
       entity_ids: current_tenant_entity_ids,
       instrument_ids: current_tenant_instrument_ids

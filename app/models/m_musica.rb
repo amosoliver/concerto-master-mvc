@@ -16,6 +16,8 @@ class MMusica < ApplicationRecord
 
   before_validation :assign_g_entidade
 
+  validates :descricao, :url_referencia, :g_entidade, :m_artista, presence: true
+
   def to_s
     descricao
   end

@@ -38,8 +38,8 @@
     </div>
 
     <div class="detail-meta">
-      <span>Criado em <%= l(@u_permissao.created_at) %></span>
-      <span>Atualizado em <%= l(@u_permissao.updated_at) %></span>
+      <span>Criado em <%= format_timestamp(@u_permissao.created_at) %></span>
+      <span>Atualizado em <%= format_timestamp(@u_permissao.updated_at) %></span>
     </div>
   </section>
 </div>

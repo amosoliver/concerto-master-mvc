@@ -37,7 +37,7 @@ class MMusicasController < ApplicationController
     @m_musica = MMusica.new(m_musica_params)
     assign_virtual_attributes
 
-    if MMusicas::CreateService.new(m_musica: @m_musica, params: m_musica_params).call
+    if MMusicas::ServicoCriacao.new(m_musica: @m_musica, params: m_musica_params).call
       redirect_to m_musicas_path, notice: "#{MMusica.model_name.human} criado com sucesso."
     end
   rescue ActiveRecord::RecordInvalid
@@ -48,7 +48,7 @@ class MMusicasController < ApplicationController
     @m_musica.assign_attributes(m_musica_params)
     assign_virtual_attributes
 
-    if MMusicas::UpdateService.new(m_musica: @m_musica, params: m_musica_params).call
+    if MMusicas::ServicoAtualizacao.new(m_musica: @m_musica, params: m_musica_params).call
       redirect_to m_musicas_path, notice: "#{MMusica.model_name.human} atualizado com sucesso."
     end
   rescue ActiveRecord::RecordInvalid

@@ -34,8 +34,8 @@
     </div>
 
     <div class="detail-meta">
-      <span>Criado em <%= l(@g_municipio.created_at) %></span>
-      <span>Atualizado em <%= l(@g_municipio.updated_at) %></span>
+      <span>Criado em <%= format_timestamp(@g_municipio.created_at) %></span>
+      <span>Atualizado em <%= format_timestamp(@g_municipio.updated_at) %></span>
     </div>
   </section>
 </div>

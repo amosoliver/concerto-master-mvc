@@ -1,10 +1,37 @@
 module ApplicationHelper
+  CALENDAR_MONTH_NAMES = [
+    nil,
+    "Janeiro",
+    "Fevereiro",
+    "Marco",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro"
+  ].freeze
+
+  CALENDAR_WEEKDAY_NAMES = [
+    "Domingo",
+    "Segunda-feira",
+    "Terca-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sabado"
+  ].freeze
+
   BREADCRUMB_ACTION_LABELS = {
     "new" => "Novo",
     "edit" => "Editar",
     "manage" => "Gerenciar",
     "manage_arranjos" => "Arranjos",
     "manage_files" => "Arquivos",
+    "grupos" => "Dashboard Pessoal",
     "show" => "Detalhes"
   }.freeze
 
@@ -54,6 +81,55 @@ module ApplicationHelper
     return if value.blank?
 
     value.gsub(/(\d{5})(\d{3})/, '\1-\2')
+  end
+
+  def calendar_month_label(date)
+    "#{CALENDAR_MONTH_NAMES[date.month]} de #{date.year}"
+  end
+
+  def calendar_weekday_label(date)
+    CALENDAR_WEEKDAY_NAMES[date.wday]
+  end
+
+  def calendar_period_label(view, snapshot)
+    case view
+    when "week"
+      start_date = snapshot[:week_start]
+      end_date = snapshot[:week_end]
+      if start_date.month == end_date.month
+        "#{start_date.day} a #{end_date.day} de #{CALENDAR_MONTH_NAMES[start_date.month]}"
+      else
+        "#{start_date.day} de #{CALENDAR_MONTH_NAMES[start_date.month]} a #{end_date.day} de #{CALENDAR_MONTH_NAMES[end_date.month]}"
+      end
+    when "day"
+      date = snapshot[:day]
+      "#{calendar_weekday_label(date)}, #{date.day} de #{CALENDAR_MONTH_NAMES[date.month]}"
+    else
+      calendar_month_label(snapshot[:month_start])
+    end
+  end
+
+  def format_datetime(value, fallback: "-")
+    return fallback if value.blank?
+
+    I18n.l(value, format: "%d/%m/%Y %H:%M")
+  end
+
+  def format_time(value, fallback: "--:--")
+    return fallback if value.blank?
+
+    I18n.l(value, format: "%H:%M")
+  end
+
+  def format_timestamp(value, fallback: "-")
+    format_datetime(value, fallback: fallback)
+  end
+
+  def format_datetime_range(start_at, end_at, fallback: "Pode definir depois")
+    values = [start_at, end_at].compact
+    return fallback if values.empty?
+
+    values.map { |value| format_datetime(value) }.join(" até ")
   end
 
   AUDIO_FILE_EXTENSIONS = %w[
@@ -116,17 +192,14 @@ module ApplicationHelper
 
     referencial_classificacoes = [
       nav_item(model_plural_human_name(GSexo), "⚧️", g_sexos_path, "g_sexos"),
-      nav_item(model_plural_human_name(GInstrumentoNaipe), "🔗", g_instrumentos_naipes_path, "g_instrumentos_naipes"),
-      nav_item(model_plural_human_name(MTipoArranjo), "🧩", m_tipos_arranjos_path, "m_tipos_arranjos"),
-      nav_item(model_plural_human_name(MTonalidade), "🎹", m_tonalidades_path, "m_tonalidades")
+      nav_item(model_plural_human_name(GInstrumentoNaipe), "🔗", g_instrumentos_naipes_path, "g_instrumentos_naipes")
     ]
 
     gestao_pessoas_entidades = [
       nav_item(model_plural_human_name(GEntidade), "🏢", g_entidades_path, "g_entidades"),
       nav_item(model_plural_human_name(GPredio), "🏛️", g_predios_path, "g_predios"),
       nav_item(model_plural_human_name(GPessoa), "👤", g_pessoas_path, "g_pessoas"),
-      nav_item(model_plural_human_name(MGrupo), "👥", m_grupos_path, "m_grupos"),
-      nav_item(model_plural_human_name(MTipoGrupo), "🏷️", m_tipos_grupos_path, "m_tipos_grupos")
+      nav_item(model_plural_human_name(MGrupo), "👥", m_grupos_path, "m_grupos")
     ]
 
     musica_catalogo = [
@@ -137,18 +210,20 @@ module ApplicationHelper
     acesso_items = [
       nav_item(model_plural_human_name(GUsuario), "🔑", g_usuarios_path, "g_usuarios"),
       nav_item(model_plural_human_name(UPerfil), "🪪", u_perfis_path, "u_perfis"),
-      nav_item(model_plural_human_name(UFuncao), "🎖️", u_funcoes_path, "u_funcoes"),
-      nav_item(model_plural_human_name(UTipoFuncao), "🏷️", u_tipos_funcoes_path, "u_tipos_funcoes"),
       nav_item(model_plural_human_name(UPermissao), "🛡️", u_permissoes_path, "u_permissoes")
     ]
 
+    dashboards_items = [
+      nav_item("Visão Geral", "📊", root_path, "home"),
+      nav_item("Pessoal", "👥", dashboard_grupos_path, "home")
+    ]
+
     [
-      { items: [nav_item("Dashboard", "📊", root_path, "home")] },
+      nav_group("Dashboards", "📈", items: dashboards_items),
       nav_group("Referencial", "🧭", items: referencial_localizacao + referencial_classificacoes),
       nav_group("Gestão", "🗂️", items: gestao_pessoas_entidades),
       nav_group("Música", "🎼", items: musica_catalogo),
-      nav_group("Acesso", "🔐", items: acesso_items),
-      { items: [nav_item(model_plural_human_name(Example), "🧪", examples_path, "examples")] }
+      nav_group("Acesso", "🔐", items: acesso_items)
     ].filter_map do |group|
       filtered_items = Array(group[:items]).select { |item| allowed_action?(item[:controller], "index") }
       next if filtered_items.blank?

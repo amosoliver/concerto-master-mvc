@@ -25,24 +25,24 @@
     <div class="form-grid">
       <div class="field-group">
         <%= form.label :nome %>
-        <%= form.text_field :nome, value: wizard_values["nome"] || g_pessoa.nome, class: "form-control", data: { controller: "uppercase" } %>
+        <%= form.text_field :nome, value: wizard_values["nome"] || g_pessoa.nome, class: "form-control", required: true, data: { controller: "uppercase" } %>
       </div>
       <div class="field-group">
         <%= form.label :email %>
-        <%= form.email_field :email, value: wizard_values["email"] || g_pessoa.email, class: "form-control" %>
+        <%= form.email_field :email, value: wizard_values["email"] || g_pessoa.email, class: "form-control", required: true %>
       </div>
       <div class="field-group">
         <%= form.label :cpf %>
-        <%= form.text_field :cpf, value: wizard_values["cpf"] || g_pessoa.cpf, class: "form-control", inputmode: "numeric", maxlength: 14, data: { controller: "mask", mask_pattern_value: "cpf" } %>
+        <%= form.text_field :cpf, value: wizard_values["cpf"] || g_pessoa.cpf, class: "form-control", required: true, inputmode: "numeric", maxlength: 14, data: { controller: "mask", mask_pattern_value: "cpf" } %>
       </div>
       <div class="field-group">
         <%= form.label :g_entidade_id %>
-        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#syncEntity" } %>
+        <%= form.collection_select :g_entidade_id, @g_entidades, :id, :to_s, { include_blank: "Selecione uma entidade...", selected: wizard_values["g_entidade_id"] || g_pessoa.g_entidade_id }, class: "form-control", required: true, data: { pessoa_filtros_target: "entidadeSelect", action: "change->pessoa-filtros#syncEntity" } %>
         <% if @g_entidades.blank? %><p class="empty-hint">Nenhuma entidade cadastrada.</p><% end %>
       </div>
       <div class="field-group">
         <%= form.label :g_sexo_id %>
-        <%= form.collection_select :g_sexo_id, @g_sexos, :id, :to_s, { include_blank: "Selecione um sexo...", selected: wizard_values["g_sexo_id"] || g_pessoa.g_sexo_id }, class: "form-control" %>
+        <%= form.collection_select :g_sexo_id, @g_sexos, :id, :to_s, { include_blank: "Selecione um sexo...", selected: wizard_values["g_sexo_id"] || g_pessoa.g_sexo_id }, class: "form-control", required: true %>
         <% if @g_sexos.blank? %><p class="empty-hint">Nenhum sexo cadastrado.</p><% end %>
       </div>
     </div>
@@ -162,7 +162,7 @@
 
       <div class="field-group">
         <%= form.label :principal_u_funcao_id, "Função principal entre as marcadas" %>
-        <%= form.collection_select :principal_u_funcao_id, @u_funcoes, :id, :to_s, { include_blank: "Selecione a função principal...", selected: wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id }, class: "form-control", data: { pessoa_filtros_target: "principalFuncaoSelect" } %>
+        <%= form.collection_select :principal_u_funcao_id, @u_funcoes, :id, :to_s, { include_blank: "Selecione a função principal...", selected: wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id }, class: "form-control", required: true, data: { pessoa_filtros_target: "principalFuncaoSelect" } %>
         <% if @u_funcoes.blank? %><p class="empty-hint">Nenhuma função cadastrada.</p><% end %>
       </div>
     </div>

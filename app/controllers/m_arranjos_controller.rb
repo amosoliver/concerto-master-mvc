@@ -26,7 +26,7 @@ class MArranjosController < ApplicationController
     @m_arranjo = MArranjo.new(m_arranjo_persistence_params)
     assign_virtual_attributes
 
-    if MArranjos::CreateService.new(m_arranjo: @m_arranjo, params: m_arranjo_params).call
+    if MArranjos::ServicoCriacao.new(m_arranjo: @m_arranjo, params: m_arranjo_params).call
       redirect_to after_save_path_for(@m_arranjo), notice: "#{MArranjo.model_name.human} criado com sucesso."
     end
   rescue ActiveRecord::RecordInvalid
@@ -37,7 +37,7 @@ class MArranjosController < ApplicationController
     @m_arranjo.assign_attributes(m_arranjo_persistence_params)
     assign_virtual_attributes
 
-    if MArranjos::UpdateService.new(m_arranjo: @m_arranjo, params: m_arranjo_params).call
+    if MArranjos::ServicoAtualizacao.new(m_arranjo: @m_arranjo, params: m_arranjo_params).call
       redirect_to after_save_path_for(@m_arranjo), notice: "#{MArranjo.model_name.human} atualizado com sucesso."
     end
   rescue ActiveRecord::RecordInvalid

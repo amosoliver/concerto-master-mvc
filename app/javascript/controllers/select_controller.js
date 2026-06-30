@@ -15,6 +15,11 @@ export default class extends Controller {
     this.instances = Array.from(this.element.querySelectorAll("select")).map((select) => {
       const instance = new window.TomSelect(select, {
         create: false,
+        // Render the dropdown on <body> instead of inline: several form cards
+        // (.panel-card, .group-builder__card, etc.) use overflow: hidden to
+        // round their corners, which was clipping the options list whenever
+        // it opened near an edge.
+        dropdownParent: "body",
         onInitialize: function() {
           syncDisabledState(this)
           syncPlaceholder(this)

@@ -18,7 +18,7 @@ class MArranjo < ApplicationRecord
 
   before_validation :assign_g_entidade
 
-  validates :descricao, presence: true
+  validates :descricao, :g_entidade, :m_musica, :m_tipo_arranjo, :m_arranjador, :m_tonalidade, presence: true
 
   def to_s
     descricao.presence || "#{m_musica} - #{m_arranjador}"

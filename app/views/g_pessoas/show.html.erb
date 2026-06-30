@@ -89,7 +89,7 @@
       <% if @g_pessoa.g_instrumentos_naipes.any? %>
         <div class="tag-cloud">
           <% @g_pessoa.g_instrumentos_naipes.each do |instrumento| %>
-            <%= link_to instrumento.to_s, g_instrumento_naipe_path(instrumento), class: "tag-cloud__item tag-cloud__item--link" %>
+            <span class="tag-cloud__item"><%= instrumento.to_s %></span>
           <% end %>
         </div>
       <% else %>
