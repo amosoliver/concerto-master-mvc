@@ -6,6 +6,7 @@ class ResolvedorEscopoEntidade
     MArranjoInstrumentoNaipe
     MPessoaFuncao
     MEventoMusica
+    MEnsaioMusica
   ].freeze
 
   def self.call(scope:, entity_ids:, instrument_ids:)
@@ -45,7 +46,8 @@ class ResolvedorEscopoEntidade
       relation.joins(:g_pessoa).where(g_pessoas: { g_entidade_id: entity_ids }).distinct
     when "GPredio", "GPessoa", "MGrupo", "GPessoasInstrumento", "MMusica",
          "MArranjo", "MArranjoInstrumentoNaipe", "MEvento", "MEventoMusica",
-         "MGrupoInstrumentoNaipe", "MGrupoPessoa", "MPessoaFuncao"
+         "MEventoMusicaGrupo", "MEnsaio", "MEnsaioEvento", "MEnsaioGrupo", "MEnsaioMusica", "MGrupoInstrumentoNaipe",
+         "MGrupoPessoa", "MPessoaFuncao"
       relation.where(g_entidade_id: entity_ids)
     else
       relation
@@ -67,6 +69,8 @@ class ResolvedorEscopoEntidade
       relation.joins(:m_arranjos_instrumentos_naipes).where(m_arranjos_instrumentos_naipes: { g_instrumento_naipe_id: instrument_ids }).distinct
     when "MEventoMusica"
       relation.joins(m_musica: { m_arranjos: :m_arranjos_instrumentos_naipes }).where(m_arranjos_instrumentos_naipes: { g_instrumento_naipe_id: instrument_ids }).distinct
+    when "MEnsaioMusica"
+      relation.joins(m_evento_musica: { m_musica: { m_arranjos: :m_arranjos_instrumentos_naipes } }).where(m_arranjos_instrumentos_naipes: { g_instrumento_naipe_id: instrument_ids }).distinct
     else
       relation
     end

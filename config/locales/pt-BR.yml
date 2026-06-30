@@ -159,12 +159,27 @@ pt-BR:
       m_compositor:
         one: "Compositor"
         other: "Compositores"
+      m_ensaio:
+        one: "Ensaio"
+        other: "Ensaios"
+      m_ensaio_evento:
+        one: "Evento do Ensaio"
+        other: "Eventos do Ensaio"
+      m_ensaio_grupo:
+        one: "Grupo do Ensaio"
+        other: "Grupos do Ensaio"
+      m_ensaio_musica:
+        one: "Música do Ensaio"
+        other: "Músicas do Ensaio"
       m_evento:
         one: "Evento"
         other: "Eventos"
       m_evento_musica:
         one: "Música do Evento"
         other: "Músicas do Evento"
+      m_evento_musica_grupo:
+        one: "Grupo da Música do Evento"
+        other: "Grupos da Música do Evento"
       m_grupo:
         one: "Grupo"
         other: "Grupos"

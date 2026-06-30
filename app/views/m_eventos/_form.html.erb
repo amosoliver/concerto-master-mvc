@@ -1,5 +1,5 @@
 <%= form_with(model: m_evento, local: true, class: "panel-card form-card", data: {
-  controller: "select entidade-form",
+  controller: "select entidade-form evento-repertorio",
   entidade_form_estado_label_value: current_context_entidade&.g_estado&.to_s,
   entidade_form_municipio_label_value: current_context_entidade&.g_municipio&.to_s
 }) do |form| %>
@@ -47,7 +47,6 @@
     <details class="field-toggle" <%= "open" if m_evento.g_predio.blank? || m_evento.novo_g_predio_nome_fantasia.present? %>>
       <summary class="secondary-button">Cadastrar prédio no fluxo do evento</summary>
       <div class="field-toggle__content">
-        <p class="selection-help">Se o prédio ainda não existir, preencha abaixo. Se você escolher um prédio já cadastrado, estes dados serão ignorados.</p>
         <div class="form-grid">
           <div class="field-group">
             <%= form.label :novo_g_predio_nome_fantasia, "Nome do prédio" %>
@@ -110,18 +109,20 @@
         </div>
       </div>
 
-      <p class="selection-help">Este passo é opcional. Você pode salvar o evento agora e completar o repertório depois em Gerenciar.</p>
-
       <% if @m_musicas.any? %>
         <div class="wizard-repertorio">
           <% @m_musicas.each_with_index do |musica, index| %>
             <% selected_entry = @selected_repertorio[musica.id] || {} %>
             <% arranjos = Array(@arranjos_por_musica[musica.id]) %>
             <% checked = selected_entry.present? %>
+            <% item_key = "evento-musica-#{index}" %>
             <article class="wizard-repertorio__item">
               <div class="wizard-repertorio__header">
                 <label class="selection-item">
-                  <%= check_box_tag "m_evento[repertorio][#{index}][selecionada]", "1", checked %>
+                  <%= check_box_tag "m_evento[repertorio][#{index}][selecionada]",
+                                    "1",
+                                    checked,
+                                    data: { action: "change->evento-repertorio#toggleMusica", evento_repertorio_target: "musicaCheckbox", item_key: item_key } %>
                   <span><strong><%= musica.descricao %></strong></span>
                 </label>
                 <%= hidden_field_tag "m_evento[repertorio][#{index}][m_musica_id]", musica.id %>
@@ -140,6 +141,23 @@
                                include_blank: arranjos.any? ? "Definir depois" : "Nenhum arranjo cadastrado",
                                class: "form-control",
                                disabled: arranjos.empty? %>
+              </div>
+
+              <div class="field-group">
+                <label>Grupos que executam esta música</label>
+                <% if @m_grupos.any? %>
+                  <div class="selection-group__items" data-evento-repertorio-target="grupoContainer" data-item-key="<%= item_key %>">
+                    <% selected_group_ids = Array(selected_entry[:m_grupo_ids]).map(&:to_i) %>
+                    <% @m_grupos.each do |grupo| %>
+                      <label class="selection-item">
+                        <%= check_box_tag "m_evento[repertorio][#{index}][m_grupo_ids][]", grupo.id, selected_group_ids.include?(grupo.id) %>
+                        <span><%= grupo.descricao %></span>
+                      </label>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="empty-card">Nenhum grupo cadastrado na entidade atual.</div>
+                <% end %>
               </div>
             </article>
           <% end %>
@@ -176,10 +194,6 @@
           <span class="detail-label">Repertório</span>
           <span class="detail-value"><%= pluralize(@selected_repertorio.size, "música") %> selecionada(s) até agora</span>
         </div>
-      </div>
-
-      <div class="empty-card">
-        O repertório não é obrigatório. Se preferir, salve o evento agora e complete as músicas e arranjos depois pela área de gerenciamento.
       </div>
     </div>
   <% end %>

@@ -12,12 +12,6 @@ class MEventosController < ApplicationController
     @q = tenant_scope(MEvento).ransack(params[:q])
     @m_eventos = @q.result.includes(:g_predio, m_eventos_musicas: { m_musica: :m_artista }).order(created_at: :desc)
     @pagy, @m_eventos = pagy(@m_eventos, limit: 10)
-    @dashboard_snapshot = DashboardResumoService.new(
-      event_scope: tenant_scope(MEvento),
-      pessoa_scope: tenant_scope(GPessoa),
-      group_scope: tenant_scope(MGrupo),
-      month_param: params[:month]
-    ).call
   end
 
   def show
@@ -109,7 +103,7 @@ class MEventosController < ApplicationController
       :novo_g_predio_bairro,
       :novo_g_predio_latitude,
       :novo_g_predio_longitude,
-      repertorio: %i[selecionada m_musica_id m_arranjo_id]
+      repertorio: [:selecionada, :m_musica_id, :m_arranjo_id, { m_grupo_ids: [] }]
     )
   end
 
@@ -124,6 +118,7 @@ class MEventosController < ApplicationController
 
   def load_form_collections
     @g_predios = tenant_predio_scope
+    @m_grupos = tenant_grupo_scope.includes(:m_tipo_grupo).order(:descricao)
     @m_musicas = tenant_scope(MMusica.includes(:m_artista, :m_compositor)).order(:descricao)
     @arranjos_por_musica = tenant_scope(MArranjo.includes(:m_tipo_arranjo, :m_arranjador, :m_tonalidade)).order(:descricao).group_by(&:m_musica_id)
   end
@@ -131,6 +126,7 @@ class MEventosController < ApplicationController
   def load_management_collections
     @evento_repertorio = @m_evento.m_eventos_musicas
                                 .includes(
+                                  :m_grupos,
                                   m_musica: %i[m_artista m_compositor],
                                   m_arranjo: [
                                     :m_tipo_arranjo,
@@ -141,6 +137,7 @@ class MEventosController < ApplicationController
                                   ]
                                 )
                                 .sort_by { |evento_musica| evento_musica.m_musica.descricao.to_s }
+    @ensaios_relacionados = @m_evento.m_ensaios.includes(:g_predio, :m_musicas, :m_grupos).order(:data_inicio)
 
     preload_form_state if action_name.in?(%w[manage update_management])
   end
@@ -155,14 +152,16 @@ class MEventosController < ApplicationController
 
         {
           m_musica_id: musica_id,
-          m_arranjo_id: entry[:m_arranjo_id].presence&.to_i
+          m_arranjo_id: entry[:m_arranjo_id].presence&.to_i,
+          m_grupo_ids: Array(entry[:m_grupo_ids]).reject(&:blank?).map(&:to_i)
         }
       end
     elsif @m_evento.persisted?
       @m_evento.m_eventos_musicas.order(:id).map do |evento_musica|
         {
           m_musica_id: evento_musica.m_musica_id,
-          m_arranjo_id: evento_musica.m_arranjo_id
+          m_arranjo_id: evento_musica.m_arranjo_id,
+          m_grupo_ids: evento_musica.m_grupos.ids
         }
       end
     else

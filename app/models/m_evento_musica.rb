@@ -6,6 +6,8 @@ class MEventoMusica < ApplicationRecord
   belongs_to :m_musica
   belongs_to :m_arranjo, optional: true
   has_many :m_ensaio_musicas
+  has_many :m_evento_musica_grupos
+  has_many :m_grupos, through: :m_evento_musica_grupos
 
   before_validation :assign_g_entidade
   validate :unique_active_event_song
@@ -21,6 +23,12 @@ class MEventoMusica < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+
+  def grupos_label
+    return "Todos os grupos" if m_grupos.empty?
+
+    m_grupos.map(&:descricao).join(", ")
   end
 
   private

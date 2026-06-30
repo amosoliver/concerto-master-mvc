@@ -1,4 +1,4 @@
-<%= form_with(model: m_ensaio, local: true, class: "panel-card form-card") do |form| %>
+<%= form_with(model: m_ensaio, local: true, class: "panel-card form-card", data: { controller: "select ensaio-form" }) do |form| %>
   <%= render "shared/form_errors", record: m_ensaio %>
 
   <div class="form-grid">
@@ -23,6 +23,133 @@
       <div class="form-control form-control--static"><%= current_context_entidade || "Sem entidade vinculada" %></div>
     </div>
   </div>
+
+  <section class="show-section show-section--embedded">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Grupos</p>
+        <h3>Grupos da entidade neste ensaio</h3>
+      </div>
+    </div>
+
+    <% if @grupos_disponiveis.any? %>
+      <div class="related-grid">
+        <% @grupos_disponiveis.each do |grupo| %>
+          <article class="related-card related-card--selectable">
+            <label class="selection-item">
+              <%= check_box_tag "m_ensaio[m_grupo_ids][]", grupo.id, @selected_group_ids.include?(grupo.id) %>
+              <span>
+                <strong><%= grupo.descricao %></strong><br>
+                <small><%= [grupo.m_tipo_grupo, pluralize(grupo.g_pessoas.size, "pessoa")].compact.join(" • ") %></small>
+              </span>
+            </label>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-card">Nenhum grupo disponível para esta entidade.</div>
+    <% end %>
+  </section>
+
+  <section class="show-section show-section--embedded">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Eventos</p>
+        <h3>Eventos que alimentam o ensaio</h3>
+      </div>
+    </div>
+
+    <% if @eventos_disponiveis.any? %>
+      <div class="related-grid">
+        <% @eventos_disponiveis.each do |evento| %>
+          <article class="related-card related-card--selectable">
+            <label class="selection-item">
+              <%= check_box_tag "m_ensaio[m_evento_ids][]",
+                                evento.id,
+                                @selected_event_ids.include?(evento.id),
+                                data: { action: "change->ensaio-form#toggleEvento", ensaio_form_target: "eventoCheckbox", event_id: evento.id } %>
+              <span>
+                <strong><%= evento.descricao %></strong><br>
+                <small><%= [format_datetime_range(evento.data_inicio, evento.data_fim, fallback: nil), evento.g_predio, pluralize(evento.m_eventos_musicas.count, "música")].compact.join(" • ") %></small>
+              </span>
+            </label>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-card">Nenhum evento disponível para montar ensaio.</div>
+    <% end %>
+  </section>
+
+  <section class="show-section show-section--embedded">
+    <div class="panel-card__header">
+      <div>
+        <p class="eyebrow">Repertório</p>
+        <h3>Músicas que serão ensaiadas</h3>
+      </div>
+    </div>
+
+    <% if @evento_musicas_disponiveis.any? %>
+      <div class="ensaio-repertorio">
+        <% @eventos_disponiveis.each do |evento| %>
+          <% musicas_evento = evento.m_eventos_musicas.sort_by { |evento_musica| evento_musica.m_musica&.descricao.to_s } %>
+          <section class="ensaio-repertorio__group"
+                   data-ensaio-form-target="eventoSection"
+                   data-event-id="<%= evento.id %>"
+                   <%= "hidden" unless @selected_event_ids.include?(evento.id) %>>
+            <div class="ensaio-repertorio__group-header">
+              <div>
+                <span class="related-card__label">Evento fonte</span>
+                <strong><%= evento.descricao %></strong>
+              </div>
+              <span class="related-card__meta"><%= [format_datetime_range(evento.data_inicio, evento.data_fim, fallback: nil), evento.g_predio].compact.join(" • ") %></span>
+            </div>
+
+            <% if musicas_evento.any? %>
+              <div class="wizard-repertorio">
+                <% musicas_evento.each_with_index do |evento_musica, index| %>
+                  <% musica = evento_musica.m_musica %>
+                  <% arranjo = evento_musica.m_arranjo %>
+                  <% selected_entry = @selected_repertorio[evento_musica.id] || {} %>
+                  <% checked = selected_entry.fetch(:selecionada, @selected_event_ids.include?(evento.id)) %>
+                  <article class="wizard-repertorio__item">
+                    <div class="wizard-repertorio__header">
+                      <label class="selection-item">
+                        <%= check_box_tag "m_ensaio[repertorio][#{evento.id}_#{index}][selecionada]",
+                                          "1",
+                                          checked,
+                                          data: { ensaio_form_target: "musicaCheckbox", event_id: evento.id } %>
+                        <span><strong><%= musica&.descricao || "Música sem descrição" %></strong></span>
+                      </label>
+                      <%= hidden_field_tag "m_ensaio[repertorio][#{evento.id}_#{index}][m_evento_musica_id]", evento_musica.id %>
+                    </div>
+
+                    <div class="wizard-repertorio__meta">
+                      <span><%= evento.to_s %></span>
+                      <span><%= musica&.m_artista || "Sem artista" %></span>
+                      <span><%= arranjo.presence || "Sem arranjo definido" %></span>
+                    </div>
+
+                    <div class="field-group">
+                      <label>Observação deste ensaio</label>
+                      <%= text_field_tag "m_ensaio[repertorio][#{evento.id}_#{index}][observacao]",
+                                         selected_entry[:observacao],
+                                         class: "form-control",
+                                         placeholder: "Ex.: revisar entrada, corrigir dinâmica, reforçar final" %>
+                    </div>
+                  </article>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="empty-card">Este evento ainda não possui músicas vinculadas.</div>
+            <% end %>
+          </section>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-card">Ainda não existe repertório de evento para usar em ensaios.</div>
+    <% end %>
+  </section>
 
   <div class="form-actions">
     <%= form.submit class: "primary-button" %>

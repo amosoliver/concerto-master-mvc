@@ -5,10 +5,11 @@ class DashboardResumoService
   DATE_FORMAT = "%Y-%m-%d".freeze
   VIEWS = %w[month week day].freeze
 
-  attr_reader :event_scope, :pessoa_scope, :group_scope, :month_param, :view, :anchor_date
+  attr_reader :event_scope, :ensaio_scope, :pessoa_scope, :group_scope, :month_param, :view, :anchor_date
 
-  def initialize(event_scope:, pessoa_scope:, group_scope:, month_param:, view_param: nil, date_param: nil)
+  def initialize(event_scope:, ensaio_scope:, pessoa_scope:, group_scope:, month_param:, view_param: nil, date_param: nil)
     @event_scope = event_scope
+    @ensaio_scope = ensaio_scope
     @pessoa_scope = pessoa_scope
     @group_scope = group_scope
     @month_param = month_param
@@ -22,16 +23,16 @@ class DashboardResumoService
       month_start: month_start,
       month_end: month_end,
       calendar_weeks: calendar_weeks,
-      events_by_day: events_by_day,
+      entries_by_day: entries_by_day,
       month_events: month_events,
       week_start: week_start,
       week_end: week_end,
       week_days: week_days,
       day: anchor_date,
-      day_events: day_events,
+      day_entries: day_entries,
       nav: nav,
-      upcoming_events: upcoming_events,
-      next_event: upcoming_events.first,
+      upcoming_entries: upcoming_entries,
+      next_event: upcoming_entries.first,
       stats: stats,
       naipe_breakdown: naipe_breakdown,
       instrument_breakdown: instrument_breakdown,
@@ -69,6 +70,13 @@ class DashboardResumoService
       .to_a
   end
 
+  def month_ensaios
+    @month_ensaios ||= base_ensaio_scope
+      .where(data_inicio: month_start.beginning_of_day..month_end.end_of_day)
+      .order(:data_inicio)
+      .to_a
+  end
+
   def week_start
     @week_start ||= anchor_date.beginning_of_week(:monday)
   end
@@ -88,21 +96,25 @@ class DashboardResumoService
       .to_a
   end
 
-  def day_events
-    @day_events ||= base_event_scope
-      .where(data_inicio: anchor_date.beginning_of_day..anchor_date.end_of_day)
+  def week_ensaios
+    @week_ensaios ||= base_ensaio_scope
+      .where(data_inicio: week_start.beginning_of_day..week_end.end_of_day)
       .order(:data_inicio)
       .to_a
   end
 
-  def events_by_day
-    @events_by_day ||= case view
+  def day_entries
+    @day_entries ||= schedule_entries_for_range(anchor_date.beginning_of_day, anchor_date.end_of_day)
+  end
+
+  def entries_by_day
+    @entries_by_day ||= case view
     when "week"
-      week_events.group_by { |evento| evento.data_inicio.to_date }
+      build_schedule_entries(week_events, week_ensaios).group_by { |entry| entry[:starts_at].to_date }
     when "day"
-      day_events.group_by { |evento| evento.data_inicio.to_date }
+      day_entries.group_by { |entry| entry[:starts_at].to_date }
     else
-      month_events.group_by { |evento| evento.data_inicio.to_date }
+      build_schedule_entries(month_events, month_ensaios).group_by { |entry| entry[:starts_at].to_date }
     end
   end
 
@@ -142,20 +154,17 @@ class DashboardResumoService
     end
   end
 
-  def upcoming_events
-    @upcoming_events ||= base_event_scope
-      .where("data_inicio >= ?", Time.zone.now.beginning_of_day)
-      .order(:data_inicio)
-      .limit(8)
-      .to_a
+  def upcoming_entries
+    @upcoming_entries ||= schedule_entries_for_range(Time.zone.now.beginning_of_day, nil).first(8)
   end
 
   def stats
     {
       eventos_mes: month_events.size,
+      ensaios_mes: month_ensaios.size,
       repertorio_mes: month_events.sum(&:repertorio_count),
       arranjos_mes: month_events.sum(&:arranjos_definidos_count),
-      proximos_eventos: upcoming_events.size,
+      proximos_eventos: upcoming_entries.size,
       grupos_ativos: group_sections.count { |group| group[:items].any? },
       vozes_ativas: voice_sections.count { |voice| voice[:people_names].any? }
     }
@@ -263,6 +272,38 @@ class DashboardResumoService
 
   def base_event_scope
     @base_event_scope ||= event_scope.includes(:g_predio, :m_eventos_musicas)
+  end
+
+  def base_ensaio_scope
+    @base_ensaio_scope ||= ensaio_scope.includes(:g_predio, :m_eventos)
+  end
+
+  def build_schedule_entries(eventos, ensaios)
+    eventos.map { |evento| schedule_entry_for(evento, :evento) } +
+      ensaios.map { |ensaio| schedule_entry_for(ensaio, :ensaio) }
+  end
+
+  def schedule_entries_for_range(start_at, end_at)
+    eventos = base_event_scope.where("data_inicio >= ?", start_at)
+    ensaios = base_ensaio_scope.where("data_inicio >= ?", start_at)
+
+    if end_at.present?
+      eventos = eventos.where(data_inicio: start_at..end_at)
+      ensaios = ensaios.where(data_inicio: start_at..end_at)
+    end
+
+    build_schedule_entries(eventos.order(:data_inicio).to_a, ensaios.order(:data_inicio).to_a)
+      .sort_by { |entry| [entry[:starts_at], entry[:kind].to_s] }
+  end
+
+  def schedule_entry_for(record, kind)
+    {
+      kind: kind,
+      record: record,
+      title: record.descricao,
+      starts_at: record.data_inicio,
+      location: record.g_predio.to_s
+    }
   end
 
   def loaded_people

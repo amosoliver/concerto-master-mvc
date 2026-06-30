@@ -44,7 +44,7 @@ class GUsuariosController < ApplicationController
   end
 
   def manage_perfis
-    @u_perfis = UPerfil.kept.order(:descricao)
+    @u_perfis = UPerfil.order(:descricao)
     @selected_ids = @g_usuario.u_perfil_ids.to_set
   end
 

@@ -7,6 +7,7 @@
     <div class="page-header__actions">
       <%= authorized_link_to "Ver evento", m_evento_path(@m_evento), class: "secondary-button" %>
       <%= authorized_link_to "Editar dados", edit_m_evento_path(@m_evento), class: "secondary-button" %>
+      <%= authorized_link_to "Novo ensaio", new_m_ensaio_path(m_evento_id: @m_evento.id), class: "primary-button" %>
       <%= link_to "Voltar", m_eventos_path, class: "secondary-button" %>
     </div>
   </div>
@@ -16,7 +17,6 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Evento</p>
         <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
-        <p class="show-summary__text">Gerencie separadamente o repertório do evento e defina qual arranjo será usado em cada música.</p>
         <div class="page-header__actions">
           <%= link_to "Ir para repertório", "#gestao-repertorio", class: "secondary-button" %>
         </div>
@@ -46,7 +46,33 @@
       </section>
     </div>
 
-    <%= form_with model: @m_evento, url: update_management_m_evento_path(@m_evento), method: :patch, local: true, class: "panel-card form-card" do |form| %>
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
+          <p class="eyebrow">Ensaios</p>
+          <h3>Ensaios ligados a este evento</h3>
+        </div>
+        <div class="page-header__actions">
+          <%= authorized_link_to "Cadastrar ensaio para este evento", new_m_ensaio_path(m_evento_id: @m_evento.id), class: "secondary-button" %>
+        </div>
+      </div>
+
+      <% if @ensaios_relacionados.any? %>
+        <div class="related-grid">
+          <% @ensaios_relacionados.each do |ensaio| %>
+            <article class="related-card">
+              <span class="related-card__label">Ensaio</span>
+              <%= link_to ensaio.descricao, m_ensaio_path(ensaio), class: "related-card__value related-card__value--link" %>
+              <span class="related-card__meta"><%= [format_datetime_range(ensaio.data_inicio, ensaio.data_fim, fallback: nil), ensaio.g_predio, (ensaio.m_grupos.any? ? pluralize(ensaio.m_grupos.count, "grupo") : "ensaio geral"), pluralize(ensaio.m_musicas.distinct.count, "música")].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Ainda não existe ensaio vinculado a este evento.</div>
+      <% end %>
+    </section>
+
+    <%= form_with model: @m_evento, url: update_management_m_evento_path(@m_evento), method: :patch, local: true, class: "panel-card form-card", data: { controller: "evento-repertorio" } do |form| %>
       <div class="panel-card__header">
         <div>
           <p class="eyebrow">Gerenciamento</p>
@@ -65,18 +91,20 @@
         </div>
       </div>
 
-      <p class="selection-help">Selecione somente o que deve fazer parte deste evento. O arranjo é opcional para cada música.</p>
-
       <% if @m_musicas.any? %>
         <div class="wizard-repertorio">
           <% @m_musicas.each_with_index do |musica, index| %>
             <% selected_entry = @selected_repertorio[musica.id] || {} %>
             <% arranjos = Array(@arranjos_por_musica[musica.id]) %>
             <% checked = selected_entry.present? %>
+            <% item_key = "evento-manage-musica-#{index}" %>
             <article class="wizard-repertorio__item">
               <div class="wizard-repertorio__header">
                 <label class="selection-item">
-                  <%= check_box_tag "m_evento[repertorio][#{index}][selecionada]", "1", checked %>
+                  <%= check_box_tag "m_evento[repertorio][#{index}][selecionada]",
+                                    "1",
+                                    checked,
+                                    data: { action: "change->evento-repertorio#toggleMusica", evento_repertorio_target: "musicaCheckbox", item_key: item_key } %>
                   <span><strong><%= musica.descricao %></strong></span>
                 </label>
                 <%= hidden_field_tag "m_evento[repertorio][#{index}][m_musica_id]", musica.id %>
@@ -95,6 +123,23 @@
                                include_blank: arranjos.any? ? "Definir depois" : "Nenhum arranjo cadastrado",
                                class: "form-control",
                                disabled: arranjos.empty? %>
+              </div>
+
+              <div class="field-group">
+                <label>Grupos que executam esta música</label>
+                <% if @m_grupos.any? %>
+                  <div class="selection-group__items" data-evento-repertorio-target="grupoContainer" data-item-key="<%= item_key %>">
+                    <% selected_group_ids = Array(selected_entry[:m_grupo_ids]).map(&:to_i) %>
+                    <% @m_grupos.each do |grupo| %>
+                      <label class="selection-item">
+                        <%= check_box_tag "m_evento[repertorio][#{index}][m_grupo_ids][]", grupo.id, selected_group_ids.include?(grupo.id) %>
+                        <span><%= grupo.descricao %></span>
+                      </label>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="empty-card">Nenhum grupo cadastrado na entidade atual.</div>
+                <% end %>
               </div>
             </article>
           <% end %>

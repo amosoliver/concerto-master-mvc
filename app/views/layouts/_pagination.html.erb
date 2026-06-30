@@ -1,7 +1,6 @@
 <% if pagy %>
   <div class="pagination-summary">
-    <span><strong>Página:</strong> <%= pluralize(pagy.in.size, "registro") %></span>
-    <span><strong>Total:</strong> <%= pluralize(pagy.count, "registro") %></span>
+    <span><%= pagy_summary_text(pagy) %></span>
   </div>
   <div class="pagination-wrap">
     <%== pagy.series_nav %>

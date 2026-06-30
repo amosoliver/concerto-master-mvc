@@ -61,8 +61,8 @@
   <section class="panel-card panel-card--fill" data-controller="view-toggle">
     <div class="panel-card__header">
       <div>
-        <p class="eyebrow">Listagem</p>
-        <h3><%= pluralize(@g_pessoas.size, "registro") %></h3>
+        <p class="eyebrow">Resultados</p>
+        <h3><%= pagy_count_label(@pagy) %></h3>
       </div>
       <div class="view-switch">
         <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>

@@ -14,7 +14,7 @@ class GMunicipiosController < ApplicationController
         }
       end
       format.html do
-        @pagy, @g_municipios = pagy(@g_municipios, limit: 50)
+        @pagy, @g_municipios = pagy(@g_municipios, limit: 10)
       end
     end
   end

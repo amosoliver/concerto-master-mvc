@@ -11,6 +11,10 @@ class MGrupo < ApplicationRecord
   has_many :g_pessoas, through: :m_grupos_pessoas
   has_many :m_grupos_instrumentos_naipes, class_name: "MGrupoInstrumentoNaipe"
   has_many :g_instrumentos_naipes, through: :m_grupos_instrumentos_naipes
+  has_many :m_ensaio_grupos
+  has_many :m_ensaios, through: :m_ensaio_grupos
+  has_many :m_evento_musica_grupos
+  has_many :m_eventos_musicas, through: :m_evento_musica_grupos
 
   before_validation :assign_g_entidade
 

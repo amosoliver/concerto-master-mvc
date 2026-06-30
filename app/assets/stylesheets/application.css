@@ -2285,3 +2285,63 @@ button, input { font: inherit; }
   .mobile-nav__label { font-size: 0.6rem; }
   .avatar .avatar { width: 34px; height: 34px; }
 }
+
+.calendar-event-pill.is-ensaio {
+  background: color-mix(in srgb, var(--accent-color, #d97706) 14%, white);
+  border-color: color-mix(in srgb, var(--accent-color, #d97706) 35%, white);
+}
+
+.calendar-event-pill.is-evento {
+  background: color-mix(in srgb, var(--brand-color, #2563eb) 12%, white);
+}
+
+.show-section--embedded {
+  margin-top: 18px;
+}
+
+.related-card--selectable {
+  padding: 0;
+}
+
+.related-card--selectable .selection-item {
+  width: 100%;
+  min-height: 100%;
+  padding: 16px 18px;
+  border-radius: inherit;
+}
+
+.ensaio-repertorio {
+  display: grid;
+  gap: 18px;
+}
+
+.ensaio-repertorio__group {
+  display: grid;
+  gap: 14px;
+}
+
+.ensaio-repertorio__group[hidden] {
+  display: none;
+}
+
+.ensaio-repertorio__group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line-color, rgba(15, 23, 42, 0.12));
+  border-radius: 16px;
+  background: var(--surface-raised, rgba(248, 250, 252, 0.9));
+}
+
+.selection-group__items.is-disabled {
+  opacity: 0.5;
+}
+
+@media (max-width: 780px) {
+  .ensaio-repertorio__group-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

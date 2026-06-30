@@ -29,7 +29,7 @@
   <% if view == "week" %>
     <div class="calendar-week">
       <% snapshot[:week_days].each do |day| %>
-        <% day_events = snapshot[:events_by_day][day] || [] %>
+        <% day_entries = snapshot[:entries_by_day][day] || [] %>
         <article class="calendar-week__day <%= "is-today" if day == Time.zone.today %>">
           <header class="calendar-week__day-header">
             <span class="calendar-week__weekday"><%= calendar_weekday_label(day).first(3) %></span>
@@ -37,15 +37,15 @@
           </header>
 
           <div class="calendar-week__events">
-            <% if day_events.any? %>
-              <% day_events.each do |evento| %>
-                <%= link_to m_evento_path(evento), class: "calendar-event-pill" do %>
-                  <strong><%= format_time(evento.data_inicio) %></strong>
-                  <span><%= evento.descricao %></span>
+            <% if day_entries.any? %>
+              <% day_entries.each do |entry| %>
+                <%= link_to calendar_entry_path(entry), class: "calendar-event-pill #{calendar_entry_css_class(entry)}" do %>
+                  <strong><%= format_time(entry[:starts_at]) %></strong>
+                  <span><%= calendar_entry_type_label(entry) %>: <%= entry[:title] %></span>
                 <% end %>
               <% end %>
             <% else %>
-              <span class="calendar-day__empty">Sem eventos</span>
+              <span class="calendar-day__empty">Sem compromissos</span>
             <% end %>
           </div>
         </article>
@@ -54,22 +54,22 @@
 
   <% elsif view == "day" %>
     <div class="calendar-day-agenda">
-      <% if snapshot[:day_events].any? %>
+      <% if snapshot[:day_entries].any? %>
         <ul class="event-list">
-          <% snapshot[:day_events].each do |evento| %>
+          <% snapshot[:day_entries].each do |entry| %>
             <li>
-              <%= link_to m_evento_path(evento), class: "event-list__link" do %>
+              <%= link_to calendar_entry_path(entry), class: "event-list__link" do %>
                 <span>
-                  <strong><%= evento.descricao %></strong><br>
-                  <small><%= evento.g_predio %></small>
+                  <strong><%= entry[:title] %></strong><br>
+                  <small><%= calendar_entry_type_label(entry) %> • <%= entry[:location] %></small>
                 </span>
-                <strong><%= format_time(evento.data_inicio) %></strong>
+                <strong><%= format_time(entry[:starts_at]) %></strong>
               <% end %>
             </li>
           <% end %>
         </ul>
       <% else %>
-        <div class="empty-card">Nenhum evento neste dia.</div>
+        <div class="empty-card">Nenhum compromisso neste dia.</div>
       <% end %>
     </div>
 
@@ -81,14 +81,14 @@
     </div>
 
     <div class="calendar-grid calendar-grid--days">
-      <% snapshot[:calendar_weeks].each do |week| %>
+        <% snapshot[:calendar_weeks].each do |week| %>
         <% week.each do |day| %>
-          <% day_events = snapshot[:events_by_day][day] || [] %>
+          <% day_entries = snapshot[:entries_by_day][day] || [] %>
           <%= link_to build_calendar_path.call(view: "day", date: day.strftime(DashboardResumoService::DATE_FORMAT)),
                 class: "calendar-day #{"is-outside" if day.month != snapshot[:month_start].month} #{"is-today" if day == Time.zone.today}" do %>
             <span class="calendar-day__number"><%= day.day %></span>
-            <% if day_events.any? %>
-              <span class="calendar-day__badge"><%= day_events.size %></span>
+            <% if day_entries.any? %>
+              <span class="calendar-day__badge"><%= day_entries.size %></span>
             <% end %>
           <% end %>
         <% end %>

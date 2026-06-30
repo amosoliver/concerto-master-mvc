@@ -2,7 +2,6 @@
   <div>
     <p class="eyebrow">Painel da entidade</p>
     <h2><%= current_context_entidade || "Agenda musical" %></h2>
-    <p>O painel principal mostra somente a agenda da entidade, com o calendário do mês e os próximos compromissos logo ao lado.</p>
   </div>
   <div class="page-header__actions">
     <div class="view-switch">
@@ -19,24 +18,26 @@
   <section class="panel-card dashboard-sidecard">
     <div class="panel-card__header">
       <div>
-        <p class="eyebrow">Próximos eventos</p>
+        <p class="eyebrow">Próximos compromissos</p>
         <h3>Agenda imediata</h3>
       </div>
     </div>
-    <% if @dashboard_snapshot[:upcoming_events].any? %>
+    <% if @dashboard_snapshot[:upcoming_entries].any? %>
       <ul class="event-list">
-        <% @dashboard_snapshot[:upcoming_events].each do |evento| %>
+        <% @dashboard_snapshot[:upcoming_entries].each do |entry| %>
           <li>
-            <span>
-              <strong><%= evento.descricao %></strong><br>
-              <small><%= evento.g_predio %></small>
-            </span>
-            <strong><%= format_datetime(evento.data_inicio) %></strong>
+            <%= link_to calendar_entry_path(entry), class: "event-list__link" do %>
+              <span>
+                <strong><%= entry[:title] %></strong><br>
+                <small><%= calendar_entry_type_label(entry) %> • <%= entry[:location] %></small>
+              </span>
+              <strong><%= format_datetime(entry[:starts_at]) %></strong>
+            <% end %>
           </li>
         <% end %>
       </ul>
     <% else %>
-      <div class="empty-card">Nenhum evento futuro cadastrado para esta entidade.</div>
+      <div class="empty-card">Nenhum compromisso futuro cadastrado para esta entidade.</div>
     <% end %>
   </section>
 </div>

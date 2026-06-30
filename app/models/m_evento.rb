@@ -16,6 +16,8 @@ class MEvento < ApplicationRecord
 
   has_many :m_eventos_musicas
   has_many :m_musicas, through: :m_eventos_musicas
+  has_many :m_ensaio_eventos
+  has_many :m_ensaios, through: :m_ensaio_eventos
 
   before_validation :assign_g_entidade
 

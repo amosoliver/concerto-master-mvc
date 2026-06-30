@@ -4,7 +4,7 @@ class UPermissoesController < ApplicationController
   def index
     @q = UPermissao.ransack(params[:q])
     @u_permissoes = @q.result.order(created_at: :desc)
-    @pagy, @u_permissoes = pagy(@u_permissoes, limit: 25)
+    @pagy, @u_permissoes = pagy(@u_permissoes, limit: 10)
   end
 
   def show

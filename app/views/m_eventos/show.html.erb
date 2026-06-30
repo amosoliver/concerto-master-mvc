@@ -16,7 +16,6 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Evento</p>
         <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
-        <p class="show-summary__text">Evento realizado em <%= @m_evento.g_predio %> com repertório, arranjos e distribuição por naipes organizados em um único lugar.</p>
       </section>
 
       <section class="panel-card show-section">
@@ -97,6 +96,7 @@
               <div class="evento-showcase__meta">
                 <span><strong>Artista:</strong> <%= musica.m_artista %></span>
                 <span><strong>Compositor:</strong> <%= musica.m_compositor.presence || "-" %></span>
+                <span><strong>Grupos:</strong> <%= evento_musica.grupos_label %></span>
               </div>
 
               <div class="evento-showcase__section">

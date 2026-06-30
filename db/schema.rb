@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_30_090002) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_30_133000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -233,6 +233,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_090002) do
     t.index ["deleted_at"], name: "index_m_compositores_on_deleted_at"
   end
 
+  create_table "m_ensaio_eventos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
+    t.bigint "m_ensaio_id", null: false
+    t.bigint "m_evento_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_m_ensaio_eventos_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_ensaio_eventos_on_g_entidade_id"
+    t.index ["m_ensaio_id", "m_evento_id"], name: "index_m_ensaio_eventos_on_ensaio_and_evento", unique: true
+    t.index ["m_ensaio_id"], name: "index_m_ensaio_eventos_on_m_ensaio_id"
+    t.index ["m_evento_id"], name: "index_m_ensaio_eventos_on_m_evento_id"
+  end
+
+  create_table "m_ensaio_grupos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
+    t.bigint "m_ensaio_id", null: false
+    t.bigint "m_grupo_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_m_ensaio_grupos_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_ensaio_grupos_on_g_entidade_id"
+    t.index ["m_ensaio_id", "m_grupo_id"], name: "index_m_ensaio_grupos_on_ensaio_and_grupo", unique: true
+    t.index ["m_ensaio_id"], name: "index_m_ensaio_grupos_on_m_ensaio_id"
+    t.index ["m_grupo_id"], name: "index_m_ensaio_grupos_on_m_grupo_id"
+  end
+
   create_table "m_ensaio_musicas", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
@@ -259,6 +287,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_090002) do
     t.index ["deleted_at"], name: "index_m_ensaios_on_deleted_at"
     t.index ["g_entidade_id"], name: "index_m_ensaios_on_g_entidade_id"
     t.index ["g_predio_id"], name: "index_m_ensaios_on_g_predio_id"
+  end
+
+  create_table "m_evento_musica_grupos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
+    t.bigint "m_evento_musica_id", null: false
+    t.bigint "m_grupo_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_m_evento_musica_grupos_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_m_evento_musica_grupos_on_g_entidade_id"
+    t.index ["m_evento_musica_id", "m_grupo_id"], name: "index_m_evento_musica_grupos_on_item_and_grupo", unique: true
+    t.index ["m_evento_musica_id"], name: "index_m_evento_musica_grupos_on_m_evento_musica_id"
+    t.index ["m_grupo_id"], name: "index_m_evento_musica_grupos_on_m_grupo_id"
   end
 
   create_table "m_eventos", force: :cascade do |t|
@@ -475,11 +517,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_090002) do
   add_foreign_key "m_arranjos_instrumentos_naipes", "g_entidades"
   add_foreign_key "m_arranjos_instrumentos_naipes", "g_instrumentos_naipes"
   add_foreign_key "m_arranjos_instrumentos_naipes", "m_arranjos"
+  add_foreign_key "m_ensaio_eventos", "g_entidades"
+  add_foreign_key "m_ensaio_eventos", "m_ensaios"
+  add_foreign_key "m_ensaio_eventos", "m_eventos"
+  add_foreign_key "m_ensaio_grupos", "g_entidades"
+  add_foreign_key "m_ensaio_grupos", "m_ensaios"
+  add_foreign_key "m_ensaio_grupos", "m_grupos"
   add_foreign_key "m_ensaio_musicas", "g_entidades"
   add_foreign_key "m_ensaio_musicas", "m_ensaios"
   add_foreign_key "m_ensaio_musicas", "m_eventos_musicas"
   add_foreign_key "m_ensaios", "g_entidades"
   add_foreign_key "m_ensaios", "g_predios"
+  add_foreign_key "m_evento_musica_grupos", "g_entidades"
+  add_foreign_key "m_evento_musica_grupos", "m_eventos_musicas"
+  add_foreign_key "m_evento_musica_grupos", "m_grupos"
   add_foreign_key "m_eventos", "g_entidades"
   add_foreign_key "m_eventos", "g_predios"
   add_foreign_key "m_eventos_musicas", "g_entidades"

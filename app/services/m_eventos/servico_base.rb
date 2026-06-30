@@ -73,12 +73,16 @@ module MEventos
           deleted_at: nil
         )
         record.save!
+        sync_repertorio_grupos!(record, entry[:m_grupo_ids])
       end
 
       stale_ids = existing_records.keys - repertorio.map { |entry| entry[:m_musica_id] }
       return if stale_ids.empty?
 
-      MEventoMusica.where(m_evento_id: m_evento.id, m_musica_id: stale_ids, deleted_at: nil).find_each(&:discard)
+      MEventoMusica.where(m_evento_id: m_evento.id, m_musica_id: stale_ids, deleted_at: nil).find_each do |record|
+        MEventoMusicaGrupo.where(m_evento_musica_id: record.id, deleted_at: nil).find_each(&:discard)
+        record.discard
+      end
     end
 
     def normalized_repertorio
@@ -91,7 +95,8 @@ module MEventos
         arranjo_id = entry[:m_arranjo_id].presence
         {
           m_musica_id: resolve_musica_id!(musica_id),
-          m_arranjo_id: arranjo_id.present? ? resolve_arranjo_id!(musica_id, arranjo_id.to_i) : nil
+          m_arranjo_id: arranjo_id.present? ? resolve_arranjo_id!(musica_id, arranjo_id.to_i) : nil,
+          m_grupo_ids: resolve_grupo_ids(Array(entry[:m_grupo_ids]))
         }
       end
 
@@ -129,6 +134,32 @@ module MEventos
       raise ActiveRecord::RecordInvalid.new(m_evento)
     end
 
+    def resolve_grupo_ids(values)
+      ids = Array(values).reject(&:blank?).map(&:to_i).uniq
+      return [] if ids.empty?
+
+      tenant_grupos.where(id: ids).pluck(:id)
+    end
+
+    def sync_repertorio_grupos!(evento_musica, grupo_ids)
+      existing_records = MEventoMusicaGrupo.with_discarded.where(m_evento_musica_id: evento_musica.id).index_by(&:m_grupo_id)
+      target_ids = Array(grupo_ids).map(&:to_i).uniq
+
+      target_ids.each do |grupo_id|
+        record = existing_records[grupo_id] || MEventoMusicaGrupo.new(m_evento_musica_id: evento_musica.id, m_grupo_id: grupo_id)
+        record.g_entidade_id = evento_musica.g_entidade_id
+        record.deleted_at = nil
+        record.save! if record.changed?
+      end
+
+      existing_records.each do |grupo_id, record|
+        next if target_ids.include?(grupo_id)
+        next if record.deleted_at.present?
+
+        record.update!(deleted_at: Time.current)
+      end
+    end
+
     def tenant_predios
       GPredio.where(g_entidade_id: current_entity_ids)
     end
@@ -139,6 +170,10 @@ module MEventos
 
     def tenant_arranjos
       MArranjo.where(g_entidade_id: current_entity_ids)
+    end
+
+    def tenant_grupos
+      MGrupo.where(g_entidade_id: current_entity_ids)
     end
 
     def current_entity_id

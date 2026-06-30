@@ -132,6 +132,33 @@ module ApplicationHelper
     values.map { |value| format_datetime(value) }.join(" até ")
   end
 
+  def pagy_count_label(pagy, item_label: "registro")
+    total = pagy&.count.to_i
+    "#{total} #{item_label.pluralize(total)}"
+  end
+
+  def pagy_summary_text(pagy, item_label: "registro")
+    return pagy_count_label(pagy, item_label: item_label) if pagy.blank?
+
+    start_item = pagy.from || 0
+    end_item = pagy.to || 0
+    total = pagy.count || 0
+
+    "Exibindo #{start_item}-#{end_item} de #{total} #{item_label.pluralize(total)}"
+  end
+
+  def calendar_entry_path(entry)
+    entry[:kind] == :ensaio ? m_ensaio_path(entry[:record]) : m_evento_path(entry[:record])
+  end
+
+  def calendar_entry_type_label(entry)
+    entry[:kind] == :ensaio ? "Ensaio" : "Evento"
+  end
+
+  def calendar_entry_css_class(entry)
+    entry[:kind] == :ensaio ? "is-ensaio" : "is-evento"
+  end
+
   AUDIO_FILE_EXTENSIONS = %w[
     3ga 8svx aac aif aifc aiff alac amr ape au caf cda dff dsf
     flac gsm it m4a m4b m4p mid midi mod monkey mp1 mp2 mp3 mpa
@@ -204,7 +231,8 @@ module ApplicationHelper
 
     musica_catalogo = [
       nav_item(model_plural_human_name(MMusica), "🎵", m_musicas_path, "m_musicas"),
-      nav_item(model_plural_human_name(MEvento), "📅", m_eventos_path, "m_eventos")
+      nav_item(model_plural_human_name(MEvento), "📅", m_eventos_path, "m_eventos"),
+      nav_item(model_plural_human_name(MEnsaio), "🎼", m_ensaios_path, "m_ensaios")
     ]
 
     acesso_items = [

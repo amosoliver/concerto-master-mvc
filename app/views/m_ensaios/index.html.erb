@@ -40,14 +40,14 @@
           <label><%= MEnsaio.human_attribute_name(:g_predio_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :g_predio_id_eq, options_from_collection_for_select(GPredio.all, :id, :to_s, @q&.send(:g_predio_id_eq)), { include_blank: true }, "aria-label": MEnsaio.human_attribute_name(:g_predio_id), class: "search-input__field" %>
+            <%= f.select :g_predio_id_eq, options_from_collection_for_select(tenant_predio_scope, :id, :to_s, @q&.send(:g_predio_id_eq)), { include_blank: true }, "aria-label": MEnsaio.human_attribute_name(:g_predio_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MEnsaio.human_attribute_name(:g_entidade_id) %></label>
           <div class="search-input">
             <span aria-hidden="true">🔎</span>
-            <%= f.select :g_entidade_id_eq, options_from_collection_for_select(GEntidade.all, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": MEnsaio.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
+            <%= f.select :g_entidade_id_eq, options_from_collection_for_select(tenant_entity_scope, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": MEnsaio.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
@@ -68,8 +68,8 @@
   <section class="panel-card panel-card--fill" data-controller="view-toggle">
     <div class="panel-card__header">
       <div>
-        <p class="eyebrow">Listagem</p>
-        <h3><%= pluralize(@m_ensaios.size, "registro") %></h3>
+        <p class="eyebrow">Resultados</p>
+        <h3><%= pagy_count_label(@pagy) %></h3>
       </div>
       <div class="view-switch">
         <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
@@ -85,8 +85,9 @@
             <th scope="col"><%= MEnsaio.human_attribute_name(:data_inicio) %></th>
             <th scope="col"><%= MEnsaio.human_attribute_name(:data_fim) %></th>
             <th scope="col"><%= MEnsaio.human_attribute_name(:g_predio_id) %></th>
-            <th scope="col"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></th>
-            <th scope="col"><%= MEnsaio.human_attribute_name(:deleted_at) %></th>
+            <th scope="col">Grupos</th>
+            <th scope="col">Eventos</th>
+            <th scope="col">Músicas</th>
             <th scope="col">Ações</th>
           </tr>
         </thead>
@@ -97,8 +98,9 @@
               <td><%= format_datetime(m_ensaio.data_inicio) %></td>
               <td><%= format_datetime(m_ensaio.data_fim) %></td>
               <td><%= m_ensaio.g_predio %></td>
-              <td><%= m_ensaio.g_entidade %></td>
-              <td><%= m_ensaio.deleted_at %></td>
+              <td><%= m_ensaio.m_grupos.size %></td>
+              <td><%= m_ensaio.m_eventos.size %></td>
+              <td><%= m_ensaio.m_ensaio_musicas.size %></td>
               <td>
                 <%= render "shared/actions_menu", show_path: m_ensaio_path(m_ensaio), edit_path: edit_m_ensaio_path(m_ensaio), delete_path: m_ensaio_path(m_ensaio) %>
               </td>
@@ -120,10 +122,12 @@
             <span class="detail-value"><%= format_datetime(m_ensaio.data_fim) %></span>
             <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_predio_id) %></span>
             <span class="detail-value"><%= m_ensaio.g_predio %></span>
-            <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
-            <span class="detail-value"><%= m_ensaio.g_entidade %></span>
-            <span class="detail-label"><%= MEnsaio.human_attribute_name(:deleted_at) %></span>
-            <span class="detail-value"><%= m_ensaio.deleted_at %></span>
+            <span class="detail-label">Grupos</span>
+            <span class="detail-value"><%= pluralize(m_ensaio.m_grupos.size, "grupo") %></span>
+            <span class="detail-label">Eventos</span>
+            <span class="detail-value"><%= pluralize(m_ensaio.m_eventos.size, "evento") %></span>
+            <span class="detail-label">Músicas</span>
+            <span class="detail-value"><%= pluralize(m_ensaio.m_ensaio_musicas.size, "música") %></span>
           </div>
           <div class="record-card__footer">
             <%= render "shared/actions_menu", show_path: m_ensaio_path(m_ensaio), edit_path: edit_m_ensaio_path(m_ensaio), delete_path: m_ensaio_path(m_ensaio) %>

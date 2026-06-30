@@ -15,9 +15,6 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Ensaio</p>
         <h2 class="show-summary__title"><%= @m_ensaio.descricao %></h2>
-        <p class="show-summary__text">
-          Ensaio realizado em <%= @m_ensaio.g_predio %> para preparar repertórios até a data do evento.
-        </p>
       </section>
 
       <section class="panel-card show-section">
@@ -29,12 +26,16 @@
         </div>
         <div class="show-stats">
           <div class="show-stat">
+            <span class="show-stat__label">Grupos</span>
+            <span class="show-stat__value"><%= @m_ensaio.m_grupos.count %></span>
+          </div>
+          <div class="show-stat">
             <span class="show-stat__label">Músicas</span>
             <span class="show-stat__value"><%= @m_ensaio.m_musicas.distinct.count %></span>
           </div>
           <div class="show-stat">
             <span class="show-stat__label">Eventos</span>
-            <span class="show-stat__value"><%= @m_ensaio.m_evento_musicas.map(&:m_evento_id).uniq.count %></span>
+            <span class="show-stat__value"><%= @m_ensaio.m_eventos.count %></span>
           </div>
           <div class="show-stat">
             <span class="show-stat__label">Início</span>
@@ -73,6 +74,10 @@
           <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
           <span class="detail-value"><%= @m_ensaio.g_entidade %></span>
         </div>
+        <div class="detail-tile">
+          <span class="detail-label">Grupos</span>
+          <span class="detail-value"><%= @m_ensaio.m_grupos.map(&:descricao).presence&.join(", ") || "Ensaio geral da entidade" %></span>
+        </div>
       </div>
 
       <div class="detail-meta">
@@ -84,19 +89,42 @@
     <section class="panel-card show-section">
       <div class="panel-card__header">
         <div>
+          <p class="eyebrow">Grupos</p>
+          <h3>Grupos participantes</h3>
+        </div>
+        <span class="show-section__count"><%= @m_ensaio.m_grupos.count %></span>
+      </div>
+      <% if @m_ensaio.m_grupos.any? %>
+        <div class="related-grid">
+          <% @m_ensaio.m_grupos.includes(:m_tipo_grupo).each do |grupo| %>
+            <article class="related-card">
+              <span class="related-card__label">Grupo</span>
+              <span class="related-card__value"><%= grupo.descricao %></span>
+              <span class="related-card__meta"><%= [grupo.m_tipo_grupo, pluralize(grupo.g_pessoas.count, "pessoa")].compact.join(" • ") %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-card">Este ensaio está marcado como geral para a entidade, sem grupo específico.</div>
+      <% end %>
+    </section>
+
+    <section class="panel-card show-section">
+      <div class="panel-card__header">
+        <div>
           <p class="eyebrow">Eventos</p>
           <h3>Eventos trabalhados neste ensaio</h3>
         </div>
-        <span class="show-section__count"><%= @m_ensaio.m_evento_musicas.map(&:m_evento_id).uniq.count %></span>
+        <span class="show-section__count"><%= @m_ensaio.m_eventos.count %></span>
       </div>
-      <% eventos = @m_ensaio.m_evento_musicas.includes(:m_evento).map(&:m_evento).compact.uniq.sort_by { |e| e.data_inicio || Time.at(0) }.reverse %>
+      <% eventos = @m_ensaio.m_eventos.includes(:g_predio).sort_by { |e| e.data_inicio || Time.at(0) } %>
       <% if eventos.any? %>
         <div class="related-grid">
           <% eventos.each do |evento| %>
             <article class="related-card">
               <span class="related-card__label">Evento</span>
               <%= link_to evento.descricao, m_evento_path(evento), class: "related-card__value related-card__value--link" %>
-              <span class="related-card__meta"><%= [format_datetime(evento.data_inicio, fallback: nil), evento.g_predio].compact.join(" • ") %></span>
+              <span class="related-card__meta"><%= [format_datetime_range(evento.data_inicio, evento.data_fim, fallback: nil), evento.g_predio].compact.join(" • ") %></span>
             </article>
           <% end %>
         </div>
@@ -115,12 +143,12 @@
       </div>
       <% if @m_ensaio.m_ensaio_musicas.any? %>
         <div class="related-grid">
-          <% @m_ensaio.m_ensaio_musicas.includes(m_evento_musica: [:m_evento, :m_musica]).each do |ensaio_musica| %>
+          <% @m_ensaio.m_ensaio_musicas.includes(m_evento_musica: [:m_evento, :m_musica, :m_arranjo]).each do |ensaio_musica| %>
             <% evento_musica = ensaio_musica.m_evento_musica %>
             <article class="related-card">
               <span class="related-card__label"><%= evento_musica&.m_evento || "Evento" %></span>
               <span class="related-card__value"><%= evento_musica&.m_musica&.descricao || "Música não informada" %></span>
-              <span class="related-card__meta"><%= ensaio_musica.observacao.presence || "Sem observação registrada" %></span>
+              <span class="related-card__meta"><%= [evento_musica&.m_arranjo, ensaio_musica.observacao.presence || "Sem observação registrada"].compact.join(" • ") %></span>
             </article>
           <% end %>
         </div>
