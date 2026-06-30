@@ -2104,6 +2104,37 @@ button, input { font: inherit; }
   html, body { overscroll-behavior-y: contain; }
   body { overflow: auto; height: auto; }
 
+  /* === Dropdowns as bottom sheets ===
+     On mobile, a fixed panel near the button breaks on small screens
+     (content overflows, width is unpredictable, tap targets are tiny).
+     Anchoring to the screen bottom is the correct mobile-native pattern.
+     JS reposition() skips its calculation at ≤780px so CSS wins. */
+  .actions-menu__panel {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    max-height: 80vh;
+    max-height: 80dvh;
+    border-radius: 24px 24px 0 0 !important;
+    min-width: 0 !important;
+    padding: 20px 16px calc(16px + env(safe-area-inset-bottom)) !important;
+    gap: 8px !important;
+    overflow-y: auto;
+  }
+  .actions-menu__panel::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    margin: 0 auto 12px;
+    flex-shrink: 0;
+  }
+  .tenant-menu { min-width: 0; width: 100%; }
+  .tenant-menu__list { max-height: 38vh; max-height: 38dvh; }
+
   .dashboard-shell {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
