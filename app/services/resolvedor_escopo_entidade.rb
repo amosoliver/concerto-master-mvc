@@ -3,6 +3,8 @@ class ResolvedorEscopoEntidade
     GPessoasInstrumento
     MGrupoInstrumentoNaipe
     MGrupoPessoa
+    MMusica
+    MArranjo
     MArranjoInstrumentoNaipe
     MPessoaFuncao
     MEventoMusica

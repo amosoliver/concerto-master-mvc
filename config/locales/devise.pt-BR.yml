@@ -24,7 +24,19 @@ pt-BR:
     registrations:
       destroyed: "Sua conta foi cancelada com sucesso. Esperamos que você volte em breve."
       signed_up: "Bem-vindo(a)! Você efetuou seu cadastro com sucesso."
+      signed_up_but_inactive: "Você se cadastrou com sucesso, mas sua conta ainda não pode ser acessada."
+      signed_up_but_locked: "Você se cadastrou com sucesso, mas sua conta está bloqueada."
+      signed_up_but_unconfirmed: "Enviamos um link de confirmação para seu e-mail. Siga as instruções para ativar sua conta."
       updated: "Sua conta foi atualizada com sucesso."
+      update_needs_confirmation: "Sua conta foi atualizada, mas precisamos confirmar seu novo e-mail. Verifique sua caixa de entrada."
+    confirmations:
+      confirmed: "Seu e-mail foi confirmado com sucesso."
+      send_instructions: "Em alguns minutos, você receberá um e-mail com instruções para confirmar sua conta."
+      send_paranoid_instructions: "Se o seu e-mail existir em nossa base, você receberá instruções para confirmação em alguns minutos."
+    unlocks:
+      send_instructions: "Em alguns minutos, você receberá um e-mail com instruções para desbloquear sua conta."
+      send_paranoid_instructions: "Se a sua conta existir, você receberá instruções para desbloqueio em alguns minutos."
+      unlocked: "Sua conta foi desbloqueada com sucesso. Faça login para continuar."
 
   errors:
     messages:

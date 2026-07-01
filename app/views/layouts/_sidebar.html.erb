@@ -1,9 +1,11 @@
 <aside class="sidebar" data-sidebar-target="panel">
   <div class="sidebar__brand">
-    <div class="brand-mark">🎵</div>
-    <div>
-      <h1>Concert Master</h1>
-    </div>
+    <%= link_to root_path, class: "sidebar__brand-link" do %>
+      <div class="brand-mark">🎵</div>
+      <div>
+        <h1>Concert Master</h1>
+      </div>
+    <% end %>
     <button type="button" class="sidebar-close" data-action="click->sidebar#close" aria-label="Fechar menu">✕</button>
   </div>
 

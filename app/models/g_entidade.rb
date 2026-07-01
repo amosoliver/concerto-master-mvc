@@ -34,6 +34,18 @@ class GEntidade < ApplicationRecord
     g_predios.first
   end
 
+  def self_and_ancestor_ids
+    ids = [id]
+    current_parent_id = g_entidade_id
+
+    while current_parent_id.present?
+      ids << current_parent_id
+      current_parent_id = self.class.where(id: current_parent_id).pick(:g_entidade_id)
+    end
+
+    ids
+  end
+
   validate :g_entidade_nao_pode_ser_a_propria_entidade
 
   def to_s

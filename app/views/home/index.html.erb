@@ -12,6 +12,10 @@
   </div>
 </section>
 
+<% unless current_user_has_instrument_assignments? %>
+  <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade. Os arquivos específicos por instrumento não serão exibidos até esse vínculo ser definido.</div>
+<% end %>
+
 <div class="dashboard-layout">
   <%= render "shared/entity_calendar", snapshot: @dashboard_snapshot, base_path: root_path, base_params: request.query_parameters.except("month", "view", "date").symbolize_keys %>
 

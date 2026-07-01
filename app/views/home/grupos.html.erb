@@ -12,6 +12,10 @@
   </div>
 </section>
 
+<% unless current_user_has_instrument_assignments? %>
+  <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade. Defina esse vínculo para liberar os materiais filtrados por grupo e instrumento.</div>
+<% end %>
+
 <section class="panel-card">
   <div class="panel-card__header">
     <div>

@@ -61,7 +61,7 @@ module CurrentContext
     usuario = current_g_usuario
     pessoa = usuario.g_pessoa
     entidade_base = pessoa&.g_entidade
-    entidade_disponivel_ids = entidade_base ? entidade_base.self_and_descendant_ids : []
+    entidade_disponivel_ids = usuario.accessible_entity_ids(base_entity: entidade_base)
     entidades_disponiveis = GEntidade.where(id: entidade_disponivel_ids).order(:descricao)
     entidade = resolve_current_entidade(entidade_base, entidade_disponivel_ids)
     entidade_ids = entidade ? entidade.self_and_descendant_ids : []

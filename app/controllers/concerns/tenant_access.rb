@@ -45,6 +45,8 @@ module TenantAccess
   end
 
   def current_tenant_instrument_ids
+    return all_instrument_ids_for_current_tenant if current_g_usuario&.admin_for?(current_tenant_entity)
+
     Current.g_instrumento_naipe_ids || []
   end
 
@@ -79,5 +81,9 @@ module TenantAccess
 
   def tenant_arranjo_scope
     tenant_scope(MArranjo.includes(:m_musica)).order(:id)
+  end
+
+  def all_instrument_ids_for_current_tenant
+    @all_instrument_ids_for_current_tenant ||= GInstrumentoNaipe.pluck(:id)
   end
 end

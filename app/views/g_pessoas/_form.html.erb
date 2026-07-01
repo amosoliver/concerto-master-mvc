@@ -144,25 +144,33 @@
     <div class="form-grid">
       <div class="field-group field-group--full">
         <label>Funções da pessoa</label>
-        <p class="selection-help">Marque as funções e escolha a principal.</p>
+        <p class="selection-help">Marque as funções da pessoa e defina a principal na mesma lista.</p>
         <div class="selection-panel">
           <div class="selection-group">
             <div class="selection-group__items">
               <% selected_ids = Array(wizard_values["u_funcao_ids"] || g_pessoa.u_funcao_ids).map(&:to_i) %>
+              <% selected_principal_id = (wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id).presence&.to_i %>
               <% @u_funcoes.each do |u_funcao| %>
-                <label class="selection-item">
-                  <%= check_box_tag "g_pessoa[u_funcao_ids][]", u_funcao.id, selected_ids.include?(u_funcao.id), data: { action: "change->pessoa-filtros#syncFuncoes" } %>
-                  <span><%= u_funcao.descricao %></span>
-                </label>
+                <% checked = selected_ids.include?(u_funcao.id) %>
+                <div class="funcao-option">
+                  <label class="selection-item">
+                    <%= check_box_tag "g_pessoa[u_funcao_ids][]", u_funcao.id, checked, data: { action: "change->pessoa-filtros#syncFuncoes" } %>
+                    <span><%= u_funcao.descricao %></span>
+                  </label>
+
+                  <label class="funcao-option__principal <%= "is-disabled" unless checked %>">
+                    <%= radio_button_tag "g_pessoa[principal_u_funcao_id]",
+                                         u_funcao.id,
+                                         checked && selected_principal_id == u_funcao.id,
+                                         disabled: !checked,
+                                         data: { pessoa_filtros_target: "principalFuncaoRadio" } %>
+                    <span>Definir como função principal</span>
+                  </label>
+                </div>
               <% end %>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="field-group">
-        <%= form.label :principal_u_funcao_id, "Função principal entre as marcadas" %>
-        <%= form.collection_select :principal_u_funcao_id, @u_funcoes, :id, :to_s, { include_blank: "Selecione a função principal...", selected: wizard_values["principal_u_funcao_id"] || g_pessoa.principal_u_funcao_id }, class: "form-control", required: true, data: { pessoa_filtros_target: "principalFuncaoSelect" } %>
         <% if @u_funcoes.blank? %><p class="empty-hint">Nenhuma função cadastrada.</p><% end %>
       </div>
     </div>

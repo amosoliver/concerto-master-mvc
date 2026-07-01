@@ -2,9 +2,10 @@
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciar</p>
-      <h1>Perfis do usuário</h1>
+      <h1>Acessos e perfis do usuário</h1>
     </div>
     <div class="page-header__actions">
+      <%= authorized_link_to "Novo perfil", new_u_perfil_path, class: "secondary-button" if allowed_path?(new_u_perfil_path, method: :get) %>
       <%= link_to "Voltar", g_usuario_path(@g_usuario), class: "secondary-button" %>
     </div>
   </div>
@@ -22,8 +23,12 @@
         <span class="detail-value"><%= @g_usuario.g_pessoa %></span>
       </div>
       <div class="detail-tile">
-        <span class="detail-label">Perfis ativos</span>
-        <span class="detail-value"><%= @selected_ids.size %></span>
+        <span class="detail-label">Entidade base</span>
+        <span class="detail-value"><%= @g_usuario.g_pessoa.g_entidade %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label">Entidades disponíveis aqui</span>
+        <span class="detail-value"><%= @available_entities.size %></span>
       </div>
     </div>
   </section>
@@ -32,29 +37,46 @@
     <div class="panel-card__header">
       <div>
         <p class="eyebrow">Associação</p>
-        <h3>Selecione os perfis</h3>
+        <h3>Perfis por entidade</h3>
       </div>
     </div>
 
-    <% if @u_perfis.any? %>
-      <div class="selection-panel">
-        <div class="selection-group">
-          <div class="selection-group__items">
-            <% @u_perfis.each do |perfil| %>
-              <label class="selection-item">
-                <%= check_box_tag "u_perfil_ids[]", perfil.id, @selected_ids.include?(perfil.id), id: "perfil_#{perfil.id}" %>
-                <span><%= perfil.descricao %></span>
-              </label>
-            <% end %>
-          </div>
-        </div>
+    <% if @available_entities.any? && @u_perfis.any? %>
+      <div class="entity-access-stack">
+        <% @available_entities.each do |entidade| %>
+          <% selected_ids = Array(@selected_accesses[entidade.id]).map(&:to_i) %>
+          <section class="entity-access-card">
+            <div class="entity-access-card__header">
+              <div>
+                <h4><%= entidade %></h4>
+                <p>Marque um ou mais perfis para liberar este usuário nessa entidade.</p>
+              </div>
+              <span class="entity-access-card__count"><%= pluralize(selected_ids.size, "perfil") %></span>
+            </div>
+
+            <div class="selection-panel">
+              <div class="selection-group">
+                <div class="selection-group__items">
+                  <% @u_perfis.each do |perfil| %>
+                    <label class="selection-item">
+                      <%= check_box_tag "entity_profile_ids[#{entidade.id}][]", perfil.id, selected_ids.include?(perfil.id), id: "entity_#{entidade.id}_perfil_#{perfil.id}" %>
+                      <span><%= perfil.descricao %></span>
+                    </label>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </section>
+        <% end %>
       </div>
-    <% else %>
+    <% elsif @u_perfis.blank? %>
       <div class="empty-card">Nenhum perfil cadastrado. Crie perfis em <%= link_to "Perfis", u_perfis_path %> primeiro.</div>
+    <% else %>
+      <div class="empty-card">Nenhuma entidade disponível na área atual para conceder acesso a este usuário.</div>
     <% end %>
 
     <div class="form-actions">
-      <%= form.submit "Salvar perfis", class: "primary-button" %>
+      <%= form.submit "Salvar acessos", class: "primary-button" %>
       <%= link_to "Cancelar", g_usuario_path(@g_usuario), class: "secondary-button" %>
     </div>
   <% end %>

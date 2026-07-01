@@ -79,13 +79,16 @@
       <div class="panel-card__header">
         <div>
           <p class="eyebrow">Instrumentos</p>
-          <h3>Instrumentos do arranjo</h3>
+          <h3>Arquivos do seu instrumento ou naipe</h3>
         </div>
-        <span class="show-section__count"><%= @m_arranjo.g_instrumentos_naipes.count %></span>
+        <% user_relations = instrument_relations_for_current_user(@m_arranjo) %>
+        <span class="show-section__count"><%= user_relations.count %></span>
       </div>
-      <% if @instrumentos_do_arranjo.any? %>
+      <% if !current_user_has_instrument_assignments? %>
+        <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade.</div>
+      <% elsif user_relations.any? %>
         <div class="related-grid">
-          <% @instrumentos_do_arranjo.each do |instrumento_arranjo| %>
+          <% user_relations.each do |instrumento_arranjo| %>
             <article class="related-card">
               <span class="related-card__label">Instrumento</span>
               <span class="related-card__value"><%= instrumento_arranjo.g_instrumento_naipe.to_s %></span>
@@ -120,7 +123,7 @@
           <% end %>
         </div>
       <% else %>
-        <div class="empty-card">Nenhum instrumento foi vinculado a este arranjo.</div>
+        <div class="empty-card">Este arranjo não possui arquivo específico para o instrumento/naipe associado ao seu usuário.</div>
       <% end %>
     </section>
   </div>

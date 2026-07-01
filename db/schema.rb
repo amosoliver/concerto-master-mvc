@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_30_133000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_01_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -485,10 +485,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_133000) do
   create_table "u_usuarios_perfis", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.bigint "g_entidade_id", null: false
     t.bigint "g_usuario_id", null: false
     t.bigint "u_perfil_id", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_u_usuarios_perfis_on_deleted_at"
+    t.index ["g_entidade_id"], name: "index_u_usuarios_perfis_on_g_entidade_id"
+    t.index ["g_usuario_id", "g_entidade_id"], name: "index_u_usuarios_perfis_on_g_usuario_id_and_g_entidade_id"
     t.index ["g_usuario_id"], name: "index_u_usuarios_perfis_on_g_usuario_id"
     t.index ["u_perfil_id"], name: "index_u_usuarios_perfis_on_u_perfil_id"
   end
@@ -556,6 +559,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_133000) do
   add_foreign_key "u_perfis_funcoes", "u_perfis"
   add_foreign_key "u_perfis_permissoes", "u_perfis"
   add_foreign_key "u_perfis_permissoes", "u_permissoes"
+  add_foreign_key "u_usuarios_perfis", "g_entidades"
   add_foreign_key "u_usuarios_perfis", "g_usuarios"
   add_foreign_key "u_usuarios_perfis", "u_perfis"
 end

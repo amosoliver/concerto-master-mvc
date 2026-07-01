@@ -260,6 +260,39 @@ module ApplicationHelper
     end
   end
 
+  def current_user_has_instrument_assignments?
+    current_tenant_instrument_ids.any?
+  end
+
+  def current_user_admin_for_current_entity?
+    current_g_usuario&.admin_for?(current_context_entidade)
+  end
+
+  def current_user_group_ids_for_entity
+    return [] unless current_context_pessoa.present?
+
+    @current_user_group_ids_for_entity ||= current_context_pessoa.m_grupos.where(g_entidade_id: current_context_entidade_ids).pluck(:id)
+  end
+
+  def evento_musica_visible_for_current_user?(evento_musica)
+    return false if evento_musica.blank?
+    return true if current_user_admin_for_current_entity?
+
+    grupo_ids = evento_musica.m_grupos.map(&:id)
+    return true if grupo_ids.empty?
+
+    (grupo_ids & current_user_group_ids_for_entity).any?
+  end
+
+  def instrument_relations_for_current_user(arranjo)
+    return [] if arranjo.blank?
+    return [] if current_tenant_instrument_ids.blank?
+
+    arranjo.m_arranjos_instrumentos_naipes.select do |relation|
+      current_tenant_instrument_ids.include?(relation.g_instrumento_naipe_id)
+    end
+  end
+
   def authorized_link_to(name = nil, options = nil, html_options = nil, &block)
     target = block_given? ? name : options
     method = extract_authorized_link_method(block_given? ? options : html_options)

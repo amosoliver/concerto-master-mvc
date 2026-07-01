@@ -24,6 +24,10 @@
               <small><%= current_g_usuario.email %></small>
             </div>
 
+            <div class="tenant-menu__section">
+              <%= link_to root_path, class: "actions-menu__item" do %><span aria-hidden="true">🏠</span> Visão Geral<% end %>
+            </div>
+
             <% if current_context_entidade_base.present? %>
               <div class="tenant-menu__section">
                 <p class="tenant-menu__label">Tenant ativo</p>

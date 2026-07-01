@@ -89,6 +89,12 @@ button, input { font: inherit; }
   padding: 8px 10px 24px;
   flex: 0 0 auto;
 }
+.sidebar__brand-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
 
 .brand-mark {
   width: 44px;
@@ -1137,6 +1143,76 @@ button, input { font: inherit; }
 }
 .selection-item span { line-height: 1.35; }
 .selection-item.is-hidden { display: none !important; }
+.funcao-option {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.82), rgba(255, 255, 255, 0.96));
+}
+.funcao-option__principal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.funcao-option__principal input[type="radio"] {
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.funcao-option__principal.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.funcao-option__principal.is-disabled input[type="radio"] {
+  cursor: not-allowed;
+}
+.entity-access-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.entity-access-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.88), rgba(255, 255, 255, 0.98));
+  box-shadow: var(--shadow-soft);
+}
+.entity-access-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.entity-access-card__header h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+.entity-access-card__header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.entity-access-card__count {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
 .groups-stack { display: flex; flex-direction: column; gap: 14px; }
 .map-card {
   border: 1px solid rgba(148, 163, 184, 0.18);
@@ -1773,6 +1849,9 @@ button, input { font: inherit; }
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(248, 250, 252, 0.98));
   box-shadow: var(--shadow-soft);
 }
+.evento-showcase__card[open] {
+  gap: 16px;
+}
 .wizard-repertorio__header {
   display: flex;
   align-items: flex-start;
@@ -1806,6 +1885,43 @@ button, input { font: inherit; }
   justify-content: space-between;
   gap: 12px;
 }
+.evento-showcase__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.evento-showcase__summary-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.evento-showcase__summary::-webkit-details-marker {
+  display: none;
+}
+.evento-showcase__summary-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.evento-showcase__summary-meta span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.08);
+}
+.evento-showcase__details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
 .evento-showcase__section {
   display: flex;
   flex-direction: column;
@@ -1830,8 +1946,8 @@ button, input { font: inherit; }
   padding: 14px;
   border-radius: 18px;
   border: 1px solid rgba(148, 163, 184, 0.16);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(248, 250, 252, 0.98));
-  box-shadow: var(--shadow-soft);
+  background: rgba(248, 250, 252, 0.72);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1870,7 +1986,8 @@ button, input { font: inherit; }
   border-color: rgba(53, 80, 111, 0.44);
 }
 :root[data-theme="dark"] .wizard-repertorio__meta span,
-:root[data-theme="dark"] .evento-showcase__meta span {
+:root[data-theme="dark"] .evento-showcase__meta span,
+:root[data-theme="dark"] .evento-showcase__summary-meta span {
   background: rgba(53, 80, 111, 0.18);
 }
 :root[data-theme="dark"] .evento-files-grid__card {

@@ -5,6 +5,7 @@
       <h1><%= GUsuario.model_name.human %></h1>
     </div>
     <div class="page-header__actions">
+      <%= authorized_link_to "Acessos e perfis", manage_perfis_g_usuario_path(@g_usuario), class: "secondary-button" if allowed_path?(manage_perfis_g_usuario_path(@g_usuario), method: :get) %>
       <%= authorized_link_to "Editar", edit_g_usuario_path(@g_usuario), class: "primary-button" %>
       <%= link_to "Voltar", g_usuarios_path, class: "secondary-button" %>
     </div>
@@ -30,6 +31,10 @@
       <div class="detail-tile">
         <span class="detail-label"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></span>
         <span class="detail-value"><%= @g_usuario.g_pessoa %></span>
+      </div>
+      <div class="detail-tile">
+        <span class="detail-label">Entidades com acesso</span>
+        <span class="detail-value"><%= @g_usuario.entidades_de_acesso.distinct.count %></span>
       </div>
     </div>
 

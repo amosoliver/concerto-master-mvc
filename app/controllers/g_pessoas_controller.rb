@@ -134,6 +134,7 @@ class GPessoasController < ApplicationController
 
   def store_wizard_step!
     session[wizard_session_key] = normalized_wizard_values(wizard_values.merge(g_pessoa_params.to_h))
+    @wizard_values = nil
   end
 
   def wizard_params
@@ -181,10 +182,12 @@ class GPessoasController < ApplicationController
 
   def clear_new_wizard!
     session.delete(wizard_session_key)
+    @wizard_values = nil
   end
 
   def clear_edit_wizard!
     session.delete(wizard_session_key)
+    @wizard_values = nil
   end
 
   def wizard_session_key

@@ -56,6 +56,10 @@ pt-BR:
     descricao: "Descrição"
     nome: "Nome"
     email: "E-mail"
+    password: "Senha"
+    password_confirmation: "Confirmação da senha"
+    current_password: "Senha atual"
+    unconfirmed_email: "E-mail não confirmado"
     cpf: "CPF"
     sigla: "Sigla"
     codigo_ibge: "Código IBGE"
@@ -223,3 +227,17 @@ pt-BR:
     attributes:
       g_entidade:
         g_entidade_id: "Entidade Pai"
+      g_usuario:
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmação da senha"
+        current_password: "Senha atual"
+      g_pessoa:
+        email: "E-mail"
+      m_evento:
+        data_inicio: "Data de Início"
+        data_fim: "Data de Término"
+
+    errors:
+      messages:
+        record_invalid: "A validação falhou: %{errors}"

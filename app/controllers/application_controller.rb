@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource)
     return edit_g_usuario_registration_path if resource.is_a?(GUsuario) && resource.primeiro_acesso?
 
-    super
+    root_path
   end
   def redirect_primeiro_acesso!
     return unless g_usuario_signed_in?

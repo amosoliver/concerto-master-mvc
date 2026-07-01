@@ -1,5 +1,6 @@
 class GUsuariosController < ApplicationController
   before_action :set_g_usuario, only: %i[show edit update destroy manage_perfis update_perfis]
+  before_action :load_access_management_collections, only: %i[manage_perfis update_perfis]
 
   def index
     @q = tenant_scope(GUsuario).ransack(params[:q])
@@ -44,24 +45,22 @@ class GUsuariosController < ApplicationController
   end
 
   def manage_perfis
-    @u_perfis = UPerfil.order(:descricao)
-    @selected_ids = @g_usuario.u_perfil_ids.to_set
   end
 
   def update_perfis
-    target_ids = Array(params[:u_perfil_ids]).reject(&:blank?).map(&:to_i).uniq
-    existing = UUsuarioPerfil.with_discarded.where(g_usuario_id: @g_usuario.id).index_by(&:u_perfil_id)
+    submitted_pairs = selected_access_pairs
+    existing = UUsuarioPerfil.with_discarded.where(g_usuario_id: @g_usuario.id).index_by { |record| [record.g_entidade_id, record.u_perfil_id] }
 
-    target_ids.each do |perfil_id|
-      record = existing[perfil_id] || UUsuarioPerfil.new(g_usuario_id: @g_usuario.id, u_perfil_id: perfil_id)
+    submitted_pairs.each do |entity_id, perfil_id|
+      record = existing[[entity_id, perfil_id]] || UUsuarioPerfil.new(g_usuario_id: @g_usuario.id, g_entidade_id: entity_id, u_perfil_id: perfil_id)
       next if record.persisted? && record.deleted_at.nil?
 
       record.deleted_at = nil
       record.save!
     end
 
-    existing.each do |perfil_id, record|
-      next if target_ids.include?(perfil_id)
+    existing.each do |pair, record|
+      next if submitted_pairs.include?(pair)
       next if record.deleted_at.present?
 
       record.update!(deleted_at: Time.current)
@@ -102,5 +101,32 @@ class GUsuariosController < ApplicationController
 
   def default_password
     "102030"
+  end
+
+  def load_access_management_collections
+    @available_entities = current_context_entidades.to_a
+    @u_perfis = UPerfil.order(:descricao)
+    @selected_accesses = @g_usuario.u_usuarios_perfis.each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |access, memo|
+      memo[access.g_entidade_id] << access.u_perfil_id
+    end
+  end
+
+  def selected_access_pairs
+    raw_accesses_param = params[:entity_profile_ids]
+    raw_accesses = raw_accesses_param.respond_to?(:to_unsafe_h) ? raw_accesses_param.to_unsafe_h : raw_accesses_param.to_h
+    allowed_entity_ids = @available_entities.map(&:id)
+    allowed_profile_ids = @u_perfis.map(&:id)
+
+    raw_accesses.each_with_object([]) do |(entity_id, perfil_ids), selected|
+      normalized_entity_id = entity_id.to_i
+      next unless allowed_entity_ids.include?(normalized_entity_id)
+
+      Array(perfil_ids).reject(&:blank?).map(&:to_i).each do |perfil_id|
+        next unless allowed_profile_ids.include?(perfil_id)
+
+        pair = [normalized_entity_id, perfil_id]
+        selected << pair unless selected.include?(pair)
+      end
+    end
   end
 end

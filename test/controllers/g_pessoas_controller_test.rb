@@ -3,6 +3,24 @@ require "test_helper"
 class GPessoasControllerTest < ActionDispatch::IntegrationTest
   setup do
     @g_pessoa = g_pessoas(:one)
+    @authorized_user = build_authorized_user_for_g_pessoas!
+  end
+
+  test "advances to the next wizard step on the first valid submit" do
+    sign_in @authorized_user
+
+    post g_pessoas_url, params: {
+      step: "dados",
+      g_pessoa: {
+        nome: "Pessoa Teste",
+        email: "pessoa.teste@example.com",
+        cpf: "123.456.789-00",
+        g_entidade_id: @authorized_user.g_pessoa.g_entidade_id,
+        g_sexo_id: g_sexos(:one).id
+      }
+    }
+
+    assert_redirected_to new_g_pessoa_path(step: "grupos", resume: 1)
   end
 
   test "should get index" do
@@ -44,5 +62,40 @@ class GPessoasControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to g_pessoas_url
+  end
+
+  private
+
+  def build_authorized_user_for_g_pessoas!
+    pessoa = GPessoa.create!(
+      nome: "Pessoa Operadora",
+      email: "operadora.gpessoas@example.com",
+      cpf: "98765432100",
+      g_entidade: g_entidades(:one),
+      g_sexo: g_sexos(:one)
+    )
+
+    usuario = GUsuario.create!(
+      email: "operadora.gpessoas@example.com",
+      password: "123456",
+      password_confirmation: "123456",
+      ativo: true,
+      primeiro_acesso: false,
+      g_pessoa: pessoa
+    )
+
+    perfil = UPerfil.create!(descricao: "Perfil GPessoas Test")
+    %w[new create].each do |action|
+      permissao = UPermissao.create!(
+        descricao: "Permissao #{action} GPessoas Test",
+        controlador: "g_pessoas",
+        acao: action,
+        admin: false
+      )
+      UPerfilPermissao.create!(u_perfil: perfil, u_permissao: permissao)
+    end
+    UUsuarioPerfil.create!(u_perfil: perfil, g_usuario: usuario)
+
+    usuario
   end
 end

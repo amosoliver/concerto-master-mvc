@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["entidadeSelect", "groupItem", "groupCheckbox", "instrumentoItem", "perfilItem", "principalFuncaoSelect", "groupsEmpty", "instrumentosEmpty", "perfisEmpty"]
+  static targets = ["entidadeSelect", "groupItem", "groupCheckbox", "instrumentoItem", "perfilItem", "principalFuncaoRadio", "groupsEmpty", "instrumentosEmpty", "perfisEmpty"]
   static values = { selectedFuncaoIds: String }
 
   connect() {
@@ -95,28 +95,22 @@ export default class extends Controller {
   }
 
   syncPrincipalFuncoes() {
-    if (!this.hasPrincipalFuncaoSelectTarget) return
-
     const selectedFuncaoIds = this.selectedFunctionIds()
-    const select = this.principalFuncaoSelectTarget
-    let currentValueAllowed = false
+    if (!this.hasPrincipalFuncaoRadioTarget) return
 
-    Array.from(select.options).forEach((option) => {
-      if (option.value === "") {
-        option.hidden = false
-        option.disabled = false
-        return
+    this.principalFuncaoRadioTargets.forEach((radio) => {
+      const allowed = selectedFuncaoIds.includes(String(radio.value))
+      radio.disabled = !allowed
+
+      const principalLabel = radio.closest(".funcao-option__principal")
+      if (principalLabel) {
+        principalLabel.classList.toggle("is-disabled", !allowed)
       }
 
-      const allowed = selectedFuncaoIds.includes(option.value)
-      option.hidden = !allowed
-      option.disabled = !allowed
-      currentValueAllowed ||= allowed && option.value === select.value
+      if (!allowed) {
+        radio.checked = false
+      }
     })
-
-    if (!currentValueAllowed) {
-      select.value = ""
-    }
   }
 
   clearChecks(checkboxes) {
