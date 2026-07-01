@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_link_to "Novo #{GInstrumentoNaipe.model_name.human}", new_g_instrumento_naipe_path, class: "primary-button" %>
     </div>
   </div>
@@ -18,14 +22,14 @@
         <div class="search-field">
           <label><%= GInstrumentoNaipe.human_attribute_name(:g_instrumento_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_instrumento_id_eq, options_from_collection_for_select(GInstrumento.all, :id, :to_s, @q&.send(:g_instrumento_id_eq)), { include_blank: true }, "aria-label": GInstrumentoNaipe.human_attribute_name(:g_instrumento_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_naipe_id_eq, options_from_collection_for_select(GNaipe.all, :id, :to_s, @q&.send(:g_naipe_id_eq)), { include_blank: true }, "aria-label": GInstrumentoNaipe.human_attribute_name(:g_naipe_id), class: "search-input__field" %>
           </div>
         </div>
@@ -37,17 +41,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -55,7 +49,7 @@
           <tr>
             <th scope="col"><%= GInstrumentoNaipe.human_attribute_name(:g_instrumento_id) %></th>
             <th scope="col"><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -63,7 +57,7 @@
             <tr>
               <td><%= g_instrumento_naipe.g_instrumento %></td>
               <td><%= g_instrumento_naipe.g_naipe %></td>
-              <td>
+              <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: g_instrumento_naipe_path(g_instrumento_naipe), edit_path: edit_g_instrumento_naipe_path(g_instrumento_naipe), delete_path: g_instrumento_naipe_path(g_instrumento_naipe) %>
               </td>
             </tr>
@@ -76,14 +70,20 @@
       <% @g_instrumentos_naipes.each do |g_instrumento_naipe| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_instrumento_id) %></span>
-            <span class="detail-value"><%= g_instrumento_naipe.g_instrumento %></span>
-            <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></span>
-            <span class="detail-value"><%= g_instrumento_naipe.g_naipe %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= g_instrumento_naipe.g_instrumento %></h3>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:note, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GInstrumentoNaipe.human_attribute_name(:g_naipe_id) %></span>
+                  <span class="detail-value"><%= g_instrumento_naipe.g_naipe %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: g_instrumento_naipe_path(g_instrumento_naipe), edit_path: edit_g_instrumento_naipe_path(g_instrumento_naipe), delete_path: g_instrumento_naipe_path(g_instrumento_naipe) %>
-          </div>
+          <%= render "shared/card_actions", show_path: g_instrumento_naipe_path(g_instrumento_naipe), edit_path: edit_g_instrumento_naipe_path(g_instrumento_naipe), delete_path: g_instrumento_naipe_path(g_instrumento_naipe) %>
         </article>
       <% end %>
     </div>

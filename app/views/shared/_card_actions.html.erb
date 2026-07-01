@@ -1,0 +1,16 @@
+<%# locals: (show_path:, edit_path:, delete_path:, config_path: nil, config_label: "Gerenciar") %>
+<% config_path = local_assigns[:config_path] %>
+<% config_label = local_assigns[:config_label] || "Gerenciar" %>
+<% can_show = allowed_path?(show_path, method: :get) %>
+<% can_edit = allowed_path?(edit_path, method: :get) %>
+<% can_delete = allowed_path?(delete_path, method: :delete) %>
+<% can_config = config_path.present? && allowed_path?(config_path, method: :get) %>
+
+<% if can_show || can_edit || can_delete || can_config %>
+  <div class="record-card__actions">
+    <%= authorized_link_to show_path, class: "secondary-button secondary-button--sm" do %><%= ui_icon(:eye, size: 16) %><span>Ver</span><% end if can_show %>
+    <%= authorized_link_to config_path, class: "secondary-button secondary-button--sm" do %><%= ui_icon(:tool, size: 16) %><span><%= config_label %></span><% end if can_config %>
+    <%= authorized_link_to edit_path, class: "secondary-button secondary-button--sm" do %><%= ui_icon(:pencil, size: 16) %><span>Editar</span><% end if can_edit %>
+    <%= authorized_button_to delete_path, method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "danger-button danger-button--sm" do %><%= ui_icon(:trash, size: 16) %><span>Excluir</span><% end if can_delete %>
+  </div>
+<% end %>

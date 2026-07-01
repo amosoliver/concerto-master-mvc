@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_link_to "Novo #{MArranjo.model_name.human}", new_m_arranjo_path, class: "primary-button" %>
     </div>
   </div>
@@ -18,35 +22,35 @@
         <div class="search-field">
           <label><%= MArranjo.human_attribute_name(:descricao) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :descricao_cont, placeholder: MArranjo.human_attribute_name(:descricao), "aria-label": MArranjo.human_attribute_name(:descricao), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MArranjo.human_attribute_name(:m_musica_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :m_musica_id_eq, options_from_collection_for_select(tenant_musica_scope, :id, :to_s, @q&.send(:m_musica_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_musica_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :m_tipo_arranjo_id_eq, options_from_collection_for_select(MTipoArranjo.all, :id, :to_s, @q&.send(:m_tipo_arranjo_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_tipo_arranjo_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MArranjo.human_attribute_name(:m_arranjador_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :m_arranjador_id_eq, options_from_collection_for_select(MArranjador.all, :id, :to_s, @q&.send(:m_arranjador_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_arranjador_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :m_tonalidade_id_eq, options_from_collection_for_select(MTonalidade.all, :id, :to_s, @q&.send(:m_tonalidade_id_eq)), { include_blank: true }, "aria-label": MArranjo.human_attribute_name(:m_tonalidade_id), class: "search-input__field" %>
           </div>
         </div>
@@ -58,17 +62,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -79,7 +73,7 @@
             <th scope="col"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></th>
             <th scope="col"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></th>
             <th scope="col"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +84,7 @@
               <td><%= m_arranjo.m_tipo_arranjo %></td>
               <td><%= m_arranjo.m_arranjador %></td>
               <td><%= m_arranjo.m_tonalidade %></td>
-              <td>
+              <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: m_arranjo_path(m_arranjo), edit_path: edit_m_arranjo_path(m_arranjo), delete_path: m_arranjo_path(m_arranjo) %>
               </td>
             </tr>
@@ -103,20 +97,41 @@
       <% @m_arranjos.each do |m_arranjo| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= MArranjo.human_attribute_name(:descricao) %></span>
-            <span class="detail-value"><%= m_arranjo.descricao %></span>
-            <span class="detail-label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
-            <span class="detail-value"><%= m_arranjo.m_musica %></span>
-            <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></span>
-            <span class="detail-value"><%= m_arranjo.m_tipo_arranjo %></span>
-            <span class="detail-label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
-            <span class="detail-value"><%= m_arranjo.m_arranjador %></span>
-            <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>
-            <span class="detail-value"><%= m_arranjo.m_tonalidade %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= m_arranjo.descricao %></h3>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:note, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
+                  <span class="detail-value"><%= m_arranjo.m_musica %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:hierarchy, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></span>
+                  <span class="detail-value"><%= m_arranjo.m_tipo_arranjo %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:user, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
+                  <span class="detail-value"><%= m_arranjo.m_arranjador %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:key, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>
+                  <span class="detail-value"><%= m_arranjo.m_tonalidade %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: m_arranjo_path(m_arranjo), edit_path: edit_m_arranjo_path(m_arranjo), delete_path: m_arranjo_path(m_arranjo) %>
-          </div>
+          <%= render "shared/card_actions", show_path: m_arranjo_path(m_arranjo), edit_path: edit_m_arranjo_path(m_arranjo), delete_path: m_arranjo_path(m_arranjo) %>
         </article>
       <% end %>
     </div>

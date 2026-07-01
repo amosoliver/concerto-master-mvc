@@ -1,22 +1,22 @@
 <nav class="mobile-nav" aria-label="Navegação rápida">
   <%= link_to root_path, class: "mobile-nav__item #{'is-active' if controller_name == 'home'}" do %>
-    <span class="mobile-nav__icon" aria-hidden="true">🏠</span>
+    <span class="mobile-nav__icon"><%= ui_icon(:home, size: 20) %></span>
     <span class="mobile-nav__label">Início</span>
   <% end %>
   <%= link_to m_eventos_path, class: "mobile-nav__item #{'is-active' if controller_name == 'm_eventos'}" do %>
-    <span class="mobile-nav__icon" aria-hidden="true">📅</span>
+    <span class="mobile-nav__icon"><%= ui_icon(:calendar, size: 20) %></span>
     <span class="mobile-nav__label">Eventos</span>
   <% end %>
   <%= link_to m_musicas_path, class: "mobile-nav__item #{'is-active' if controller_name == 'm_musicas'}" do %>
-    <span class="mobile-nav__icon" aria-hidden="true">🎵</span>
+    <span class="mobile-nav__icon"><%= ui_icon(:music, size: 20) %></span>
     <span class="mobile-nav__label">Músicas</span>
   <% end %>
   <%= link_to m_grupos_path, class: "mobile-nav__item #{'is-active' if controller_name == 'm_grupos'}" do %>
-    <span class="mobile-nav__icon" aria-hidden="true">👥</span>
+    <span class="mobile-nav__icon"><%= ui_icon(:users, size: 20) %></span>
     <span class="mobile-nav__label">Grupos</span>
   <% end %>
   <button type="button" class="mobile-nav__item" data-action="click->sidebar#toggle" aria-label="Abrir menu">
-    <span class="mobile-nav__icon" aria-hidden="true">☰</span>
+    <span class="mobile-nav__icon"><%= ui_icon(:menu, size: 20) %></span>
     <span class="mobile-nav__label">Menu</span>
   </button>
 </nav>

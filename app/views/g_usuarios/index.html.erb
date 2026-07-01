@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_link_to "Novo #{GUsuario.model_name.human}", new_g_usuario_path, class: "primary-button" %>
     </div>
   </div>
@@ -18,21 +22,21 @@
         <div class="search-field">
           <label><%= GUsuario.human_attribute_name(:email) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :email_cont, placeholder: GUsuario.human_attribute_name(:email), "aria-label": GUsuario.human_attribute_name(:email), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GUsuario.human_attribute_name(:ativo) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :ativo_cont, placeholder: GUsuario.human_attribute_name(:ativo), "aria-label": GUsuario.human_attribute_name(:ativo), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GUsuario.human_attribute_name(:g_pessoa_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_pessoa_id_eq, options_from_collection_for_select(tenant_pessoa_scope, :id, :to_s, @q&.send(:g_pessoa_id_eq)), { include_blank: true }, "aria-label": GUsuario.human_attribute_name(:g_pessoa_id), class: "search-input__field" %>
           </div>
         </div>
@@ -44,17 +48,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -63,7 +57,7 @@
             <th scope="col"><%= GUsuario.human_attribute_name(:email) %></th>
             <th scope="col"><%= GUsuario.human_attribute_name(:ativo) %></th>
             <th scope="col"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -72,7 +66,7 @@
               <td><%= g_usuario.email %></td>
               <td><%= g_usuario.ativo %></td>
               <td><%= g_usuario.g_pessoa %></td>
-              <td>
+              <td class="table-actions-cell">
                 <% can_show = allowed_path?(g_usuario_path(g_usuario), method: :get) %>
                 <% can_edit = allowed_path?(edit_g_usuario_path(g_usuario), method: :get) %>
                 <% can_delete = allowed_path?(g_usuario_path(g_usuario), method: :delete) %>
@@ -80,13 +74,13 @@
                 <% can_create_perfil = allowed_path?(new_u_perfil_path, method: :get) %>
                 <% if can_show || can_edit || can_delete || can_manage_perfis || can_create_perfil %>
                   <div class="actions-menu" data-controller="dropdown">
-                    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações"><%= ui_icon(:settings, size: 15) %></button>
                     <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-                      <%= authorized_link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end if can_show %>
-                      <%= authorized_link_to manage_perfis_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">🔐</span> Acessos e perfis<% end if can_manage_perfis %>
-                      <%= authorized_link_to new_u_perfil_path, class: "actions-menu__item" do %><span aria-hidden="true">➕</span> Cadastrar perfil<% end if can_create_perfil %>
-                      <%= authorized_link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end if can_edit %>
-                      <%= authorized_button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+                      <%= authorized_link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><%= ui_icon(:eye, size: 16) %> Ver<% end if can_show %>
+                      <%= authorized_link_to manage_perfis_g_usuario_path(g_usuario), class: "actions-menu__item" do %><%= ui_icon(:shield_lock, size: 16) %> Acessos e perfis<% end if can_manage_perfis %>
+                      <%= authorized_link_to new_u_perfil_path, class: "actions-menu__item" do %><%= ui_icon(:plus, size: 16) %> Cadastrar perfil<% end if can_create_perfil %>
+                      <%= authorized_link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><%= ui_icon(:pencil, size: 16) %> Editar<% end if can_edit %>
+                      <%= authorized_button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><%= ui_icon(:trash, size: 16) %> Excluir<% end if can_delete %>
                     </div>
                   </div>
                 <% end %>
@@ -101,32 +95,43 @@
       <% @g_usuarios.each do |g_usuario| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= GUsuario.human_attribute_name(:email) %></span>
-            <span class="detail-value"><%= g_usuario.email %></span>
-            <span class="detail-label"><%= GUsuario.human_attribute_name(:ativo) %></span>
-            <span class="detail-value"><%= g_usuario.ativo %></span>
-            <span class="detail-label"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></span>
-            <span class="detail-value"><%= g_usuario.g_pessoa %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= g_usuario.email %></h3>
+              <% if g_usuario.ativo %>
+                <span class="status-badge status-badge--success">Ativo</span>
+              <% else %>
+                <span class="status-badge status-badge--muted">Inativo</span>
+              <% end %>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:user, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GUsuario.human_attribute_name(:g_pessoa_id) %></span>
+                  <span class="detail-value"><%= g_usuario.g_pessoa %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <% can_show = allowed_path?(g_usuario_path(g_usuario), method: :get) %>
-            <% can_edit = allowed_path?(edit_g_usuario_path(g_usuario), method: :get) %>
-            <% can_delete = allowed_path?(g_usuario_path(g_usuario), method: :delete) %>
-            <% can_manage_perfis = allowed_path?(manage_perfis_g_usuario_path(g_usuario), method: :get) %>
-            <% can_create_perfil = allowed_path?(new_u_perfil_path, method: :get) %>
-            <% if can_show || can_edit || can_delete || can_manage_perfis || can_create_perfil %>
+          <% can_show = allowed_path?(g_usuario_path(g_usuario), method: :get) %>
+          <% can_edit = allowed_path?(edit_g_usuario_path(g_usuario), method: :get) %>
+          <% can_delete = allowed_path?(g_usuario_path(g_usuario), method: :delete) %>
+          <% can_manage_perfis = allowed_path?(manage_perfis_g_usuario_path(g_usuario), method: :get) %>
+          <% can_create_perfil = allowed_path?(new_u_perfil_path, method: :get) %>
+          <% if can_show || can_edit || can_delete || can_manage_perfis || can_create_perfil %>
+            <div class="record-card__footer">
               <div class="actions-menu" data-controller="dropdown">
-                <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações"><%= ui_icon(:settings, size: 15) %></button>
                 <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-                  <%= authorized_link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end if can_show %>
-                  <%= authorized_link_to manage_perfis_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">🔐</span> Acessos e perfis<% end if can_manage_perfis %>
-                  <%= authorized_link_to new_u_perfil_path, class: "actions-menu__item" do %><span aria-hidden="true">➕</span> Cadastrar perfil<% end if can_create_perfil %>
-                  <%= authorized_link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end if can_edit %>
-                  <%= authorized_button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+                  <%= authorized_link_to g_usuario_path(g_usuario), class: "actions-menu__item" do %><%= ui_icon(:eye, size: 16) %> Ver<% end if can_show %>
+                  <%= authorized_link_to manage_perfis_g_usuario_path(g_usuario), class: "actions-menu__item" do %><%= ui_icon(:shield_lock, size: 16) %> Acessos e perfis<% end if can_manage_perfis %>
+                  <%= authorized_link_to new_u_perfil_path, class: "actions-menu__item" do %><%= ui_icon(:plus, size: 16) %> Cadastrar perfil<% end if can_create_perfil %>
+                  <%= authorized_link_to edit_g_usuario_path(g_usuario), class: "actions-menu__item" do %><%= ui_icon(:pencil, size: 16) %> Editar<% end if can_edit %>
+                  <%= authorized_button_to g_usuario_path(g_usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><%= ui_icon(:trash, size: 16) %> Excluir<% end if can_delete %>
                 </div>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </article>
       <% end %>
     </div>

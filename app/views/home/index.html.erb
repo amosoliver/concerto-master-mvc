@@ -27,19 +27,42 @@
       </div>
     </div>
     <% if @dashboard_snapshot[:upcoming_entries].any? %>
-      <ul class="event-list">
-        <% @dashboard_snapshot[:upcoming_entries].each do |entry| %>
-          <li>
-            <%= link_to calendar_entry_path(entry), class: "event-list__link" do %>
-              <span>
-                <strong><%= entry[:title] %></strong><br>
-                <small><%= calendar_entry_type_label(entry) %> • <%= entry[:location] %></small>
-              </span>
-              <strong><%= format_datetime(entry[:starts_at]) %></strong>
-            <% end %>
-          </li>
+      <% next_entry = @dashboard_snapshot[:next_event] %>
+      <% remaining_entries = @dashboard_snapshot[:upcoming_entries].drop(1) %>
+
+      <% if next_entry.present? %>
+        <%= link_to calendar_entry_path(next_entry), class: "next-event-card #{calendar_entry_css_class(next_entry)}" do %>
+          <div class="next-event-card__eyebrow">
+            <span class="pill">Próximo</span>
+            <span><%= calendar_entry_type_label(next_entry) %></span>
+          </div>
+          <strong class="next-event-card__title"><%= next_entry[:title] %></strong>
+          <div class="next-event-card__meta">
+            <span><%= format_datetime(next_entry[:starts_at]) %></span>
+            <span><%= next_entry[:location] %></span>
+          </div>
         <% end %>
-      </ul>
+      <% end %>
+
+      <% if remaining_entries.any? %>
+        <div class="dashboard-sidecard__subheader">
+          <p>Na sequência</p>
+        </div>
+
+        <ul class="event-list">
+          <% remaining_entries.each do |entry| %>
+            <li>
+              <%= link_to calendar_entry_path(entry), class: "event-list__link" do %>
+                <span>
+                  <strong><%= entry[:title] %></strong><br>
+                  <small><%= calendar_entry_type_label(entry) %> • <%= entry[:location] %></small>
+                </span>
+                <strong><%= format_datetime(entry[:starts_at]) %></strong>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     <% else %>
       <div class="empty-card">Nenhum compromisso futuro cadastrado para esta entidade.</div>
     <% end %>

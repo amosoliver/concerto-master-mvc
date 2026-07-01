@@ -1,0 +1,146 @@
+<%# locals: (evento_musica:, eyebrow: "Música", subtitle_parts: nil, open: true) %>
+<%
+  musica = evento_musica.m_musica
+  arranjo = evento_musica.m_arranjo
+  instrumento_relations = instrument_relations_for_current_user(arranjo)
+  visivel_para_grupo = evento_musica_visible_for_current_user?(evento_musica)
+  arquivos_gerais = arranjo.present? ? arranjo.audio.to_a : []
+  arquivos_do_naipe = instrumento_relations.select { |relation| relation.arquivo.attached? }
+  usar_abas_por_naipe = arquivos_do_naipe.size.positive? && arquivos_do_naipe.size <= 10
+  subtitle_parts ||= [musica.m_artista.presence, musica.m_compositor.presence]
+%>
+<details class="evento-track-card" <%= "open" if local_assigns.fetch(:open, true) %>>
+  <summary class="evento-track-card__summary">
+    <div class="evento-track-card__header">
+      <div class="evento-track-card__title-wrap">
+        <span class="related-card__label"><%= local_assigns[:eyebrow] || "Música" %></span>
+        <h4 class="evento-track-card__title"><%= musica.descricao %></h4>
+        <p class="evento-track-card__subtitle">
+          <%= subtitle_parts.compact.presence&.join(" • ") || "Sem artista ou compositor informado" %>
+        </p>
+      </div>
+      <div class="evento-track-card__summary-side">
+        <span class="status-badge <%= arranjo.present? ? "status-badge--success" : "status-badge--muted" %>"><%= arranjo.present? ? "Arranjo definido" : "Sem arranjo" %></span>
+        <span class="evento-track-card__chevron"><%= ui_icon(:chevron_down, size: 18) %></span>
+      </div>
+    </div>
+  </summary>
+
+  <div class="evento-track-card__body">
+    <div class="evento-track-card__content">
+      <% if musica.url_referencia.present? %>
+        <section class="evento-track-card__panel evento-track-card__reference">
+          <div class="evento-track-card__reference-header">
+            <div>
+              <span class="related-card__label">Referência da música</span>
+              <% if arranjo.present? && [arranjo.m_tipo_arranjo, arranjo.m_arranjador, arranjo.m_tonalidade].any?(&:present?) %>
+                <p class="evento-track-card__subtitle">
+                  <%= [arranjo.m_tipo_arranjo, arranjo.m_arranjador, arranjo.m_tonalidade].compact.join(" • ") %>
+                </p>
+              <% end %>
+            </div>
+            <%= link_to "Abrir link", musica.url_referencia, target: "_blank", rel: "noopener", class: "related-card__value related-card__value--link" %>
+          </div>
+          <% if musica.url_referencia_embeddable? %>
+            <div class="url-preview evento-track-card__embed">
+              <iframe
+                class="url-preview__frame"
+                src="<%= musica.url_referencia_embed %>"
+                title="Prévia da referência de <%= musica.descricao %>"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          <% else %>
+            <div class="empty-card">Não foi possível incorporar esta referência automaticamente, mas o link direto está disponível acima.</div>
+          <% end %>
+        </section>
+      <% end %>
+
+      <section class="evento-track-card__panel evento-track-card__files">
+        <div class="evento-track-card__panel-header">
+          <span class="related-card__label">Arquivos e áudios</span>
+        </div>
+        <% if !current_user_has_instrument_assignments? %>
+          <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade.</div>
+        <% elsif !visivel_para_grupo %>
+          <div class="empty-card">Esta música não está vinculada a um grupo em que seu usuário participa.</div>
+        <% elsif arranjo.blank? %>
+          <div class="empty-card">Defina um arranjo nesta música para liberar os arquivos.</div>
+        <% elsif arquivos_gerais.blank? && arquivos_do_naipe.blank? %>
+          <div class="empty-card">Nenhum arquivo disponível para este arranjo ainda.</div>
+        <% else %>
+          <% if arquivos_gerais.any? %>
+            <div class="evento-track-card__file-group">
+              <span class="related-card__label">Arquivos gerais</span>
+              <div class="evento-media-list">
+                <% arquivos_gerais.each do |arquivo| %>
+                  <%= render "shared/attachment_media", arquivo: arquivo %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if usar_abas_por_naipe %>
+            <div class="instrument-tabs" data-controller="instrument-tabs">
+              <div class="instrument-tabs__nav" role="tablist" aria-label="Arquivos por instrumento">
+                <% arquivos_do_naipe.each_with_index do |instrumento_arranjo, index| %>
+                  <button
+                    type="button"
+                    class="instrument-tabs__tab <%= "is-active" if index.zero? %>"
+                    data-instrument-tabs-target="tab"
+                    data-action="instrument-tabs#show"
+                    data-instrument-tabs-panel-id-param="instrument-panel-<%= evento_musica.id %>-<%= index %>"
+                    role="tab"
+                    aria-selected="<%= index.zero? %>">
+                    <%= instrumento_arranjo.g_instrumento_naipe %>
+                    <span><%= instrumento_arranjo.arquivo.attachments.count %></span>
+                  </button>
+                <% end %>
+              </div>
+
+              <div class="instrument-tabs__panels">
+                <% arquivos_do_naipe.each_with_index do |instrumento_arranjo, index| %>
+                  <section
+                    id="instrument-panel-<%= evento_musica.id %>-<%= index %>"
+                    class="instrument-tabs__panel"
+                    data-instrument-tabs-target="panel"
+                    role="tabpanel"
+                    <%= "hidden" unless index.zero? %>>
+                    <div class="evento-track-card__file-group">
+                      <div class="instrument-tabs__panel-header">
+                        <span class="related-card__label"><%= instrumento_arranjo.g_instrumento_naipe %></span>
+                        <span class="instrument-tabs__count"><%= pluralize(instrumento_arranjo.arquivo.attachments.count, "arquivo") %></span>
+                      </div>
+                      <div class="evento-media-list">
+                        <% instrumento_arranjo.arquivo.each do |arquivo| %>
+                          <%= render "shared/attachment_media", arquivo: arquivo %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </section>
+                <% end %>
+              </div>
+            </div>
+          <% else %>
+            <div class="instrument-accordions">
+              <% arquivos_do_naipe.each do |instrumento_arranjo| %>
+                <details class="instrument-accordion" <%= "open" if arquivos_do_naipe.size == 1 %>>
+                  <summary class="instrument-accordion__summary">
+                    <span><%= instrumento_arranjo.g_instrumento_naipe %></span>
+                    <span class="instrument-tabs__count"><%= pluralize(instrumento_arranjo.arquivo.attachments.count, "arquivo") %></span>
+                  </summary>
+                  <div class="evento-media-list instrument-accordion__content">
+                    <% instrumento_arranjo.arquivo.each do |arquivo| %>
+                      <%= render "shared/attachment_media", arquivo: arquivo %>
+                    <% end %>
+                  </div>
+                </details>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </section>
+    </div>
+  </div>
+</details>

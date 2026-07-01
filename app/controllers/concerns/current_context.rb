@@ -72,7 +72,15 @@ module CurrentContext
     Current.g_entidade = entidade
     Current.g_entidade_ids = entidade_ids
     Current.g_entidades = entidades_disponiveis
-    Current.g_instrumento_naipe_ids = pessoa&.g_instrumento_naipe_ids.to_a.uniq
+    Current.g_instrumento_naipe_ids =
+      if pessoa.present? && entidade.present?
+        pessoa.g_pessoas_instrumentos
+              .where(g_entidade_id: entidade.id)
+              .distinct
+              .pluck(:g_instrumento_naipe_id)
+      else
+        []
+      end
   end
 
   def reset_current_context

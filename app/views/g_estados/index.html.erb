@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_link_to "Novo #{GEstado.model_name.human}", new_g_estado_path, class: "primary-button" %>
     </div>
   </div>
@@ -18,28 +22,28 @@
         <div class="search-field">
           <label><%= GEstado.human_attribute_name(:descricao) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :descricao_cont, placeholder: GEstado.human_attribute_name(:descricao), "aria-label": GEstado.human_attribute_name(:descricao), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GEstado.human_attribute_name(:sigla) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :sigla_cont, placeholder: GEstado.human_attribute_name(:sigla), "aria-label": GEstado.human_attribute_name(:sigla), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GEstado.human_attribute_name(:codigo_ibge) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :codigo_ibge_cont, placeholder: GEstado.human_attribute_name(:codigo_ibge), "aria-label": GEstado.human_attribute_name(:codigo_ibge), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GEstado.human_attribute_name(:g_pais_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_pais_id_eq, options_from_collection_for_select(GPais.all, :id, :to_s, @q&.send(:g_pais_id_eq)), { include_blank: true }, "aria-label": GEstado.human_attribute_name(:g_pais_id), class: "search-input__field" %>
           </div>
         </div>
@@ -51,17 +55,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -71,7 +65,7 @@
             <th scope="col"><%= GEstado.human_attribute_name(:sigla) %></th>
             <th scope="col"><%= GEstado.human_attribute_name(:codigo_ibge) %></th>
             <th scope="col"><%= GEstado.human_attribute_name(:g_pais_id) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -81,7 +75,7 @@
               <td><%= g_estado.sigla %></td>
               <td><%= g_estado.codigo_ibge %></td>
               <td><%= g_estado.g_pais %></td>
-              <td>
+              <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: g_estado_path(g_estado), edit_path: edit_g_estado_path(g_estado), delete_path: g_estado_path(g_estado) %>
               </td>
             </tr>
@@ -94,18 +88,28 @@
       <% @g_estados.each do |g_estado| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= GEstado.human_attribute_name(:descricao) %></span>
-            <span class="detail-value"><%= g_estado.descricao %></span>
-            <span class="detail-label"><%= GEstado.human_attribute_name(:sigla) %></span>
-            <span class="detail-value"><%= g_estado.sigla %></span>
-            <span class="detail-label"><%= GEstado.human_attribute_name(:codigo_ibge) %></span>
-            <span class="detail-value"><%= g_estado.codigo_ibge %></span>
-            <span class="detail-label"><%= GEstado.human_attribute_name(:g_pais_id) %></span>
-            <span class="detail-value"><%= g_estado.g_pais %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= g_estado.descricao %></h3>
+              <span class="status-badge status-badge--muted"><%= g_estado.sigla %></span>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:key, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GEstado.human_attribute_name(:codigo_ibge) %></span>
+                  <span class="detail-value"><%= g_estado.codigo_ibge %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:world, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GEstado.human_attribute_name(:g_pais_id) %></span>
+                  <span class="detail-value"><%= g_estado.g_pais %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: g_estado_path(g_estado), edit_path: edit_g_estado_path(g_estado), delete_path: g_estado_path(g_estado) %>
-          </div>
+          <%= render "shared/card_actions", show_path: g_estado_path(g_estado), edit_path: edit_g_estado_path(g_estado), delete_path: g_estado_path(g_estado) %>
         </article>
       <% end %>
     </div>

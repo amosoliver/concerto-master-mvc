@@ -34,14 +34,6 @@
 
       <div class="detail-grid">
         <div class="detail-tile">
-          <span class="detail-label"><%= MEvento.human_attribute_name(:descricao) %></span>
-          <span class="detail-value"><%= @m_evento.descricao %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MEvento.human_attribute_name(:data_inicio) %></span>
-          <span class="detail-value"><%= format_datetime(@m_evento.data_inicio) %></span>
-        </div>
-        <div class="detail-tile">
           <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
           <span class="detail-value"><%= format_datetime(@m_evento.data_fim) %></span>
         </div>
@@ -52,7 +44,7 @@
       </div>
     </div>
 
-    <section class="panel-card show-section">
+    <section class="panel-card show-section show-section--full-width">
       <div class="panel-card__header">
         <div>
           <p class="eyebrow">Repertório</p>
@@ -63,108 +55,7 @@
       <% if @evento_repertorio.any? %>
         <div class="evento-showcase">
           <% @evento_repertorio.each do |evento_musica| %>
-            <% musica = evento_musica.m_musica %>
-            <% arranjo = evento_musica.m_arranjo %>
-            <% instrumento_relations = instrument_relations_for_current_user(arranjo) %>
-            <% visivel_para_grupo = evento_musica_visible_for_current_user?(evento_musica) %>
-            <details class="evento-showcase__card">
-              <summary class="evento-showcase__summary">
-                <div class="evento-showcase__summary-title">
-                  <span class="related-card__label">Música</span>
-                  <span class="related-card__value"><%= musica.descricao %></span>
-                </div>
-                <div class="evento-showcase__summary-meta">
-                  <span><strong>Artista:</strong> <%= musica.m_artista %></span>
-                  <span><strong>Arranjo:</strong> <%= arranjo.present? ? "Sim" : "Não" %></span>
-                </div>
-              </summary>
-
-              <div class="evento-showcase__details">
-                <div class="evento-showcase__section">
-                  <span class="related-card__label">Arquivos disponíveis</span>
-                  <% if !current_user_has_instrument_assignments? %>
-                    <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade.</div>
-                  <% elsif !visivel_para_grupo %>
-                    <div class="empty-card">Esta música não está vinculada a um grupo em que seu usuário participa.</div>
-                  <% elsif arranjo.present? %>
-                    <% if arranjo.audio.attached? %>
-                      <div class="evento-media-list">
-                        <% arranjo.audio.each do |arquivo| %>
-                          <% if audio_attachment_file?(arquivo) %>
-                            <div class="attachment-audio-card">
-                              <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
-                              <div class="attachment-actions">
-                                <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                                <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                              </div>
-                            </div>
-                          <% else %>
-                            <div class="attachment-row">
-                              <div class="attachment-row__main">
-                                <span class="attachment-row__label"><%= attachment_label(arquivo) %></span>
-                                <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
-                              </div>
-                              <div class="attachment-actions">
-                                <% if previewable_attachment_file?(arquivo) %>
-                                  <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                                <% end %>
-                                <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                              </div>
-                            </div>
-                          <% end %>
-                        <% end %>
-                      </div>
-                    <% elsif instrumento_relations.any? %>
-                      <div class="evento-files-grid">
-                        <% instrumento_relations.each do |instrumento_arranjo| %>
-                          <% next unless instrumento_arranjo.arquivo.attached? %>
-                          <section class="evento-files-grid__card">
-                            <div class="evento-files-grid__header">
-                              <strong><%= instrumento_arranjo.g_instrumento_naipe %></strong>
-                              <span><%= instrumento_arranjo.arquivo.attachments.count %></span>
-                            </div>
-
-                            <div class="evento-media-list">
-                              <% instrumento_arranjo.arquivo.each do |arquivo| %>
-                                <% if audio_attachment_file?(arquivo) %>
-                                  <div class="attachment-audio-card">
-                                    <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
-                                    <div class="attachment-actions">
-                                      <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                                      <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                                    </div>
-                                  </div>
-                                <% else %>
-                                  <div class="attachment-row">
-                                    <div class="attachment-row__main">
-                                      <span class="attachment-row__label"><%= attachment_label(arquivo) %></span>
-                                      <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
-                                    </div>
-                                    <div class="attachment-actions">
-                                      <% if previewable_attachment_file?(arquivo) %>
-                                        <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                                      <% end %>
-                                      <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                                    </div>
-                                  </div>
-                                <% end %>
-                              <% end %>
-                            </div>
-                          </section>
-                        <% end %>
-                      </div>
-                      <% unless instrumento_relations.any? { |relation| relation.arquivo.attached? } %>
-                        <div class="empty-card">Nenhum arquivo disponível para o seu instrumento/naipe neste arranjo.</div>
-                      <% end %>
-                    <% else %>
-                      <div class="empty-card">Este arranjo ainda não possui áudio nem arquivo disponível para o seu instrumento/naipe.</div>
-                    <% end %>
-                  <% else %>
-                    <div class="empty-card">Esta música ainda não possui arranjo definido.</div>
-                  <% end %>
-                </div>
-              </div>
-            </details>
+            <%= render "shared/music_track_card", evento_musica: evento_musica %>
           <% end %>
         </div>
       <% else %>

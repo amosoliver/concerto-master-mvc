@@ -55,14 +55,6 @@
 
       <div class="detail-grid">
         <div class="detail-tile">
-          <span class="detail-label"><%= MEnsaio.human_attribute_name(:descricao) %></span>
-          <span class="detail-value"><%= @m_ensaio.descricao %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_inicio) %></span>
-          <span class="detail-value"><%= format_datetime(@m_ensaio.data_inicio) %></span>
-        </div>
-        <div class="detail-tile">
           <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_fim) %></span>
           <span class="detail-value"><%= format_datetime(@m_ensaio.data_fim) %></span>
         </div>
@@ -73,10 +65,6 @@
         <div class="detail-tile">
           <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
           <span class="detail-value"><%= @m_ensaio.g_entidade %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label">Grupos</span>
-          <span class="detail-value"><%= @m_ensaio.m_grupos.map(&:descricao).presence&.join(", ") || "Ensaio geral da entidade" %></span>
         </div>
       </div>
 
@@ -139,49 +127,23 @@
           <p class="eyebrow">Repertório</p>
           <h3>Músicas ensaiadas do seu grupo e instrumento</h3>
         </div>
-        <% ensaio_musicas_visiveis = @m_ensaio.m_ensaio_musicas.select { |ensaio_musica| evento_musica_visible_for_current_user?(ensaio_musica.m_evento_musica) } %>
+        <%
+          ensaio_musicas = @m_ensaio.m_ensaio_musicas.includes(m_evento_musica: [:m_evento, :m_grupos, { m_musica: %i[m_artista m_compositor] }, { m_arranjo: [:m_arranjador, :m_tipo_arranjo, :m_tonalidade, { audio_attachments: :blob }, { m_arranjos_instrumentos_naipes: [:g_instrumento_naipe, { arquivo_attachments: :blob }] }] }])
+          ensaio_musicas_visiveis = ensaio_musicas.select { |ensaio_musica| evento_musica_visible_for_current_user?(ensaio_musica.m_evento_musica) }
+        %>
         <span class="show-section__count"><%= ensaio_musicas_visiveis.count %></span>
       </div>
       <% if !current_user_has_instrument_assignments? %>
         <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade.</div>
       <% elsif ensaio_musicas_visiveis.any? %>
-        <div class="related-grid">
-          <% @m_ensaio.m_ensaio_musicas.includes(m_evento_musica: [:m_evento, :m_musica, { m_arranjo: [:m_arranjador, :m_tipo_arranjo, { m_arranjos_instrumentos_naipes: [:g_instrumento_naipe, { arquivo_attachments: :blob }] }] }]).each do |ensaio_musica| %>
+        <div class="evento-showcase">
+          <% ensaio_musicas_visiveis.each do |ensaio_musica| %>
             <% evento_musica = ensaio_musica.m_evento_musica %>
-            <% next unless evento_musica_visible_for_current_user?(evento_musica) %>
-            <% instrumento_relations = instrument_relations_for_current_user(evento_musica&.m_arranjo) %>
-            <article class="related-card">
-              <span class="related-card__label"><%= evento_musica&.m_evento || "Evento" %></span>
-              <span class="related-card__value"><%= evento_musica&.m_musica&.descricao || "Música não informada" %></span>
-              <span class="related-card__meta"><%= [evento_musica&.m_arranjo, ensaio_musica.observacao.presence || "Sem observação registrada"].compact.join(" • ") %></span>
-              <% if instrumento_relations.any? %>
-                <div class="attachment-stack">
-                  <% instrumento_relations.each do |instrumento_arranjo| %>
-                    <span class="related-card__label"><%= instrumento_arranjo.g_instrumento_naipe %></span>
-                    <% if instrumento_arranjo.arquivo.attached? %>
-                      <% instrumento_arranjo.arquivo.each do |arquivo| %>
-                        <div class="attachment-row">
-                          <div class="attachment-row__main">
-                            <span class="attachment-row__label"><%= attachment_label(arquivo) %></span>
-                            <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
-                          </div>
-                          <div class="attachment-actions">
-                            <% if previewable_attachment_file?(arquivo) %>
-                              <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                            <% end %>
-                            <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                          </div>
-                        </div>
-                      <% end %>
-                    <% else %>
-                      <span class="related-card__meta">Nenhum arquivo enviado para o seu instrumento/naipe.</span>
-                    <% end %>
-                  <% end %>
-                </div>
-              <% elsif evento_musica&.m_arranjo.present? %>
-                <span class="related-card__meta">O arranjo desta música não possui material específico para o seu instrumento/naipe.</span>
-              <% end %>
-            </article>
+            <% musica = evento_musica.m_musica %>
+            <%
+              subtitle_parts = [evento_musica.m_evento.to_s.presence, musica.m_artista.presence, musica.m_compositor.presence, ensaio_musica.observacao.presence]
+            %>
+            <%= render "shared/music_track_card", evento_musica: evento_musica, eyebrow: "Música ensaiada", subtitle_parts: subtitle_parts %>
           <% end %>
         </div>
       <% else %>

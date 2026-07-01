@@ -8,12 +8,12 @@
 
 <% if can_show || can_edit || can_delete || can_config %>
   <div class="actions-menu" data-controller="dropdown">
-    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações"><%= ui_icon(:settings, size: 15) %></button>
     <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-      <%= authorized_link_to show_path, class: "actions-menu__item" do %><span aria-hidden="true">👁️</span> Ver<% end if can_show %>
-      <%= authorized_link_to config_path, class: "actions-menu__item" do %><span aria-hidden="true">🛠️</span> <%= config_label %><% end if can_config %>
-      <%= authorized_link_to edit_path, class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Editar<% end if can_edit %>
-      <%= authorized_button_to delete_path, method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+      <%= authorized_link_to show_path, class: "actions-menu__item" do %><%= ui_icon(:eye, size: 16) %> Ver<% end if can_show %>
+      <%= authorized_link_to config_path, class: "actions-menu__item" do %><%= ui_icon(:tool, size: 16) %> <%= config_label %><% end if can_config %>
+      <%= authorized_link_to edit_path, class: "actions-menu__item" do %><%= ui_icon(:pencil, size: 16) %> Editar<% end if can_edit %>
+      <%= authorized_button_to delete_path, method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><%= ui_icon(:trash, size: 16) %> Excluir<% end if can_delete %>
     </div>
   </div>
 <% end %>

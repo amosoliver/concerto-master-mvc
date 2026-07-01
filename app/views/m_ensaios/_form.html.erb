@@ -90,6 +90,7 @@
     </div>
 
     <% if @evento_musicas_disponiveis.any? %>
+      <% repertorio_index = 0 %>
       <div class="ensaio-repertorio">
         <% @eventos_disponiveis.each do |evento| %>
           <% musicas_evento = evento.m_eventos_musicas.sort_by { |evento_musica| evento_musica.m_musica&.descricao.to_s } %>
@@ -107,7 +108,7 @@
 
             <% if musicas_evento.any? %>
               <div class="wizard-repertorio">
-                <% musicas_evento.each_with_index do |evento_musica, index| %>
+                <% musicas_evento.each do |evento_musica| %>
                   <% musica = evento_musica.m_musica %>
                   <% arranjo = evento_musica.m_arranjo %>
                   <% selected_entry = @selected_repertorio[evento_musica.id] || {} %>
@@ -115,13 +116,13 @@
                   <article class="wizard-repertorio__item">
                     <div class="wizard-repertorio__header">
                       <label class="selection-item">
-                        <%= check_box_tag "m_ensaio[repertorio][#{evento.id}_#{index}][selecionada]",
+                        <%= check_box_tag "m_ensaio[repertorio][#{repertorio_index}][selecionada]",
                                           "1",
                                           checked,
                                           data: { ensaio_form_target: "musicaCheckbox", event_id: evento.id } %>
                         <span><strong><%= musica&.descricao || "Música sem descrição" %></strong></span>
                       </label>
-                      <%= hidden_field_tag "m_ensaio[repertorio][#{evento.id}_#{index}][m_evento_musica_id]", evento_musica.id %>
+                      <%= hidden_field_tag "m_ensaio[repertorio][#{repertorio_index}][m_evento_musica_id]", evento_musica.id %>
                     </div>
 
                     <div class="wizard-repertorio__meta">
@@ -132,12 +133,13 @@
 
                     <div class="field-group">
                       <label>Observação deste ensaio</label>
-                      <%= text_field_tag "m_ensaio[repertorio][#{evento.id}_#{index}][observacao]",
+                      <%= text_field_tag "m_ensaio[repertorio][#{repertorio_index}][observacao]",
                                          selected_entry[:observacao],
                                          class: "form-control",
                                          placeholder: "Ex.: revisar entrada, corrigir dinâmica, reforçar final" %>
                     </div>
                   </article>
+                  <% repertorio_index += 1 %>
                 <% end %>
               </div>
             <% else %>

@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_button_to "Atualizar permissões", atualizar_u_permissoes_path, method: :post, class: "primary-button" %>
     </div>
   </div>
@@ -18,28 +22,28 @@
         <div class="search-field">
           <label><%= UPermissao.human_attribute_name(:descricao) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :descricao_cont, placeholder: UPermissao.human_attribute_name(:descricao), "aria-label": UPermissao.human_attribute_name(:descricao), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= UPermissao.human_attribute_name(:controlador) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :controlador_cont, placeholder: UPermissao.human_attribute_name(:controlador), "aria-label": UPermissao.human_attribute_name(:controlador), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= UPermissao.human_attribute_name(:acao) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :acao_cont, placeholder: UPermissao.human_attribute_name(:acao), "aria-label": UPermissao.human_attribute_name(:acao), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= UPermissao.human_attribute_name(:admin) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :admin_cont, placeholder: UPermissao.human_attribute_name(:admin), "aria-label": UPermissao.human_attribute_name(:admin), class: "search-input__field" %>
           </div>
         </div>
@@ -51,17 +55,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -71,7 +65,7 @@
             <th scope="col"><%= UPermissao.human_attribute_name(:controlador) %></th>
             <th scope="col"><%= UPermissao.human_attribute_name(:acao) %></th>
             <th scope="col"><%= UPermissao.human_attribute_name(:admin) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -81,7 +75,7 @@
               <td><%= u_permissao.controlador %></td>
               <td><%= u_permissao.acao %></td>
               <td><%= u_permissao.admin %></td>
-              <td>
+              <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: u_permissao_path(u_permissao), edit_path: edit_u_permissao_path(u_permissao), delete_path: u_permissao_path(u_permissao) %>
               </td>
             </tr>
@@ -94,18 +88,32 @@
       <% @u_permissoes.each do |u_permissao| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= UPermissao.human_attribute_name(:descricao) %></span>
-            <span class="detail-value"><%= u_permissao.descricao %></span>
-            <span class="detail-label"><%= UPermissao.human_attribute_name(:controlador) %></span>
-            <span class="detail-value"><%= u_permissao.controlador %></span>
-            <span class="detail-label"><%= UPermissao.human_attribute_name(:acao) %></span>
-            <span class="detail-value"><%= u_permissao.acao %></span>
-            <span class="detail-label"><%= UPermissao.human_attribute_name(:admin) %></span>
-            <span class="detail-value"><%= u_permissao.admin %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= u_permissao.descricao %></h3>
+              <% if u_permissao.admin %>
+                <span class="status-badge status-badge--success">Admin</span>
+              <% else %>
+                <span class="status-badge status-badge--muted">Padrão</span>
+              <% end %>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:folders, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= UPermissao.human_attribute_name(:controlador) %></span>
+                  <span class="detail-value"><%= u_permissao.controlador %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:tool, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= UPermissao.human_attribute_name(:acao) %></span>
+                  <span class="detail-value"><%= u_permissao.acao %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: u_permissao_path(u_permissao), edit_path: edit_u_permissao_path(u_permissao), delete_path: u_permissao_path(u_permissao) %>
-          </div>
+          <%= render "shared/card_actions", show_path: u_permissao_path(u_permissao), edit_path: edit_u_permissao_path(u_permissao), delete_path: u_permissao_path(u_permissao) %>
         </article>
       <% end %>
     </div>

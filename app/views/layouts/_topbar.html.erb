@@ -1,12 +1,13 @@
 <header class="topbar">
   <div class="topbar__primary">
-    <button type="button" class="sidebar-toggle" data-sidebar-target="toggle" data-action="click->sidebar#toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <button type="button" class="sidebar-toggle" data-sidebar-target="toggle" data-action="click->sidebar#toggle" aria-label="Abrir menu" aria-expanded="false"><%= ui_icon(:menu, size: 20) %></button>
     <div class="topbar__accent" aria-hidden="true"></div>
   </div>
 
   <div class="topbar__actions">
     <button class="icon-button" data-action="click->theme#toggle" aria-label="Alternar tema">
-      <span data-theme-target="themeIcon">🌙</span>
+      <span class="theme-icon theme-icon--moon"><%= ui_icon(:moon, size: 19) %></span>
+      <span class="theme-icon theme-icon--sun"><%= ui_icon(:sun, size: 19) %></span>
     </button>
     <% if g_usuario_signed_in? %>
       <div class="actions-menu" data-controller="dropdown">
@@ -25,7 +26,7 @@
             </div>
 
             <div class="tenant-menu__section">
-              <%= link_to root_path, class: "actions-menu__item" do %><span aria-hidden="true">🏠</span> Visão Geral<% end %>
+              <%= link_to root_path, class: "actions-menu__item" do %><%= ui_icon(:home, size: 16) %> Visão Geral<% end %>
             </div>
 
             <% if current_context_entidade_base.present? %>
@@ -59,7 +60,7 @@
             <% end %>
 
             <div class="tenant-menu__section tenant-menu__section--footer">
-              <%= button_to destroy_g_usuario_session_path, method: :delete, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🚪</span> Sair<% end %>
+              <%= button_to destroy_g_usuario_session_path, method: :delete, class: "actions-menu__item actions-menu__item--danger" do %><%= ui_icon(:logout, size: 16) %> Sair<% end %>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_link_to "Novo #{MGrupo.model_name.human}", new_m_grupo_path, class: "primary-button" %>
     </div>
   </div>
@@ -18,21 +22,21 @@
         <div class="search-field">
           <label><%= MGrupo.human_attribute_name(:descricao) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :descricao_cont, placeholder: MGrupo.human_attribute_name(:descricao), "aria-label": MGrupo.human_attribute_name(:descricao), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MGrupo.human_attribute_name(:g_entidade_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_entidade_id_eq, options_from_collection_for_select(tenant_entity_scope, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": MGrupo.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= MGrupo.human_attribute_name(:m_tipo_grupo_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :m_tipo_grupo_id_eq, options_from_collection_for_select(MTipoGrupo.all, :id, :to_s, @q&.send(:m_tipo_grupo_id_eq)), { include_blank: true }, "aria-label": MGrupo.human_attribute_name(:m_tipo_grupo_id), class: "search-input__field" %>
           </div>
         </div>
@@ -44,17 +48,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -63,7 +57,7 @@
             <th scope="col"><%= MGrupo.human_attribute_name(:descricao) %></th>
             <th scope="col"><%= MGrupo.human_attribute_name(:g_entidade_id) %></th>
             <th scope="col"><%= MGrupo.human_attribute_name(:m_tipo_grupo_id) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -72,7 +66,7 @@
               <td><%= m_grupo.descricao %></td>
               <td><%= m_grupo.g_entidade %></td>
               <td><%= m_grupo.m_tipo_grupo %></td>
-              <td>
+              <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo), config_path: manage_m_grupo_path(m_grupo) %>
               </td>
             </tr>
@@ -85,16 +79,27 @@
       <% @m_grupos.each do |m_grupo| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= MGrupo.human_attribute_name(:descricao) %></span>
-            <span class="detail-value"><%= m_grupo.descricao %></span>
-            <span class="detail-label"><%= MGrupo.human_attribute_name(:g_entidade_id) %></span>
-            <span class="detail-value"><%= m_grupo.g_entidade %></span>
-            <span class="detail-label"><%= MGrupo.human_attribute_name(:m_tipo_grupo_id) %></span>
-            <span class="detail-value"><%= m_grupo.m_tipo_grupo %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= m_grupo.descricao %></h3>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:building_bank, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= MGrupo.human_attribute_name(:g_entidade_id) %></span>
+                  <span class="detail-value"><%= m_grupo.g_entidade %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:hierarchy, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= MGrupo.human_attribute_name(:m_tipo_grupo_id) %></span>
+                  <span class="detail-value"><%= m_grupo.m_tipo_grupo %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo), config_path: manage_m_grupo_path(m_grupo) %>
-          </div>
+          <%= render "shared/card_actions", show_path: m_grupo_path(m_grupo), edit_path: edit_m_grupo_path(m_grupo), delete_path: m_grupo_path(m_grupo), config_path: manage_m_grupo_path(m_grupo) %>
         </article>
       <% end %>
     </div>

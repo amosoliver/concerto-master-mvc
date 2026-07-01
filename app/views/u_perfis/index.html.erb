@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Acesso</p>
@@ -6,17 +6,21 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
 
       <% if allowed_path?(new_u_perfil_path, method: :get) %>
         <div class="actions-menu" data-controller="dropdown">
           <button type="button" class="primary-button" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false">
-            Ações
+            <%= ui_icon(:plus, size: 16) %><span>Novo</span>
           </button>
           <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
             <%= authorized_link_to new_u_perfil_path, class: "actions-menu__item" do %>
-              <span aria-hidden="true">➕</span> Cadastrar perfil
+              <%= ui_icon(:plus, size: 16) %> Cadastrar perfil
             <% end %>
           </div>
         </div>
@@ -30,7 +34,7 @@
         <div class="search-field">
           <label><%= UPerfil.human_attribute_name(:descricao) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :descricao_cont, placeholder: UPerfil.human_attribute_name(:descricao), "aria-label": UPerfil.human_attribute_name(:descricao), class: "search-input__field" %>
           </div>
         </div>
@@ -42,17 +46,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -61,7 +55,7 @@
             <th scope="col"><%= UPerfil.human_attribute_name(:descricao) %></th>
             <th scope="col">Funções</th>
             <th scope="col">Permissões</th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -70,17 +64,17 @@
               <td><%= u_perfil.descricao %></td>
               <td><%= u_perfil.u_funcoes.count %></td>
               <td><%= u_perfil.u_permissoes.count %></td>
-              <td>
+              <td class="table-actions-cell">
                 <% can_edit = allowed_path?(edit_u_perfil_path(u_perfil), method: :get) %>
                 <% can_delete = allowed_path?(u_perfil_path(u_perfil), method: :delete) %>
                 <% if can_edit || can_delete %>
                   <div class="actions-menu" data-controller="dropdown">
-                    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                    <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações"><%= ui_icon(:settings, size: 15) %></button>
                     <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-                      <%= authorized_link_to edit_u_perfil_path(u_perfil), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Atualizar perfil<% end if can_edit %>
-                      <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "funcoes"), class: "actions-menu__item" do %><span aria-hidden="true">🎖️</span> Gerir funções<% end if can_edit %>
-                      <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "permissoes"), class: "actions-menu__item" do %><span aria-hidden="true">🛡️</span> Gerir permissões<% end if can_edit %>
-                      <%= authorized_button_to u_perfil_path(u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+                      <%= authorized_link_to edit_u_perfil_path(u_perfil), class: "actions-menu__item" do %><%= ui_icon(:pencil, size: 16) %> Atualizar perfil<% end if can_edit %>
+                      <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "funcoes"), class: "actions-menu__item" do %><%= ui_icon(:id, size: 16) %> Gerir funções<% end if can_edit %>
+                      <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "permissoes"), class: "actions-menu__item" do %><%= ui_icon(:shield_lock, size: 16) %> Gerir permissões<% end if can_edit %>
+                      <%= authorized_button_to u_perfil_path(u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><%= ui_icon(:trash, size: 16) %> Excluir<% end if can_delete %>
                     </div>
                   </div>
                 <% end %>
@@ -95,28 +89,41 @@
       <% @u_perfis.each do |u_perfil| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= UPerfil.human_attribute_name(:descricao) %></span>
-            <span class="detail-value"><%= u_perfil.descricao %></span>
-            <span class="detail-label">Funções</span>
-            <span class="detail-value"><%= u_perfil.u_funcoes.count %></span>
-            <span class="detail-label">Permissões</span>
-            <span class="detail-value"><%= u_perfil.u_permissoes.count %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= u_perfil.descricao %></h3>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:id, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label">Funções</span>
+                  <span class="detail-value"><%= u_perfil.u_funcoes.count %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:shield_lock, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label">Permissões</span>
+                  <span class="detail-value"><%= u_perfil.u_permissoes.count %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <% can_edit = allowed_path?(edit_u_perfil_path(u_perfil), method: :get) %>
-            <% can_delete = allowed_path?(u_perfil_path(u_perfil), method: :delete) %>
-            <% if can_edit || can_delete %>
+          <% can_edit = allowed_path?(edit_u_perfil_path(u_perfil), method: :get) %>
+          <% can_delete = allowed_path?(u_perfil_path(u_perfil), method: :delete) %>
+          <% if can_edit || can_delete %>
+            <div class="record-card__footer">
               <div class="actions-menu" data-controller="dropdown">
-                <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações">⚙️</button>
+                <button type="button" class="icon-button icon-button--sm" data-dropdown-target="button" data-action="click->dropdown#toggle" aria-haspopup="true" aria-expanded="false" aria-label="Ações"><%= ui_icon(:settings, size: 15) %></button>
                 <div class="actions-menu__panel" data-dropdown-target="panel" hidden>
-                  <%= authorized_link_to edit_u_perfil_path(u_perfil), class: "actions-menu__item" do %><span aria-hidden="true">✏️</span> Atualizar perfil<% end if can_edit %>
-                  <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "funcoes"), class: "actions-menu__item" do %><span aria-hidden="true">🎖️</span> Gerir funções<% end if can_edit %>
-                  <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "permissoes"), class: "actions-menu__item" do %><span aria-hidden="true">🛡️</span> Gerir permissões<% end if can_edit %>
-                  <%= authorized_button_to u_perfil_path(u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><span aria-hidden="true">🗑️</span> Excluir<% end if can_delete %>
+                  <%= authorized_link_to edit_u_perfil_path(u_perfil), class: "actions-menu__item" do %><%= ui_icon(:pencil, size: 16) %> Atualizar perfil<% end if can_edit %>
+                  <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "funcoes"), class: "actions-menu__item" do %><%= ui_icon(:id, size: 16) %> Gerir funções<% end if can_edit %>
+                  <%= authorized_link_to edit_u_perfil_path(u_perfil, section: "permissoes"), class: "actions-menu__item" do %><%= ui_icon(:shield_lock, size: 16) %> Gerir permissões<% end if can_edit %>
+                  <%= authorized_button_to u_perfil_path(u_perfil), method: :delete, data: { turbo_confirm: "Tem certeza?" }, class: "actions-menu__item actions-menu__item--danger" do %><%= ui_icon(:trash, size: 16) %> Excluir<% end if can_delete %>
                 </div>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </article>
       <% end %>
     </div>

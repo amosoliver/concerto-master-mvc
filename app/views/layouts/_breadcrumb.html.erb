@@ -5,7 +5,7 @@
       <% crumbs.each_with_index do |crumb, index| %>
         <li>
           <% if crumb[:path] %>
-            <%= link_to crumb[:path] do %><%= "🏠 " if index.zero? %><%= crumb[:label] %><% end %>
+            <%= link_to crumb[:path] do %><%= ui_icon(:home, size: 14, classes: "breadcrumb__home") if index.zero? %><%= crumb[:label] %><% end %>
           <% else %>
             <span aria-current="page"><%= crumb[:label] %></span>
           <% end %>

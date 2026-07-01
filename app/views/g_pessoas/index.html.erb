@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%= authorized_link_to "Novo #{GPessoa.model_name.human}", new_g_pessoa_path, class: "primary-button" %>
     </div>
   </div>
@@ -18,35 +22,35 @@
         <div class="search-field">
           <label><%= GPessoa.human_attribute_name(:nome) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :nome_cont, placeholder: GPessoa.human_attribute_name(:nome), "aria-label": GPessoa.human_attribute_name(:nome), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GPessoa.human_attribute_name(:email) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :email_cont, placeholder: GPessoa.human_attribute_name(:email), "aria-label": GPessoa.human_attribute_name(:email), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GPessoa.human_attribute_name(:cpf) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.search_field :cpf_cont, placeholder: GPessoa.human_attribute_name(:cpf), "aria-label": GPessoa.human_attribute_name(:cpf), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GPessoa.human_attribute_name(:g_entidade_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_entidade_id_eq, options_from_collection_for_select(tenant_entity_scope, :id, :to_s, @q&.send(:g_entidade_id_eq)), { include_blank: true }, "aria-label": GPessoa.human_attribute_name(:g_entidade_id), class: "search-input__field" %>
           </div>
         </div>
         <div class="search-field">
           <label><%= GPessoa.human_attribute_name(:g_sexo_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%= f.select :g_sexo_id_eq, options_from_collection_for_select(GSexo.all, :id, :to_s, @q&.send(:g_sexo_id_eq)), { include_blank: true }, "aria-label": GPessoa.human_attribute_name(:g_sexo_id), class: "search-input__field" %>
           </div>
         </div>
@@ -58,17 +62,7 @@
     <% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -79,7 +73,7 @@
             <th scope="col"><%= GPessoa.human_attribute_name(:cpf) %></th>
             <th scope="col"><%= GPessoa.human_attribute_name(:g_entidade_id) %></th>
             <th scope="col"><%= GPessoa.human_attribute_name(:g_sexo_id) %></th>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +84,7 @@
               <td><%= format_cpf(g_pessoa.cpf) %></td>
               <td><%= g_pessoa.g_entidade %></td>
               <td><%= g_pessoa.g_sexo %></td>
-              <td>
+              <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: g_pessoa_path(g_pessoa), edit_path: edit_g_pessoa_path(g_pessoa), delete_path: g_pessoa_path(g_pessoa) %>
               </td>
             </tr>
@@ -103,20 +97,41 @@
       <% @g_pessoas.each do |g_pessoa| %>
         <article class="record-card">
           <div class="record-card__body">
-            <span class="detail-label"><%= GPessoa.human_attribute_name(:nome) %></span>
-            <span class="detail-value"><%= g_pessoa.nome %></span>
-            <span class="detail-label"><%= GPessoa.human_attribute_name(:email) %></span>
-            <span class="detail-value"><%= g_pessoa.email %></span>
-            <span class="detail-label"><%= GPessoa.human_attribute_name(:cpf) %></span>
-            <span class="detail-value"><%= format_cpf(g_pessoa.cpf) %></span>
-            <span class="detail-label"><%= GPessoa.human_attribute_name(:g_entidade_id) %></span>
-            <span class="detail-value"><%= g_pessoa.g_entidade %></span>
-            <span class="detail-label"><%= GPessoa.human_attribute_name(:g_sexo_id) %></span>
-            <span class="detail-value"><%= g_pessoa.g_sexo %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%= g_pessoa.nome %></h3>
+            </div>
+            <div class="record-card__attrs">
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:mail, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GPessoa.human_attribute_name(:email) %></span>
+                  <span class="detail-value"><%= g_pessoa.email %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:id, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GPessoa.human_attribute_name(:cpf) %></span>
+                  <span class="detail-value"><%= format_cpf(g_pessoa.cpf) %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:building, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GPessoa.human_attribute_name(:g_entidade_id) %></span>
+                  <span class="detail-value"><%= g_pessoa.g_entidade %></span>
+                </span>
+              </div>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%= ui_icon(:gender, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%= GPessoa.human_attribute_name(:g_sexo_id) %></span>
+                  <span class="detail-value"><%= g_pessoa.g_sexo %></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="record-card__footer">
-            <%= render "shared/actions_menu", show_path: g_pessoa_path(g_pessoa), edit_path: edit_g_pessoa_path(g_pessoa), delete_path: g_pessoa_path(g_pessoa) %>
-          </div>
+          <%= render "shared/card_actions", show_path: g_pessoa_path(g_pessoa), edit_path: edit_g_pessoa_path(g_pessoa), delete_path: g_pessoa_path(g_pessoa) %>
         </article>
       <% end %>
     </div>

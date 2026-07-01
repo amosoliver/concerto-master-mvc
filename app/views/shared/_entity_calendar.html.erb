@@ -30,10 +30,18 @@
     <div class="calendar-week">
       <% snapshot[:week_days].each do |day| %>
         <% day_entries = snapshot[:entries_by_day][day] || [] %>
-        <article class="calendar-week__day <%= "is-today" if day == Time.zone.today %>">
+        <% day_path = build_calendar_path.call(view: "day", date: day.strftime(DashboardResumoService::DATE_FORMAT)) %>
+        <article
+          class="calendar-week__day <%= "is-today" if day == Time.zone.today %>"
+          data-controller="calendar-link"
+          data-calendar-link-url-value="<%= day_path %>"
+          data-action="click->calendar-link#open keydown->calendar-link#open"
+          tabindex="0"
+          role="link"
+          aria-label="Abrir agenda de <%= l(day, format: "%d/%m/%Y") %>">
           <header class="calendar-week__day-header">
             <span class="calendar-week__weekday"><%= calendar_weekday_label(day).first(3) %></span>
-            <%= link_to day.day, build_calendar_path.call(view: "day", date: day.strftime(DashboardResumoService::DATE_FORMAT)), class: "calendar-week__day-number" %>
+            <%= link_to day.day, day_path, class: "calendar-week__day-number" %>
           </header>
 
           <div class="calendar-week__events">
@@ -74,24 +82,45 @@
     </div>
 
   <% else %>
-    <div class="calendar-grid calendar-grid--weekdays">
-      <% %w[Seg Ter Qua Qui Sex Sab Dom].each do |weekday| %>
-        <span class="calendar-grid__weekday"><%= weekday %></span>
-      <% end %>
-    </div>
-
-    <div class="calendar-grid calendar-grid--days">
-        <% snapshot[:calendar_weeks].each do |week| %>
-        <% week.each do |day| %>
+    <div class="calendar-grid calendar-grid--month">
+      <% (snapshot[:month_start]..snapshot[:month_end]).each do |day| %>
           <% day_entries = snapshot[:entries_by_day][day] || [] %>
-          <%= link_to build_calendar_path.call(view: "day", date: day.strftime(DashboardResumoService::DATE_FORMAT)),
-                class: "calendar-day #{"is-outside" if day.month != snapshot[:month_start].month} #{"is-today" if day == Time.zone.today}" do %>
-            <span class="calendar-day__number"><%= day.day %></span>
+          <% day_path = build_calendar_path.call(view: "day", date: day.strftime(DashboardResumoService::DATE_FORMAT)) %>
+          <article
+            class="calendar-day <%= "has-events" if day_entries.any? %> <%= "is-today" if day == Time.zone.today %>"
+            data-controller="calendar-link"
+            data-calendar-link-url-value="<%= day_path %>"
+            data-action="click->calendar-link#open keydown->calendar-link#open"
+            tabindex="0"
+            role="link"
+            aria-label="Abrir agenda de <%= l(day, format: "%d/%m/%Y") %>">
+            <div class="calendar-day__header">
+              <div class="calendar-day__title">
+                <span class="calendar-day__weekday"><%= calendar_weekday_label(day).first(3) %></span>
+                <%= link_to day.day, day_path, class: "calendar-day__number" %>
+              </div>
+              <% if day_entries.any? %>
+                <span class="calendar-day__badge"><%= day_entries.size %></span>
+              <% end %>
+            </div>
+
             <% if day_entries.any? %>
-              <span class="calendar-day__badge"><%= day_entries.size %></span>
+              <div class="calendar-day__events">
+                <% day_entries.first(2).each do |entry| %>
+                  <%= link_to calendar_entry_path(entry), class: "calendar-day__entry #{calendar_entry_css_class(entry)}" do %>
+                    <strong><%= format_time(entry[:starts_at]) %></strong>
+                    <span><%= entry[:title] %></span>
+                  <% end %>
+                <% end %>
+
+                <% if day_entries.size > 2 %>
+                  <%= link_to "+#{day_entries.size - 2} mais", day_path, class: "calendar-day__more" %>
+                <% end %>
+              </div>
+            <% else %>
+              <span class="calendar-day__empty">Sem compromissos</span>
             <% end %>
-          <% end %>
-        <% end %>
+          </article>
       <% end %>
     </div>
   <% end %>

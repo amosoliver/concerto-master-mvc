@@ -1,4 +1,4 @@
-<div class="page-shell" data-controller="filters" data-filters-active-value="<%%= request.query_parameters.except("page").present? %>">
+<div class="page-shell" data-controller="filters view-toggle" data-filters-active-value="<%%= request.query_parameters.except("page").present? %>">
   <div class="page-header">
     <div>
       <p class="eyebrow">Gerenciamento</p>
@@ -6,8 +6,12 @@
     </div>
     <div class="page-header__actions">
       <button type="button" class="filter-toggle" data-filters-target="toggleButton" data-action="click->filters#toggle" aria-expanded="false">
-        <span aria-hidden="true">🔎</span> Filtros
+        <%%= ui_icon(:search, size: 16, classes: "search-input__icon") %><span>Filtros</span>
       </button>
+      <div class="view-switch view-switch--header">
+        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable"><%%= ui_icon(:table, size: 15) %><span>Tabela</span></button>
+        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards"><%%= ui_icon(:layout_grid, size: 15) %><span>Cards</span></button>
+      </div>
       <%%= link_to "Novo #{<%= class_name %>.model_name.human}", new_<%= singular_route_name %>_path, class: "primary-button" %>
     </div>
   </div>
@@ -20,7 +24,7 @@
         <div class="search-field">
           <label><%%= <%= class_name %>.human_attribute_name(:<%= attribute.name %>_id) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%%= f.select :<%= attribute.name %>_id_eq, options_from_collection_for_select(<%= attribute.name.camelize %>.all, :id, :to_s, @q&.send(:<%= attribute.name %>_id_eq)), { include_blank: true }, "aria-label": <%= class_name %>.human_attribute_name(:<%= attribute.name %>_id), class: "search-input__field" %>
           </div>
         </div>
@@ -28,7 +32,7 @@
         <div class="search-field">
           <label><%%= <%= class_name %>.human_attribute_name(:<%= attribute.name %>) %></label>
           <div class="search-input">
-            <span aria-hidden="true">🔎</span>
+            <%%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
             <%%= f.search_field :<%= attribute.name %>_cont, placeholder: <%= class_name %>.human_attribute_name(:<%= attribute.name %>), "aria-label": <%= class_name %>.human_attribute_name(:<%= attribute.name %>), class: "search-input__field" %>
           </div>
         </div>
@@ -42,17 +46,7 @@
     <%% end %>
   </div>
 
-  <section class="panel-card panel-card--fill" data-controller="view-toggle">
-    <div class="panel-card__header">
-      <div>
-        <p class="eyebrow">Resultados</p>
-        <h3><%%= pagy_count_label(@pagy) %></h3>
-      </div>
-      <div class="view-switch">
-        <button type="button" class="view-switch__btn is-active" data-view-toggle-target="tableButton" data-action="click->view-toggle#showTable">☰ Tabela</button>
-        <button type="button" class="view-switch__btn" data-view-toggle-target="cardsButton" data-action="click->view-toggle#showCards">▦ Cards</button>
-      </div>
-    </div>
+  <section class="panel-card panel-card--fill">
 
     <div class="table-wrapper" data-view-toggle-target="table">
       <table class="data-table">
@@ -61,7 +55,7 @@
 <% attributes.each do |attribute| -%>
             <th scope="col"><%%= <%= class_name %>.human_attribute_name(:<%= attribute.column_name %>) %></th>
 <% end -%>
-            <th scope="col">Ações</th>
+            <th scope="col" class="table-actions-col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -70,7 +64,7 @@
 <% attributes.each do |attribute| -%>
               <td><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
 <% end -%>
-              <td>
+              <td class="table-actions-cell">
                 <%%= render "shared/actions_menu", show_path: <%= singular_route_name %>_path(<%= singular_table_name %>), edit_path: edit_<%= singular_route_name %>_path(<%= singular_table_name %>), delete_path: <%= singular_route_name %>_path(<%= singular_table_name %>) %>
               </td>
             </tr>
@@ -83,14 +77,24 @@
       <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
         <article class="record-card">
           <div class="record-card__body">
-<% attributes.each do |attribute| -%>
-            <span class="detail-label"><%%= <%= class_name %>.human_attribute_name(:<%= attribute.column_name %>) %></span>
-            <span class="detail-value"><%%= <%= singular_table_name %>.<%= attribute.name %> %></span>
+            <div class="record-card__header">
+              <h3 class="record-card__title"><%%= <%= singular_table_name %>.<%= attributes.first.name %> %></h3>
+            </div>
+<% if attributes.size > 1 -%>
+            <div class="record-card__attrs">
+<% attributes.drop(1).each do |attribute| -%>
+              <div class="record-card__attr">
+                <span class="record-card__attr-icon"><%%= ui_icon(:id, size: 16) %></span>
+                <span class="record-card__attr-text">
+                  <span class="detail-label"><%%= <%= class_name %>.human_attribute_name(:<%= attribute.column_name %>) %></span>
+                  <span class="detail-value"><%%= <%= singular_table_name %>.<%= attribute.name %> %></span>
+                </span>
+              </div>
+<% end -%>
+            </div>
 <% end -%>
           </div>
-          <div class="record-card__footer">
-            <%%= render "shared/actions_menu", show_path: <%= singular_route_name %>_path(<%= singular_table_name %>), edit_path: edit_<%= singular_route_name %>_path(<%= singular_table_name %>), delete_path: <%= singular_route_name %>_path(<%= singular_table_name %>) %>
-          </div>
+          <%%= render "shared/card_actions", show_path: <%= singular_route_name %>_path(<%= singular_table_name %>), edit_path: edit_<%= singular_route_name %>_path(<%= singular_table_name %>), delete_path: <%= singular_route_name %>_path(<%= singular_table_name %>) %>
         </article>
       <%% end %>
     </div>

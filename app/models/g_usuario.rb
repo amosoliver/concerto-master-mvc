@@ -3,6 +3,8 @@ require "set"
 class GUsuario < ApplicationRecord
   include SoftDeletable
 
+  ADMIN_PROFILE_NAME = "Administrador".freeze
+
   devise :database_authenticatable, :registerable, :rememberable, :validatable
 
   belongs_to :g_pessoa
@@ -81,7 +83,7 @@ class GUsuario < ApplicationRecord
 
     current_entity_id = entidade.id
     @admin_flags_by_entity ||= {}
-    @admin_flags_by_entity[current_entity_id] ||= scoped_u_permissoes_for(entidade).where(admin: true).exists?
+    @admin_flags_by_entity[current_entity_id] ||= perfis_ativos_para(entidade).where(descricao: ADMIN_PROFILE_NAME).exists?
   end
 
   private
