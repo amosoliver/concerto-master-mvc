@@ -6,7 +6,7 @@
     </div>
     <div class="page-header__actions">
       <%= authorized_link_to "Gerenciar arranjos", manage_arranjos_m_musica_path(@m_musica), class: "primary-button" %>
-      <%= authorized_link_to "Editar", edit_m_musica_path(@m_musica), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_musica_path(@m_musica), class: "secondary-button" %>
       <%= link_to "Voltar", m_musicas_path, class: "secondary-button" %>
     </div>
   </div>
@@ -42,8 +42,8 @@
     <section class="panel-card detail-card">
       <div class="panel-card__header">
         <div>
-          <p class="eyebrow">Informações</p>
-          <h3><%= MMusica.model_name.human %></h3>
+          <p class="eyebrow">Dados</p>
+          <h3>Dados principais</h3>
         </div>
       </div>
 
@@ -78,25 +78,13 @@
         <div class="panel-card__header">
           <div>
             <p class="eyebrow">Versão</p>
-            <h3>Prévia da referência</h3>
+            <h3>Referência da música</h3>
           </div>
         </div>
-        <% if @m_musica.url_referencia_embeddable? %>
-          <div class="url-preview">
-            <iframe
-              class="url-preview__frame"
-              src="<%= @m_musica.url_referencia_embed %>"
-              title="Prévia da versão de <%= @m_musica.descricao %>"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-          </div>
-        <% else %>
-          <div class="empty-card">
-            Não foi possível incorporar esta referência automaticamente.
-            <%= link_to "Abrir link", @m_musica.url_referencia, target: "_blank", rel: "noopener", class: "related-card__value--link" %>
-          </div>
-        <% end %>
+        <%= render "shared/music_reference_preview",
+              musica: @m_musica,
+              title: "Ouvir #{@m_musica.descricao}",
+              subtitle: [@m_musica.url_referencia_provider, @m_musica.m_artista.presence, @m_musica.m_compositor.presence].compact.join(" • ") %>
       </section>
     <% end %>
 

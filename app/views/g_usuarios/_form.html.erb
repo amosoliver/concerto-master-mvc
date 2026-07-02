@@ -16,7 +16,10 @@
     </div>
     <div class="field-group">
       <%= form.label :ativo %>
-      <%= form.checkbox :ativo, class: "form-control" %>
+      <label class="checkbox-field">
+        <%= form.check_box :ativo %>
+        <span class="checkbox-field__label">Usuário ativo</span>
+      </label>
     </div>
     <div class="field-group">
       <%= form.label :g_pessoa_id %>

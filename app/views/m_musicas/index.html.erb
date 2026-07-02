@@ -75,9 +75,9 @@
       </table>
     </div>
 
-    <div class="card-grid" data-view-toggle-target="cards" hidden>
+    <div class="card-grid card-grid--compact" data-view-toggle-target="cards" hidden>
       <% @m_musicas.each do |m_musica| %>
-        <article class="record-card">
+        <article class="record-card record-card--compact">
           <div class="record-card__body">
             <div class="record-card__header">
               <h3 class="record-card__title"><%= m_musica.descricao %></h3>

@@ -63,7 +63,7 @@
             <article class="related-card">
               <span class="related-card__label">Ensaio</span>
               <%= link_to ensaio.descricao, m_ensaio_path(ensaio), class: "related-card__value related-card__value--link" %>
-              <span class="related-card__meta"><%= [format_datetime_range(ensaio.data_inicio, ensaio.data_fim, fallback: nil), ensaio.g_predio, (ensaio.m_grupos.any? ? pluralize(ensaio.m_grupos.count, "grupo") : "ensaio geral"), pluralize(ensaio.m_musicas.distinct.count, "música")].compact.join(" • ") %></span>
+              <span class="related-card__meta"><%= [format_datetime(ensaio.data_inicio), ensaio.g_predio, (ensaio.m_grupos.any? ? pluralize(ensaio.m_grupos.count, "grupo") : "ensaio geral"), pluralize(ensaio.m_musicas.distinct.count, "música")].compact.join(" • ") %></span>
             </article>
           <% end %>
         </div>

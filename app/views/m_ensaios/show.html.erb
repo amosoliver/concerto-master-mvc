@@ -15,32 +15,39 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Ensaio</p>
         <h2 class="show-summary__title"><%= @m_ensaio.descricao %></h2>
+        <p class="show-summary__text show-summary__text--highlight">Início em <%= format_datetime(@m_ensaio.data_inicio) %></p>
+        <% if @m_ensaio.m_grupos.any? %>
+          <div class="tag-cloud">
+            <% @m_ensaio.m_grupos.first(4).each do |grupo| %>
+              <span class="tag-cloud__item"><%= grupo.descricao %></span>
+            <% end %>
+          </div>
+        <% end %>
       </section>
 
-      <section class="panel-card show-section">
+      <% predio = @m_ensaio.g_predio %>
+      <section class="panel-card show-section show-location">
         <div class="panel-card__header">
           <div>
-            <p class="eyebrow">Resumo</p>
-            <h3>Planejamento</h3>
+            <p class="eyebrow">Local</p>
+            <h3><%= predio %></h3>
           </div>
+          <% if openstreetmap_url(predio).present? %>
+            <%= link_to "Abrir mapa", openstreetmap_url(predio), target: "_blank", rel: "noopener", class: "secondary-button" %>
+          <% end %>
         </div>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Grupos</span>
-            <span class="show-stat__value"><%= @m_ensaio.m_grupos.count %></span>
+        <div class="show-location__grid">
+          <div class="show-location__content">
+            <p class="show-location__address"><%= predio_location_line(predio).presence || "Endereço indisponível" %></p>
           </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Músicas</span>
-            <span class="show-stat__value"><%= @m_ensaio.m_musicas.distinct.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Eventos</span>
-            <span class="show-stat__value"><%= @m_ensaio.m_eventos.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Início</span>
-            <span class="show-stat__value"><%= format_datetime(@m_ensaio.data_inicio) %></span>
-          </div>
+          <% if openstreetmap_embed_url(predio).present? %>
+            <iframe
+              title="Mapa do local do ensaio"
+              class="show-location__map"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="<%= openstreetmap_embed_url(predio) %>"></iframe>
+          <% end %>
         </div>
       </section>
     </div>
@@ -48,23 +55,19 @@
     <section class="panel-card detail-card">
       <div class="panel-card__header">
         <div>
-          <p class="eyebrow">Informações</p>
-          <h3><%= MEnsaio.model_name.human %></h3>
+          <p class="eyebrow">Dados</p>
+          <h3>Contexto</h3>
         </div>
       </div>
 
       <div class="detail-grid">
         <div class="detail-tile">
-          <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_fim) %></span>
-          <span class="detail-value"><%= format_datetime(@m_ensaio.data_fim) %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_predio_id) %></span>
-          <span class="detail-value"><%= @m_ensaio.g_predio %></span>
-        </div>
-        <div class="detail-tile">
           <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
           <span class="detail-value"><%= @m_ensaio.g_entidade %></span>
+        </div>
+        <div class="detail-tile">
+          <span class="detail-label">Escopo</span>
+          <span class="detail-value"><%= @m_ensaio.m_grupos.any? ? "Por grupos vinculados" : "Ensaio geral da entidade" %></span>
         </div>
       </div>
 
@@ -80,7 +83,6 @@
           <p class="eyebrow">Grupos</p>
           <h3>Grupos participantes</h3>
         </div>
-        <span class="show-section__count"><%= @m_ensaio.m_grupos.count %></span>
       </div>
       <% if @m_ensaio.m_grupos.any? %>
         <div class="related-grid">
@@ -103,7 +105,6 @@
           <p class="eyebrow">Eventos</p>
           <h3>Eventos trabalhados neste ensaio</h3>
         </div>
-        <span class="show-section__count"><%= @m_ensaio.m_eventos.count %></span>
       </div>
       <% eventos = @m_ensaio.m_eventos.includes(:g_predio).sort_by { |e| e.data_inicio || Time.at(0) } %>
       <% if eventos.any? %>
@@ -112,7 +113,7 @@
             <article class="related-card">
               <span class="related-card__label">Evento</span>
               <%= link_to evento.descricao, m_evento_path(evento), class: "related-card__value related-card__value--link" %>
-              <span class="related-card__meta"><%= [format_datetime_range(evento.data_inicio, evento.data_fim, fallback: nil), evento.g_predio].compact.join(" • ") %></span>
+              <span class="related-card__meta"><%= [format_datetime(evento.data_inicio), evento.g_predio].compact.join(" • ") %></span>
             </article>
           <% end %>
         </div>
@@ -131,7 +132,6 @@
           ensaio_musicas = @m_ensaio.m_ensaio_musicas.includes(m_evento_musica: [:m_evento, :m_grupos, { m_musica: %i[m_artista m_compositor] }, { m_arranjo: [:m_arranjador, :m_tipo_arranjo, :m_tonalidade, { audio_attachments: :blob }, { m_arranjos_instrumentos_naipes: [:g_instrumento_naipe, { arquivo_attachments: :blob }] }] }])
           ensaio_musicas_visiveis = ensaio_musicas.select { |ensaio_musica| evento_musica_visible_for_current_user?(ensaio_musica.m_evento_musica) }
         %>
-        <span class="show-section__count"><%= ensaio_musicas_visiveis.count %></span>
       </div>
       <% if !current_user_has_instrument_assignments? %>
         <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade.</div>

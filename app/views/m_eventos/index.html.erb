@@ -34,13 +34,6 @@
           </div>
         </div>
         <div class="search-field">
-          <label><%= MEvento.human_attribute_name(:data_fim) %></label>
-          <div class="search-input">
-            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
-            <%= f.search_field :data_fim_cont, placeholder: MEvento.human_attribute_name(:data_fim), "aria-label": MEvento.human_attribute_name(:data_fim), class: "search-input__field" %>
-          </div>
-        </div>
-        <div class="search-field">
           <label><%= MEvento.human_attribute_name(:g_predio_id) %></label>
           <div class="search-input">
             <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
@@ -63,7 +56,6 @@
           <tr>
             <th scope="col"><%= MEvento.human_attribute_name(:descricao) %></th>
             <th scope="col"><%= MEvento.human_attribute_name(:data_inicio) %></th>
-            <th scope="col"><%= MEvento.human_attribute_name(:data_fim) %></th>
             <th scope="col"><%= MEvento.human_attribute_name(:g_predio_id) %></th>
             <th scope="col" class="table-actions-col">Ações</th>
           </tr>
@@ -73,7 +65,6 @@
             <tr>
               <td><%= m_evento.descricao %></td>
               <td><%= format_datetime(m_evento.data_inicio) %></td>
-              <td><%= format_datetime(m_evento.data_fim) %></td>
               <td><%= m_evento.g_predio %></td>
               <td class="table-actions-cell">
                 <%= render "shared/actions_menu", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento), config_path: manage_m_evento_path(m_evento) %>
@@ -84,9 +75,9 @@
       </table>
     </div>
 
-    <div class="card-grid" data-view-toggle-target="cards" hidden>
+    <div class="card-grid card-grid--compact" data-view-toggle-target="cards" hidden>
       <% @m_eventos.each do |m_evento| %>
-        <article class="record-card">
+        <article class="record-card record-card--compact">
           <div class="record-card__body">
             <div class="record-card__header">
               <h3 class="record-card__title"><%= m_evento.descricao %></h3>
@@ -100,35 +91,14 @@
                 </span>
               </div>
               <div class="record-card__attr">
-                <span class="record-card__attr-icon"><%= ui_icon(:calendar, size: 16) %></span>
-                <span class="record-card__attr-text">
-                  <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
-                  <span class="detail-value"><%= format_datetime(m_evento.data_fim) %></span>
-                </span>
-              </div>
-              <div class="record-card__attr">
                 <span class="record-card__attr-icon"><%= ui_icon(:building, size: 16) %></span>
                 <span class="record-card__attr-text">
                   <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
                   <span class="detail-value"><%= m_evento.g_predio %></span>
                 </span>
               </div>
-              <div class="record-card__attr">
-                <span class="record-card__attr-icon"><%= ui_icon(:note, size: 16) %></span>
-                <span class="record-card__attr-text">
-                  <span class="detail-label">Repertório</span>
-                  <span class="detail-value"><%= pluralize(m_evento.repertorio_count, "música") %></span>
-                </span>
-              </div>
             </div>
           </div>
-          <% if m_evento.m_eventos_musicas.any? %>
-            <div class="record-card__summary">
-              <% m_evento.m_eventos_musicas.first(3).each do |evento_musica| %>
-                <span class="tag-cloud__item"><%= evento_musica.m_musica.descricao %></span>
-              <% end %>
-            </div>
-          <% end %>
           <%= render "shared/card_actions", show_path: m_evento_path(m_evento), edit_path: edit_m_evento_path(m_evento), delete_path: m_evento_path(m_evento), config_path: manage_m_evento_path(m_evento) %>
         </article>
       <% end %>

@@ -5,7 +5,7 @@ class <%= controller_class_name %>Controller < ApplicationController
   def index
     @q = <%= class_name %>.ransack(params[:q])
     @<%= plural_table_name %> = @q.result.order(created_at: :desc)
-    @pagy, @<%= plural_table_name %> = pagy(@<%= plural_table_name %>, limit: 10)
+    @pagy, @<%= plural_table_name %> = pagy(@<%= plural_table_name %>, limit: 5)
   end
 
   def show

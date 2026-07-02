@@ -4,6 +4,7 @@ module TenantAccess
   included do
     helper_method :current_tenant_entity,
                   :current_tenant_entity_ids,
+                  :current_tenant_admin?,
                   :current_tenant_instrument_ids,
                   :tenant_entity_scope,
                   :tenant_pessoa_scope,
@@ -18,8 +19,10 @@ module TenantAccess
   private
 
   def tenant_scope(scope)
+    return normalize_tenant_scope(scope) if tenant_bypass_scope?(scope)
+
     ResolvedorEscopoEntidade.call(
-      scope: scope,
+      scope: normalize_tenant_scope(scope),
       entity_ids: current_tenant_entity_ids,
       instrument_ids: current_tenant_instrument_ids
     )
@@ -45,9 +48,13 @@ module TenantAccess
   end
 
   def current_tenant_instrument_ids
-    return all_instrument_ids_for_current_tenant if current_g_usuario&.admin_for?(current_tenant_entity)
+    return all_instrument_ids_for_current_tenant if current_tenant_admin?
 
     Current.g_instrumento_naipe_ids || []
+  end
+
+  def current_tenant_admin?
+    current_g_usuario&.admin_for?(current_tenant_entity)
   end
 
   def tenant_entity_scope
@@ -68,6 +75,8 @@ module TenantAccess
 
   def tenant_instrumento_scope
     scope = GInstrumentoNaipe.includes(:g_instrumento, :g_naipe).order(:id)
+    return scope if current_tenant_admin?
+
     current_tenant_instrument_ids.present? ? scope.where(id: current_tenant_instrument_ids) : scope.none
   end
 
@@ -81,6 +90,16 @@ module TenantAccess
 
   def tenant_arranjo_scope
     tenant_scope(MArranjo.includes(:m_musica)).order(:id)
+  end
+
+  def tenant_bypass_scope?(scope)
+    return false unless current_tenant_admin?
+
+    %w[MArranjo MArranjoInstrumentoNaipe].include?(normalize_tenant_scope(scope).klass.name)
+  end
+
+  def normalize_tenant_scope(scope)
+    scope.respond_to?(:klass) ? scope : scope.all
   end
 
   def all_instrument_ids_for_current_tenant

@@ -6,7 +6,7 @@ class MEnsaiosController < ApplicationController
   def index
     @q = tenant_scope(MEnsaio).ransack(params[:q])
     @m_ensaios = @q.result.includes(:g_predio, :m_eventos, m_ensaio_musicas: { m_evento_musica: :m_musica }).order(created_at: :desc)
-    @pagy, @m_ensaios = pagy(@m_ensaios, limit: 10)
+    @pagy, @m_ensaios = pagy(@m_ensaios, limit: 5)
   end
 
   def show

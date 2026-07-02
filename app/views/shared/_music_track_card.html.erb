@@ -14,7 +14,7 @@
     <div class="evento-track-card__header">
       <div class="evento-track-card__title-wrap">
         <span class="related-card__label"><%= local_assigns[:eyebrow] || "Música" %></span>
-        <h4 class="evento-track-card__title"><%= musica.descricao %></h4>
+        <h3 class="evento-track-card__title"><%= musica.descricao.presence || "Música sem nome" %></h3>
         <p class="evento-track-card__subtitle">
           <%= subtitle_parts.compact.presence&.join(" • ") || "Sem artista ou compositor informado" %>
         </p>
@@ -41,19 +41,11 @@
             </div>
             <%= link_to "Abrir link", musica.url_referencia, target: "_blank", rel: "noopener", class: "related-card__value related-card__value--link" %>
           </div>
-          <% if musica.url_referencia_embeddable? %>
-            <div class="url-preview evento-track-card__embed">
-              <iframe
-                class="url-preview__frame"
-                src="<%= musica.url_referencia_embed %>"
-                title="Prévia da referência de <%= musica.descricao %>"
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-            </div>
-          <% else %>
-            <div class="empty-card">Não foi possível incorporar esta referência automaticamente, mas o link direto está disponível acima.</div>
-          <% end %>
+          <%= render "shared/music_reference_preview",
+                musica: musica,
+                title: "Ouvir #{musica.descricao}",
+                subtitle: [musica.url_referencia_provider, arranjo&.m_tipo_arranjo, arranjo&.m_arranjador, arranjo&.m_tonalidade].compact.join(" • "),
+                eyebrow: "Player externo" %>
         </section>
       <% end %>
 

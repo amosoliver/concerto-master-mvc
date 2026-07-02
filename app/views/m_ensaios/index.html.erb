@@ -34,13 +34,6 @@
           </div>
         </div>
         <div class="search-field">
-          <label><%= MEnsaio.human_attribute_name(:data_fim) %></label>
-          <div class="search-input">
-            <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
-            <%= f.search_field :data_fim_cont, placeholder: MEnsaio.human_attribute_name(:data_fim), "aria-label": MEnsaio.human_attribute_name(:data_fim), class: "search-input__field" %>
-          </div>
-        </div>
-        <div class="search-field">
           <label><%= MEnsaio.human_attribute_name(:g_predio_id) %></label>
           <div class="search-input">
             <%= ui_icon(:search, size: 16, classes: "search-input__icon") %>
@@ -77,7 +70,6 @@
           <tr>
             <th scope="col"><%= MEnsaio.human_attribute_name(:descricao) %></th>
             <th scope="col"><%= MEnsaio.human_attribute_name(:data_inicio) %></th>
-            <th scope="col"><%= MEnsaio.human_attribute_name(:data_fim) %></th>
             <th scope="col"><%= MEnsaio.human_attribute_name(:g_predio_id) %></th>
             <th scope="col">Grupos</th>
             <th scope="col">Eventos</th>
@@ -90,7 +82,6 @@
             <tr>
               <td><%= m_ensaio.descricao %></td>
               <td><%= format_datetime(m_ensaio.data_inicio) %></td>
-              <td><%= format_datetime(m_ensaio.data_fim) %></td>
               <td><%= m_ensaio.g_predio %></td>
               <td><%= m_ensaio.m_grupos.size %></td>
               <td><%= m_ensaio.m_eventos.size %></td>
@@ -104,13 +95,23 @@
       </table>
     </div>
 
-    <div class="card-grid" data-view-toggle-target="cards" hidden>
+    <div class="card-grid card-grid--compact" data-view-toggle-target="cards" hidden>
       <% @m_ensaios.each do |m_ensaio| %>
-        <article class="record-card">
+        <article class="record-card record-card--compact">
           <div class="record-card__body">
             <div class="record-card__header">
               <h3 class="record-card__title"><%= m_ensaio.descricao %></h3>
             </div>
+            <p class="record-card__summary">
+              <% if m_ensaio.m_grupos.any? %>
+                <span class="tag-cloud__item"><%= pluralize(m_ensaio.m_grupos.size, "grupo") %></span>
+              <% else %>
+                <span class="tag-cloud__item">Ensaio geral</span>
+              <% end %>
+              <% if m_ensaio.m_eventos.any? %>
+                <span class="tag-cloud__item"><%= pluralize(m_ensaio.m_eventos.size, "evento") %></span>
+              <% end %>
+            </p>
             <div class="record-card__attrs">
               <div class="record-card__attr">
                 <span class="record-card__attr-icon"><%= ui_icon(:calendar, size: 16) %></span>
@@ -120,38 +121,10 @@
                 </span>
               </div>
               <div class="record-card__attr">
-                <span class="record-card__attr-icon"><%= ui_icon(:calendar, size: 16) %></span>
-                <span class="record-card__attr-text">
-                  <span class="detail-label"><%= MEnsaio.human_attribute_name(:data_fim) %></span>
-                  <span class="detail-value"><%= format_datetime(m_ensaio.data_fim) %></span>
-                </span>
-              </div>
-              <div class="record-card__attr">
                 <span class="record-card__attr-icon"><%= ui_icon(:building, size: 16) %></span>
                 <span class="record-card__attr-text">
                   <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_predio_id) %></span>
                   <span class="detail-value"><%= m_ensaio.g_predio %></span>
-                </span>
-              </div>
-              <div class="record-card__attr">
-                <span class="record-card__attr-icon"><%= ui_icon(:users, size: 16) %></span>
-                <span class="record-card__attr-text">
-                  <span class="detail-label">Grupos</span>
-                  <span class="detail-value"><%= pluralize(m_ensaio.m_grupos.size, "grupo") %></span>
-                </span>
-              </div>
-              <div class="record-card__attr">
-                <span class="record-card__attr-icon"><%= ui_icon(:calendar, size: 16) %></span>
-                <span class="record-card__attr-text">
-                  <span class="detail-label">Eventos</span>
-                  <span class="detail-value"><%= pluralize(m_ensaio.m_eventos.size, "evento") %></span>
-                </span>
-              </div>
-              <div class="record-card__attr">
-                <span class="record-card__attr-icon"><%= ui_icon(:note, size: 16) %></span>
-                <span class="record-card__attr-text">
-                  <span class="detail-label">Músicas</span>
-                  <span class="detail-value"><%= pluralize(m_ensaio.m_ensaio_musicas.size, "música") %></span>
                 </span>
               </div>
             </div>

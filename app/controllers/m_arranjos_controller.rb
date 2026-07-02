@@ -6,7 +6,7 @@ class MArranjosController < ApplicationController
   def index
     @q = tenant_scope(MArranjo).ransack(params[:q])
     @m_arranjos = @q.result.order(created_at: :desc)
-    @pagy, @m_arranjos = pagy(@m_arranjos, limit: 10)
+    @pagy, @m_arranjos = pagy(@m_arranjos, limit: 5)
   end
 
   def show

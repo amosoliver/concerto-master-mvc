@@ -67,10 +67,10 @@
               <%= check_box_tag "m_ensaio[m_evento_ids][]",
                                 evento.id,
                                 @selected_event_ids.include?(evento.id),
-                                data: { action: "change->ensaio-form#toggleEvento", ensaio_form_target: "eventoCheckbox", event_id: evento.id } %>
+                data: { action: "change->ensaio-form#toggleEvento", ensaio_form_target: "eventoCheckbox", event_id: evento.id } %>
               <span>
                 <strong><%= evento.descricao %></strong><br>
-                <small><%= [format_datetime_range(evento.data_inicio, evento.data_fim, fallback: nil), evento.g_predio, pluralize(evento.m_eventos_musicas.count, "música")].compact.join(" • ") %></small>
+                <small><%= [format_datetime(evento.data_inicio), evento.g_predio, pluralize(evento.m_eventos_musicas.count, "música")].compact.join(" • ") %></small>
               </span>
             </label>
           </article>
@@ -103,7 +103,7 @@
                 <span class="related-card__label">Evento fonte</span>
                 <strong><%= evento.descricao %></strong>
               </div>
-              <span class="related-card__meta"><%= [format_datetime_range(evento.data_inicio, evento.data_fim, fallback: nil), evento.g_predio].compact.join(" • ") %></span>
+              <span class="related-card__meta"><%= [format_datetime(evento.data_inicio), evento.g_predio].compact.join(" • ") %></span>
             </div>
 
             <% if musicas_evento.any? %>

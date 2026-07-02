@@ -5,7 +5,7 @@ class MGruposController < ApplicationController
   def index
     @q = tenant_scope(MGrupo).ransack(params[:q])
     @m_grupos = @q.result.order(created_at: :desc)
-    @pagy, @m_grupos = pagy(@m_grupos, limit: 10)
+    @pagy, @m_grupos = pagy(@m_grupos, limit: 5)
   end
 
   def show

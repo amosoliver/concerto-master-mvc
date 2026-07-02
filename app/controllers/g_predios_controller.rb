@@ -4,7 +4,7 @@ class GPrediosController < ApplicationController
   def index
     @q = tenant_scope(GPredio).ransack(params[:q])
     @g_predios = @q.result.order(created_at: :desc)
-    @pagy, @g_predios = pagy(@g_predios, limit: 10)
+    @pagy, @g_predios = pagy(@g_predios, limit: 5)
   end
 
   def show

@@ -7,7 +7,7 @@ class UPerfisController < ApplicationController
   def index
     @q = UPerfil.ransack(params[:q])
     @u_perfis = @q.result.order(created_at: :desc)
-    @pagy, @u_perfis = pagy(@u_perfis, limit: 10)
+    @pagy, @u_perfis = pagy(@u_perfis, limit: 5)
   end
 
   def show

@@ -4,7 +4,7 @@ class GSexosController < ApplicationController
   def index
     @q = GSexo.ransack(params[:q])
     @g_sexos = @q.result.order(created_at: :desc)
-    @pagy, @g_sexos = pagy(@g_sexos, limit: 10)
+    @pagy, @g_sexos = pagy(@g_sexos, limit: 5)
   end
 
   def show

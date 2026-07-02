@@ -4,7 +4,7 @@ class GEstadosController < ApplicationController
   def index
     @q = GEstado.ransack(params[:q])
     @g_estados = @q.result.order(:descricao)
-    @pagy, @g_estados = pagy(@g_estados, limit: 10)
+    @pagy, @g_estados = pagy(@g_estados, limit: 5)
   end
 
   def show

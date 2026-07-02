@@ -63,26 +63,7 @@
                 <% if arranjo.audio.attached? %>
                   <div class="attachment-stack">
                     <% arranjo.audio.each do |arquivo| %>
-                      <% if audio_attachment_file?(arquivo) %>
-                        <div class="attachment-audio-card">
-                          <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
-                          <div class="attachment-actions">
-                            <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                            <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                          </div>
-                        </div>
-                      <% else %>
-                        <div class="attachment-file-card">
-                          <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
-                          <span class="attachment-file-card__meta"><%= attachment_label(arquivo) %></span>
-                          <div class="attachment-actions attachment-actions--stacked">
-                            <% if previewable_attachment_file?(arquivo) %>
-                              <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                            <% end %>
-                            <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                          </div>
-                        </div>
-                      <% end %>
+                      <%= render "shared/attachment_media", arquivo: arquivo %>
                     <% end %>
                   </div>
                 <% else %>
@@ -101,26 +82,7 @@
                         <% if instrumento_arranjo.arquivo.attached? %>
                           <div class="attachment-stack">
                             <% instrumento_arranjo.arquivo.each do |arquivo| %>
-                              <% if audio_attachment_file?(arquivo) %>
-                                <div class="attachment-audio-card">
-                                  <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
-                                  <div class="attachment-actions">
-                                    <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                                    <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                                  </div>
-                                </div>
-                              <% else %>
-                                <div class="attachment-file-card">
-                                  <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
-                                  <span class="attachment-file-card__meta"><%= attachment_label(arquivo) %></span>
-                                  <div class="attachment-actions attachment-actions--stacked">
-                                    <% if previewable_attachment_file?(arquivo) %>
-                                      <%= link_to "Visualizar", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-                                    <% end %>
-                                    <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
-                                  </div>
-                                </div>
-                              <% end %>
+                              <%= render "shared/attachment_media", arquivo: arquivo %>
                             <% end %>
                           </div>
                         <% else %>

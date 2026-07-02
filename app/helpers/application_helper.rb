@@ -123,6 +123,32 @@ module ApplicationHelper
     value.gsub(/(\d{5})(\d{3})/, '\1-\2')
   end
 
+  def predio_location_line(predio)
+    return if predio.blank?
+
+    [
+      predio.logradouro.presence,
+      predio.bairro.presence,
+      format_cep(predio.cep).presence
+    ].compact.join(" • ")
+  end
+
+  def openstreetmap_url(predio)
+    return if predio.blank? || predio.latitude.blank? || predio.longitude.blank?
+
+    "https://www.openstreetmap.org/?mlat=#{predio.latitude}&mlon=#{predio.longitude}#map=16/#{predio.latitude}/#{predio.longitude}"
+  end
+
+  def openstreetmap_embed_url(predio, delta: 0.01)
+    return if predio.blank? || predio.latitude.blank? || predio.longitude.blank?
+
+    lat = predio.latitude.to_f
+    lng = predio.longitude.to_f
+    bbox = [lng - delta, lat - delta, lng + delta, lat + delta].join("%2C")
+    marker = "#{lat}%2C#{lng}"
+    "https://www.openstreetmap.org/export/embed.html?bbox=#{bbox}&layer=mapnik&marker=#{marker}"
+  end
+
   def calendar_month_label(date)
     "#{CALENDAR_MONTH_NAMES[date.month]} de #{date.year}"
   end
@@ -301,6 +327,8 @@ module ApplicationHelper
   end
 
   def current_user_has_instrument_assignments?
+    return true if current_user_admin_for_current_entity?
+
     current_user_assigned_instrument_ids.any?
   end
 
@@ -330,6 +358,7 @@ module ApplicationHelper
 
   def instrument_relations_for_current_user(arranjo)
     return [] if arranjo.blank?
+    return arranjo.m_arranjos_instrumentos_naipes.to_a if current_user_admin_for_current_entity?
     return [] if current_user_assigned_instrument_ids.blank?
 
     arranjo.m_arranjos_instrumentos_naipes.select do |relation|

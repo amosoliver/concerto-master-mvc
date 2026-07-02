@@ -5,7 +5,7 @@ class GUsuariosController < ApplicationController
   def index
     @q = tenant_scope(GUsuario).ransack(params[:q])
     @g_usuarios = @q.result.order(created_at: :desc)
-    @pagy, @g_usuarios = pagy(@g_usuarios, limit: 10)
+    @pagy, @g_usuarios = pagy(@g_usuarios, limit: 5)
   end
 
   def show

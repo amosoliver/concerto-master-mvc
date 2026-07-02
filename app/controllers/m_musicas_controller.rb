@@ -5,7 +5,7 @@ class MMusicasController < ApplicationController
   def index
     @q = tenant_scope(MMusica).ransack(params[:q])
     @m_musicas = @q.result.order(created_at: :desc)
-    @pagy, @m_musicas = pagy(@m_musicas, limit: 10)
+    @pagy, @m_musicas = pagy(@m_musicas, limit: 5)
   end
 
   def show

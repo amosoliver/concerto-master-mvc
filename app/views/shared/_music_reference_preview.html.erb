@@ -1,0 +1,44 @@
+<%# locals: (musica:, title: nil, subtitle: nil, eyebrow: "Referência") %>
+<%
+  thumbnail_url = musica.url_referencia_thumbnail_url
+  provider_name = musica.url_referencia_provider
+  preview_title = local_assigns[:title].presence || musica.descricao
+  preview_subtitle = local_assigns[:subtitle].presence || [provider_name, "Link externo"].compact.join(" • ")
+  embed_url = musica.url_referencia_embed
+%>
+<div class="url-preview">
+  <% if thumbnail_url.present? %>
+    <div class="url-preview__media">
+      <%= image_tag thumbnail_url, alt: "Prévia da referência de #{musica.descricao}", class: "url-preview__image", loading: "lazy", referrerpolicy: "no-referrer" %>
+    </div>
+  <% else %>
+    <div class="url-preview__media url-preview__media--placeholder">
+      <span class="url-preview__placeholder-text"><%= provider_name.presence || "Link externo" %></span>
+    </div>
+  <% end %>
+
+  <div class="url-preview__content">
+    <span class="related-card__label"><%= local_assigns[:eyebrow] || "Referência" %></span>
+    <h4 class="url-preview__title"><%= preview_title %></h4>
+    <p class="url-preview__meta"><%= preview_subtitle %></p>
+    <p class="url-preview__link"><%= musica.url_referencia %></p>
+    <div class="url-preview__actions">
+      <% if embed_url.present? %>
+        <details class="url-preview__player">
+          <summary class="secondary-button secondary-button--sm">Reproduzir aqui</summary>
+          <div class="url-preview__player-body">
+            <iframe
+              class="url-preview__frame"
+              src="<%= embed_url %>"
+              title="Reprodução de <%= musica.descricao %>"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+        </details>
+      <% end %>
+      <%= link_to "Abrir link", musica.url_referencia, target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
+    </div>
+  </div>
+</div>

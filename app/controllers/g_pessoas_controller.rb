@@ -10,7 +10,7 @@ class GPessoasController < ApplicationController
   def index
     @q = tenant_scope(GPessoa).ransack(params[:q])
     @g_pessoas = @q.result.order(created_at: :desc)
-    @pagy, @g_pessoas = pagy(@g_pessoas, limit: 10)
+    @pagy, @g_pessoas = pagy(@g_pessoas, limit: 5)
   end
 
   def show

@@ -16,7 +16,10 @@
     </div>
     <div class="field-group">
       <%= form.label :admin %>
-      <%= form.checkbox :admin, class: "form-control" %>
+      <label class="checkbox-field">
+        <%= form.check_box :admin %>
+        <span class="checkbox-field__label">Permissão administrativa</span>
+      </label>
     </div>
   </div>
 

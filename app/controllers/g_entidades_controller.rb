@@ -11,7 +11,7 @@ class GEntidadesController < ApplicationController
   def index
     @q = tenant_scope(GEntidade).ransack(params[:q])
     @g_entidades = @q.result.order(created_at: :desc)
-    @pagy, @g_entidades = pagy(@g_entidades, limit: 10)
+    @pagy, @g_entidades = pagy(@g_entidades, limit: 5)
   end
 
   def show

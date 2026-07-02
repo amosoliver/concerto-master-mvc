@@ -2,9 +2,11 @@
   <% previous_page = pagy.page > 1 ? pagy.page - 1 : nil %>
   <% next_page = pagy.page < pagy.pages ? pagy.page + 1 : nil %>
   <div class="pagination-bar">
-    <div class="pagination-summary">
-      <span><%= pagy_summary_text(pagy) %></span>
-    </div>
+    <% if pagy.pages.to_i > 1 %>
+      <div class="pagination-summary">
+        <span><%= pagy_summary_text(pagy) %></span>
+      </div>
+    <% end %>
     <div class="pagination-wrap">
       <nav class="pagination-nav" aria-label="Paginação">
         <% if previous_page %>

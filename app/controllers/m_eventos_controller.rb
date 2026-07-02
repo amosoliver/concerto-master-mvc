@@ -11,7 +11,7 @@ class MEventosController < ApplicationController
   def index
     @q = tenant_scope(MEvento).ransack(params[:q])
     @m_eventos = @q.result.includes(:g_predio, m_eventos_musicas: { m_musica: :m_artista }).order(created_at: :desc)
-    @pagy, @m_eventos = pagy(@m_eventos, limit: 10)
+    @pagy, @m_eventos = pagy(@m_eventos, limit: 5)
   end
 
   def show

@@ -5,7 +5,7 @@ class GInstrumentosNaipesController < ApplicationController
   def index
     @q = GInstrumentoNaipe.ransack(params[:q])
     @g_instrumentos_naipes = @q.result.order(created_at: :desc)
-    @pagy, @g_instrumentos_naipes = pagy(@g_instrumentos_naipes, limit: 10)
+    @pagy, @g_instrumentos_naipes = pagy(@g_instrumentos_naipes, limit: 5)
   end
 
   def show

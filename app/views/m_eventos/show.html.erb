@@ -6,7 +6,7 @@
     </div>
     <div class="page-header__actions">
       <%= authorized_link_to "Gerenciar", manage_m_evento_path(@m_evento), class: "primary-button" %>
-      <%= authorized_link_to "Editar", edit_m_evento_path(@m_evento), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_evento_path(@m_evento), class: "secondary-button" %>
       <%= link_to "Voltar", m_eventos_path, class: "secondary-button" %>
     </div>
   </div>
@@ -16,32 +16,34 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Evento</p>
         <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Músicas</span>
-            <span class="show-stat__value"><%= @m_evento.repertorio_count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Arranjos definidos</span>
-            <span class="show-stat__value"><%= @m_evento.arranjos_definidos_count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Início</span>
-            <span class="show-stat__value"><%= format_datetime(@m_evento.data_inicio) %></span>
-          </div>
-        </div>
+        <p class="show-summary__text show-summary__text--highlight">Início em <%= format_datetime(@m_evento.data_inicio) %></p>
       </section>
 
-      <div class="detail-grid">
-        <div class="detail-tile">
-          <span class="detail-label"><%= MEvento.human_attribute_name(:data_fim) %></span>
-          <span class="detail-value"><%= format_datetime(@m_evento.data_fim) %></span>
+      <% predio = @m_evento.g_predio %>
+      <section class="panel-card show-section show-location">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Local</p>
+            <h3><%= predio %></h3>
+          </div>
+          <% if openstreetmap_url(predio).present? %>
+            <%= link_to "Abrir mapa", openstreetmap_url(predio), target: "_blank", rel: "noopener", class: "secondary-button" %>
+          <% end %>
         </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MEvento.human_attribute_name(:g_predio_id) %></span>
-          <span class="detail-value"><%= @m_evento.g_predio %></span>
+        <div class="show-location__grid">
+          <div class="show-location__content">
+            <p class="show-location__address"><%= predio_location_line(predio).presence || "Endereço indisponível" %></p>
+          </div>
+          <% if openstreetmap_embed_url(predio).present? %>
+            <iframe
+              title="Mapa do local do evento"
+              class="show-location__map"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="<%= openstreetmap_embed_url(predio) %>"></iframe>
+          <% end %>
         </div>
-      </div>
+      </section>
     </div>
 
     <section class="panel-card show-section show-section--full-width">
@@ -50,7 +52,6 @@
           <p class="eyebrow">Repertório</p>
           <h3>Músicas, arranjos e arquivos do seu naipe</h3>
         </div>
-        <span class="show-section__count"><%= @evento_repertorio.count %></span>
       </div>
       <% if @evento_repertorio.any? %>
         <div class="evento-showcase">

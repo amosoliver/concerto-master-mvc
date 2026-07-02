@@ -1,7 +1,11 @@
 <%# locals: (arquivo:) %>
 <% if audio_attachment_file?(arquivo) %>
-  <div class="attachment-audio-card">
-    <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
+  <div class="attachment-row attachment-row--audio">
+    <div class="attachment-row__main">
+      <span class="attachment-row__label"><%= attachment_label(arquivo) %></span>
+      <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
+      <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
+    </div>
     <div class="attachment-actions">
       <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
       <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>

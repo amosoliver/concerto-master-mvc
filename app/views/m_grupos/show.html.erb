@@ -6,7 +6,7 @@
     </div>
     <div class="page-header__actions">
       <%= authorized_link_to "Gerenciar", manage_m_grupo_path(@m_grupo), class: "primary-button" %>
-      <%= authorized_link_to "Editar", edit_m_grupo_path(@m_grupo), class: "primary-button" %>
+      <%= authorized_link_to "Editar", edit_m_grupo_path(@m_grupo), class: "secondary-button" %>
       <%= link_to "Voltar", m_grupos_path, class: "secondary-button" %>
     </div>
   </div>
@@ -42,8 +42,8 @@
     <section class="panel-card detail-card">
       <div class="panel-card__header">
         <div>
-          <p class="eyebrow">Informações</p>
-          <h3><%= MGrupo.model_name.human %></h3>
+          <p class="eyebrow">Dados</p>
+          <h3>Dados principais</h3>
         </div>
       </div>
 
