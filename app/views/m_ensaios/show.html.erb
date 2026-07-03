@@ -16,6 +16,22 @@
         <p class="eyebrow">Ensaio</p>
         <h2 class="show-summary__title"><%= @m_ensaio.descricao %></h2>
         <p class="show-summary__text show-summary__text--highlight">Início em <%= format_datetime(@m_ensaio.data_inicio) %></p>
+        <div class="show-mini-grid show-mini-grid--hero">
+          <article class="show-mini-card">
+            <span class="show-mini-card__label">Local</span>
+            <span class="show-mini-card__value"><%= @m_ensaio.g_predio %></span>
+          </article>
+          <article class="show-mini-card">
+            <span class="show-mini-card__label">Eventos</span>
+            <span class="show-mini-card__value"><%= @m_ensaio.m_eventos.size %></span>
+            <span class="show-mini-card__meta">relacionados</span>
+          </article>
+          <article class="show-mini-card">
+            <span class="show-mini-card__label">Músicas</span>
+            <span class="show-mini-card__value"><%= @m_ensaio.m_musicas.distinct.count %></span>
+            <span class="show-mini-card__meta">ensaiadas</span>
+          </article>
+        </div>
         <% if @m_ensaio.m_grupos.any? %>
           <div class="tag-cloud">
             <% @m_ensaio.m_grupos.first(4).each do |grupo| %>
@@ -41,12 +57,14 @@
             <p class="show-location__address"><%= predio_location_line(predio).presence || "Endereço indisponível" %></p>
           </div>
           <% if openstreetmap_embed_url(predio).present? %>
-            <iframe
-              title="Mapa do local do ensaio"
-              class="show-location__map"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              src="<%= openstreetmap_embed_url(predio) %>"></iframe>
+            <div class="map-embed-crop">
+              <iframe
+                title="Mapa do local do ensaio"
+                class="show-location__map"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="<%= openstreetmap_embed_url(predio) %>"></iframe>
+            </div>
           <% end %>
         </div>
       </section>
@@ -60,15 +78,15 @@
         </div>
       </div>
 
-      <div class="detail-grid">
-        <div class="detail-tile">
-          <span class="detail-label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
-          <span class="detail-value"><%= @m_ensaio.g_entidade %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label">Escopo</span>
-          <span class="detail-value"><%= @m_ensaio.m_grupos.any? ? "Por grupos vinculados" : "Ensaio geral da entidade" %></span>
-        </div>
+      <div class="show-mini-grid">
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= MEnsaio.human_attribute_name(:g_entidade_id) %></span>
+          <span class="show-mini-card__value"><%= @m_ensaio.g_entidade %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label">Escopo</span>
+          <span class="show-mini-card__value"><%= @m_ensaio.m_grupos.any? ? "Por grupos vinculados" : "Ensaio geral da entidade" %></span>
+        </article>
       </div>
 
       <div class="detail-meta">

@@ -1,4 +1,6 @@
 class MMusicasController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_m_musica, only: %i[show edit update destroy manage_arranjos]
   before_action :load_form_collections, only: %i[new create edit update]
 

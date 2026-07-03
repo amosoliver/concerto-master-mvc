@@ -1,4 +1,6 @@
 class GPrediosController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_g_predio, only: %i[show edit update destroy]
 
   def index

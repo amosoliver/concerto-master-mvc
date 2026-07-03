@@ -8,6 +8,8 @@ Rails.application.routes.draw do
     member do
       get :manage
       patch :update_management
+      patch :cancelar
+      patch :finalizar
     end
   end
   resources :m_arranjos do

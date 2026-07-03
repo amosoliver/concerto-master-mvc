@@ -1,4 +1,6 @@
 class MArranjosController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_m_arranjo, only: %i[show edit update destroy manage_files update_files]
   before_action :load_attachment_collections, only: %i[show manage_files update_files]
   before_action :load_form_collections, only: %i[new create edit update]

@@ -11,7 +11,7 @@
   </div>
 
   <div class="show-stack">
-    <div class="show-hero">
+    <div class="show-hero show-hero--solo">
       <section class="panel-card show-summary">
         <p class="eyebrow">Local</p>
         <h2 class="show-summary__title"><%= @g_predio.nome_fantasia %></h2>
@@ -19,29 +19,6 @@
           Espaço da entidade <%= @g_predio.g_entidade %> localizado em
           <%= [@g_predio.logradouro, @g_predio.bairro].compact.reject(&:blank?).join(" • ") %>.
         </p>
-      </section>
-
-      <section class="panel-card show-section">
-        <div class="panel-card__header">
-          <div>
-            <p class="eyebrow">Resumo</p>
-            <h3>Movimentação</h3>
-          </div>
-        </div>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Eventos</span>
-            <span class="show-stat__value"><%= @g_predio.m_eventos.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Ensaios</span>
-            <span class="show-stat__value"><%= @g_predio.m_ensaios.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">CEP</span>
-            <span class="show-stat__value"><%= format_cep(@g_predio.cep).presence || "-" %></span>
-          </div>
-        </div>
       </section>
     </div>
 
@@ -53,27 +30,27 @@
         </div>
       </div>
 
-      <div class="detail-grid">
-        <div class="detail-tile">
-          <span class="detail-label"><%= GPredio.human_attribute_name(:nome_fantasia) %></span>
-          <span class="detail-value"><%= @g_predio.nome_fantasia %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= GPredio.human_attribute_name(:cep) %></span>
-          <span class="detail-value"><%= format_cep(@g_predio.cep).presence || "-" %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= GPredio.human_attribute_name(:logradouro) %></span>
-          <span class="detail-value"><%= @g_predio.logradouro.presence || "-" %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= GPredio.human_attribute_name(:bairro) %></span>
-          <span class="detail-value"><%= @g_predio.bairro.presence || "-" %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= GPredio.human_attribute_name(:g_entidade_id) %></span>
-          <span class="detail-value"><%= @g_predio.g_entidade %></span>
-        </div>
+      <div class="show-mini-grid">
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= GPredio.human_attribute_name(:nome_fantasia) %></span>
+          <span class="show-mini-card__value"><%= @g_predio.nome_fantasia %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= GPredio.human_attribute_name(:cep) %></span>
+          <span class="show-mini-card__value"><%= format_cep(@g_predio.cep).presence || "-" %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= GPredio.human_attribute_name(:logradouro) %></span>
+          <span class="show-mini-card__value"><%= @g_predio.logradouro.presence || "-" %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= GPredio.human_attribute_name(:bairro) %></span>
+          <span class="show-mini-card__value"><%= @g_predio.bairro.presence || "-" %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= GPredio.human_attribute_name(:g_entidade_id) %></span>
+          <span class="show-mini-card__value"><%= @g_predio.g_entidade %></span>
+        </article>
       </div>
 
       <div class="detail-meta">
@@ -88,7 +65,6 @@
           <p class="eyebrow">Agenda</p>
           <h3>Eventos no prédio</h3>
         </div>
-        <span class="show-section__count"><%= @g_predio.m_eventos.count %></span>
       </div>
       <% if @g_predio.m_eventos.any? %>
         <div class="related-grid">
@@ -111,7 +87,6 @@
           <p class="eyebrow">Preparação</p>
           <h3>Ensaios realizados</h3>
         </div>
-        <span class="show-section__count"><%= @g_predio.m_ensaios.count %></span>
       </div>
       <% if @g_predio.m_ensaios.any? %>
         <div class="related-grid">

@@ -1,16 +1,19 @@
 class MEventosController < ApplicationController
   STEPS = %w[dados repertorio revisao].freeze
 
-  before_action :set_m_evento, only: %i[show edit update destroy manage update_management]
+  layout "modal", only: %i[new edit create update]
+
+  before_action :refresh_eventos_status, only: %i[index]
+  before_action :set_m_evento, only: %i[show edit update destroy manage update_management cancelar finalizar]
   before_action :load_form_collections, only: %i[new create edit update manage update_management]
   before_action :load_management_collections, only: %i[show manage update_management]
   before_action :prepare_new_wizard, only: %i[new create]
   before_action :prepare_edit_wizard, only: %i[edit update]
-  helper_method :current_step, :first_step?, :last_step?, :step_path_for
+  helper_method :current_step, :first_step?, :last_step?
 
   def index
     @q = tenant_scope(MEvento).ransack(params[:q])
-    @m_eventos = @q.result.includes(:g_predio, m_eventos_musicas: { m_musica: :m_artista }).order(created_at: :desc)
+    @m_eventos = @q.result.includes(:g_predio, :m_evento_status, m_eventos_musicas: { m_musica: :m_artista }).order(created_at: :desc)
     @pagy, @m_eventos = pagy(@m_eventos, limit: 5)
   end
 
@@ -39,6 +42,8 @@ class MEventosController < ApplicationController
 
     if navigating_previous?
       redirect_to new_m_evento_path(step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to new_m_evento_path(step: navigation_target_step, resume: 1)
     elsif last_step?
       MEventos::ServicoCriacao.new(m_evento: @m_evento, params: wizard_params).call
       clear_new_wizard!
@@ -59,6 +64,8 @@ class MEventosController < ApplicationController
 
     if navigating_previous?
       redirect_to edit_m_evento_path(@m_evento, step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to edit_m_evento_path(@m_evento, step: navigation_target_step, resume: 1)
     elsif last_step?
       MEventos::ServicoAtualizacao.new(m_evento: @m_evento, params: wizard_params).call
       clear_edit_wizard!
@@ -80,6 +87,20 @@ class MEventosController < ApplicationController
     render :manage, status: :unprocessable_entity
   end
 
+  def cancelar
+    @m_evento.cancelar!
+    redirect_to manage_m_evento_path(@m_evento), notice: "Evento cancelado com sucesso."
+  rescue ActiveRecord::RecordInvalid
+    redirect_to manage_m_evento_path(@m_evento), alert: "Este evento só pode ser cancelado até #{helpers.format_datetime(@m_evento.cancelamento_limite_em)}."
+  end
+
+  def finalizar
+    @m_evento.finalizar!
+    redirect_to manage_m_evento_path(@m_evento), notice: "Evento finalizado com sucesso."
+  rescue ActiveRecord::RecordInvalid
+    redirect_to manage_m_evento_path(@m_evento), alert: "Este evento não pode mais ser finalizado manualmente."
+  end
+
   def destroy
     @m_evento.discard
     redirect_to m_eventos_path, notice: "#{MEvento.model_name.human} removido com sucesso."
@@ -88,7 +109,12 @@ class MEventosController < ApplicationController
   private
 
   def set_m_evento
+    refresh_eventos_status(scope: tenant_scope(MEvento).where(id: params[:id]))
     @m_evento = tenant_record!(MEvento, params[:id])
+  end
+
+  def refresh_eventos_status(scope: tenant_scope(MEvento))
+    MEventos::AtualizadorStatusService.new(scope: scope).call
   end
 
   def m_evento_params
@@ -203,14 +229,6 @@ class MEventosController < ApplicationController
     STEPS[[STEPS.index(current_step) - 1, 0].max]
   end
 
-  def step_path_for(step)
-    if @m_evento&.persisted?
-      edit_m_evento_path(@m_evento, step: step, resume: 1)
-    else
-      new_m_evento_path(step: step, resume: 1)
-    end
-  end
-
   def wizard_session_key
     @wizard_session_key ||= @m_evento&.persisted? ? "m_evento_wizard_#{@m_evento.id}" : "m_evento_wizard_new"
   end
@@ -241,6 +259,14 @@ class MEventosController < ApplicationController
 
   def navigating_previous?
     params[:navigation] == "previous"
+  end
+
+  def navigation_target_step
+    value = params[:navigation].to_s
+    return unless value.start_with?("goto:")
+
+    step = value.delete_prefix("goto:")
+    step if STEPS.include?(step)
   end
 
   def fresh_wizard_start?

@@ -11,34 +11,11 @@
   </div>
 
   <div class="show-stack">
-    <div class="show-hero">
+    <div class="show-hero show-hero--solo">
       <section class="panel-card show-summary">
         <p class="eyebrow">Instrumentação</p>
         <h2 class="show-summary__title"><%= @g_instrumento_naipe %></h2>
         <p class="show-summary__text">Combinação disponível para pessoas, grupos e arranjos musicais.</p>
-      </section>
-
-      <section class="panel-card show-section">
-        <div class="panel-card__header">
-          <div>
-            <p class="eyebrow">Resumo</p>
-            <h3>Uso atual</h3>
-          </div>
-        </div>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Pessoas</span>
-            <span class="show-stat__value"><%= @g_instrumento_naipe.g_pessoas.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Grupos</span>
-            <span class="show-stat__value"><%= @g_instrumento_naipe.m_grupos.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Arranjos</span>
-            <span class="show-stat__value"><%= @g_instrumento_naipe.m_arranjos.count %></span>
-          </div>
-        </div>
       </section>
     </div>
 
@@ -73,7 +50,6 @@
           <p class="eyebrow">Pessoas</p>
           <h3>Quem toca este instrumento</h3>
         </div>
-        <span class="show-section__count"><%= @g_instrumento_naipe.g_pessoas.count %></span>
       </div>
       <% if @g_instrumento_naipe.g_pessoas.any? %>
         <div class="related-grid">
@@ -96,7 +72,6 @@
           <p class="eyebrow">Grupos</p>
           <h3>Grupos que permitem este instrumento</h3>
         </div>
-        <span class="show-section__count"><%= @g_instrumento_naipe.m_grupos.count %></span>
       </div>
       <% if @g_instrumento_naipe.m_grupos.any? %>
         <div class="related-grid">
@@ -119,7 +94,6 @@
           <p class="eyebrow">Repertório</p>
           <h3>Arranjos relacionados</h3>
         </div>
-        <span class="show-section__count"><%= @g_instrumento_naipe.m_arranjos.count %></span>
       </div>
       <% if @g_instrumento_naipe.m_arranjos.any? %>
         <div class="tag-cloud">

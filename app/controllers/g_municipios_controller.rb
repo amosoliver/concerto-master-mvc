@@ -1,4 +1,6 @@
 class GMunicipiosController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_g_municipio, only: %i[show edit update destroy]
 
   def index

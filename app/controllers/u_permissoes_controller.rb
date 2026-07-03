@@ -1,4 +1,6 @@
 class UPermissoesController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_u_permissao, only: %i[show edit update destroy]
 
   def index

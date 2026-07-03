@@ -1,7 +1,13 @@
 class MEnsaiosController < ApplicationController
+  STEPS = %w[dados grupos_eventos repertorio revisao].freeze
+
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_m_ensaio, only: %i[show edit update destroy]
+  before_action :prepare_new_wizard, only: %i[new create]
+  before_action :prepare_edit_wizard, only: %i[edit update]
   before_action :load_form_collections, only: %i[new create edit update]
-  before_action :prepare_form_state, only: %i[new create edit update]
+  helper_method :current_step, :first_step?, :last_step?
 
   def index
     @q = tenant_scope(MEnsaio).ransack(params[:q])
@@ -14,37 +20,57 @@ class MEnsaiosController < ApplicationController
 
   def new
     @m_ensaio = MEnsaio.new
-    apply_form_defaults
+    apply_wizard_values
+    preload_form_state
   end
 
   def edit
-    apply_form_defaults
+    apply_wizard_values
+    preload_form_state
   end
 
   def create
+    store_wizard_step!
     @m_ensaio = MEnsaio.new
-    apply_form_defaults
+    apply_wizard_values
+    preload_form_state
 
-    if MEnsaios::ServicoCriacao.new(m_ensaio: @m_ensaio, params: m_ensaio_params.to_h.deep_symbolize_keys).call
-      redirect_to m_ensaios_path, notice: "#{MEnsaio.model_name.human} criado com sucesso."
+    if navigating_previous?
+      redirect_to new_m_ensaio_path(step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to new_m_ensaio_path(step: navigation_target_step, resume: 1)
+    elsif last_step?
+      MEnsaios::ServicoCriacao.new(m_ensaio: @m_ensaio, params: wizard_params).call
+      clear_new_wizard!
+      redirect_to m_ensaio_path(@m_ensaio), notice: "#{MEnsaio.model_name.human} criado com sucesso."
     else
-      render :new, status: :unprocessable_entity
+      redirect_to new_m_ensaio_path(step: next_step, resume: 1)
     end
   rescue ActiveRecord::RecordInvalid
-    apply_form_defaults
+    apply_wizard_values
+    preload_form_state
     render :new, status: :unprocessable_entity
   end
 
   def update
-    apply_form_defaults
+    store_wizard_step!
+    apply_wizard_values
+    preload_form_state
 
-    if MEnsaios::ServicoAtualizacao.new(m_ensaio: @m_ensaio, params: m_ensaio_params.to_h.deep_symbolize_keys).call
-      redirect_to m_ensaios_path, notice: "#{MEnsaio.model_name.human} atualizado com sucesso."
+    if navigating_previous?
+      redirect_to edit_m_ensaio_path(@m_ensaio, step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to edit_m_ensaio_path(@m_ensaio, step: navigation_target_step, resume: 1)
+    elsif last_step?
+      MEnsaios::ServicoAtualizacao.new(m_ensaio: @m_ensaio, params: wizard_params).call
+      clear_edit_wizard!
+      redirect_to m_ensaio_path(@m_ensaio), notice: "#{MEnsaio.model_name.human} atualizado com sucesso."
     else
-      render :edit, status: :unprocessable_entity
+      redirect_to edit_m_ensaio_path(@m_ensaio, step: next_step, resume: 1)
     end
   rescue ActiveRecord::RecordInvalid
-    apply_form_defaults
+    apply_wizard_values
+    preload_form_state
     render :edit, status: :unprocessable_entity
   end
 
@@ -80,55 +106,143 @@ class MEnsaiosController < ApplicationController
     end
   end
 
-  def prepare_form_state
-    @selected_group_ids = selected_group_ids_from_params
-    @selected_event_ids = selected_event_ids_from_params
-    @selected_repertorio = selected_repertorio_from_params
+  def current_step
+    step = params[:step].presence || STEPS.first
+    STEPS.include?(step) ? step : STEPS.first
   end
 
-  def apply_form_defaults
-    @selected_group_ids = existing_group_ids if @selected_group_ids.empty? && @m_ensaio.persisted?
-    @selected_event_ids = existing_event_ids if @selected_event_ids.empty? && @m_ensaio.persisted?
-    @selected_repertorio = existing_repertorio if @selected_repertorio.empty? && @m_ensaio.persisted?
-    @selected_event_ids = selected_event_ids_from_query if @selected_event_ids.empty?
-    @selected_repertorio = repertorio_from_selected_events if @selected_repertorio.empty? && @selected_event_ids.any?
-    @m_ensaio.assign_attributes(m_ensaio_params.except(:m_evento_ids, :repertorio)) if params[:m_ensaio].present?
+  def first_step?
+    current_step == STEPS.first
   end
 
-  def selected_event_ids_from_query
-    values = Array(params[:m_evento_ids]) + Array(params[:m_evento_id])
-    normalize_ids(values)
+  def last_step?
+    current_step == STEPS.last
   end
 
-  def selected_group_ids_from_params
-    normalize_ids(m_ensaio_params[:m_grupo_ids])
+  def next_step
+    STEPS[[STEPS.index(current_step) + 1, STEPS.length - 1].min]
   end
 
-  def selected_event_ids_from_params
-    normalize_ids(m_ensaio_params[:m_evento_ids])
+  def previous_step
+    STEPS[[STEPS.index(current_step) - 1, 0].max]
   end
 
-  def selected_repertorio_from_params
-    repertorio = m_ensaio_params[:repertorio]
-    entries = case repertorio
-    when ActionController::Parameters
-      repertorio.to_unsafe_h.values
-    when Hash
-      repertorio.values
+  def wizard_session_key
+    @wizard_session_key ||= @m_ensaio&.persisted? ? "m_ensaio_wizard_#{@m_ensaio.id}" : "m_ensaio_wizard_new"
+  end
+
+  def wizard_params
+    (session[wizard_session_key] || {}).deep_symbolize_keys
+  end
+
+  def store_wizard_step!
+    session[wizard_session_key] = wizard_params.deep_stringify_keys.merge(m_ensaio_params.to_h)
+  end
+
+  def prepare_new_wizard
+    clear_new_wizard! if params[:reset] == "1" || fresh_wizard_start?
+    seed_wizard_event_from_query!
+  end
+
+  # O atalho "Cadastrar ensaio para este evento" chega como ?m_evento_id=X só
+  # na primeira requisição (GET /new). Sem gravar isso na sessão do wizard já
+  # de cara, o evento marcado se perde assim que o usuário avança da etapa
+  # "dados" (que não reenvia m_evento_ids) para a etapa "grupos_eventos".
+  def seed_wizard_event_from_query!
+    return if params[:m_evento_id].blank?
+    return if wizard_params.key?(:m_evento_ids)
+
+    session[wizard_session_key] = wizard_params.deep_stringify_keys.merge("m_evento_ids" => [params[:m_evento_id].to_s])
+  end
+
+  def prepare_edit_wizard
+    clear_edit_wizard! if params[:reset] == "1" || fresh_wizard_start?
+  end
+
+  def clear_new_wizard!
+    session.delete(wizard_session_key)
+  end
+
+  def clear_edit_wizard!
+    session.delete(wizard_session_key)
+  end
+
+  def navigating_previous?
+    params[:navigation] == "previous"
+  end
+
+  def navigation_target_step
+    value = params[:navigation].to_s
+    return unless value.start_with?("goto:")
+
+    step = value.delete_prefix("goto:")
+    step if STEPS.include?(step)
+  end
+
+  def fresh_wizard_start?
+    action_name.in?(%w[new edit]) && params[:resume] != "1"
+  end
+
+  def apply_wizard_values
+    return unless @m_ensaio
+
+    @m_ensaio.assign_attributes(
+      descricao: wizard_params.fetch(:descricao, @m_ensaio.descricao),
+      data_inicio: wizard_params.fetch(:data_inicio, @m_ensaio.data_inicio),
+      data_fim: wizard_params.fetch(:data_fim, @m_ensaio.data_fim),
+      g_predio_id: wizard_params.fetch(:g_predio_id, @m_ensaio.g_predio_id)
+    )
+  end
+
+  def preload_form_state
+    @selected_group_ids = if wizard_params.key?(:m_grupo_ids)
+      normalize_ids(wizard_params[:m_grupo_ids])
+    elsif @m_ensaio.persisted?
+      existing_group_ids
     else
-      Array(repertorio)
+      []
     end
 
-    entries.filter_map do |entry|
+    @selected_event_ids = if wizard_params.key?(:m_evento_ids)
+      normalize_ids(wizard_params[:m_evento_ids])
+    elsif @m_ensaio.persisted?
+      existing_event_ids
+    else
+      selected_event_ids_from_query
+    end
+
+    @selected_repertorio = if wizard_params.key?(:repertorio)
+      repertorio_from_wizard_params
+    elsif @m_ensaio.persisted?
+      existing_repertorio
+    elsif @selected_event_ids.any?
+      repertorio_from_selected_events
+    else
+      {}
+    end
+  end
+
+  def repertorio_from_wizard_params
+    entries = wizard_params[:repertorio]
+    return {} if entries.blank?
+
+    entries.values.filter_map do |entry|
+      next unless ActiveModel::Type::Boolean.new.cast(entry[:selecionada])
+
       evento_musica_id = entry[:m_evento_musica_id].presence&.to_i
       next if evento_musica_id.blank?
 
       {
         m_evento_musica_id: evento_musica_id,
-        selecionada: ActiveModel::Type::Boolean.new.cast(entry[:selecionada]),
+        selecionada: true,
         observacao: entry[:observacao].to_s
       }
     end.index_by { |entry| entry[:m_evento_musica_id] }
+  end
+
+  def selected_event_ids_from_query
+    values = Array(params[:m_evento_ids]) + Array(params[:m_evento_id])
+    normalize_ids(values)
   end
 
   def existing_event_ids

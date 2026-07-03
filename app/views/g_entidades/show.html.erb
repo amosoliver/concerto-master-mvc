@@ -11,7 +11,7 @@
   </div>
 
   <div class="show-stack">
-    <div class="show-hero">
+    <div class="show-hero show-hero--solo">
       <section class="panel-card show-summary">
         <p class="eyebrow">Visão geral</p>
         <h2 class="show-summary__title"><%= @g_entidade.descricao %></h2>
@@ -19,33 +19,6 @@
           Entidade localizada em <%= [@g_entidade.g_municipio, @g_entidade.g_estado].compact.join(" / ") %>
           <%= "vinculada a #{@g_entidade.g_entidade}" if @g_entidade.g_entidade.present? %>.
         </p>
-      </section>
-
-      <section class="panel-card show-section">
-        <div class="panel-card__header">
-          <div>
-            <p class="eyebrow">Resumo</p>
-            <h3>Relacionamentos</h3>
-          </div>
-        </div>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Prédios</span>
-            <span class="show-stat__value"><%= @g_entidade.g_predios.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Pessoas</span>
-            <span class="show-stat__value"><%= @g_entidade.g_pessoas.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Grupos</span>
-            <span class="show-stat__value"><%= @g_entidade.m_grupos.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Entidades filhas</span>
-            <span class="show-stat__value"><%= @g_entidade.g_entidades.count %></span>
-          </div>
-        </div>
       </section>
     </div>
 
@@ -88,7 +61,6 @@
           <p class="eyebrow">Estrutura</p>
           <h3>Prédios da entidade</h3>
         </div>
-        <span class="show-section__count"><%= @g_entidade.g_predios.count %></span>
       </div>
       <% if @g_entidade.g_predios.any? %>
         <div class="related-grid">
@@ -111,7 +83,6 @@
           <p class="eyebrow">Organização</p>
           <h3>Grupos cadastrados</h3>
         </div>
-        <span class="show-section__count"><%= @g_entidade.m_grupos.count %></span>
       </div>
       <% if @g_entidade.m_grupos.any? %>
         <div class="related-grid">

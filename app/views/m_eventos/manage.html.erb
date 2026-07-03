@@ -8,6 +8,8 @@
       <%= authorized_link_to "Ver evento", m_evento_path(@m_evento), class: "secondary-button" %>
       <%= authorized_link_to "Editar dados", edit_m_evento_path(@m_evento), class: "secondary-button" %>
       <%= authorized_link_to "Novo ensaio", new_m_ensaio_path(m_evento_id: @m_evento.id), class: "primary-button" %>
+      <%= authorized_button_to cancelar_m_evento_path(@m_evento), method: :patch, data: { turbo_confirm: "Cancelar este evento?" }, class: "danger-button" do %>Cancelar evento<% end if @m_evento.cancelavel? %>
+      <%= authorized_button_to finalizar_m_evento_path(@m_evento), method: :patch, data: { turbo_confirm: "Finalizar este evento?" }, class: "secondary-button" do %>Finalizar evento<% end if @m_evento.finalizavel? %>
       <%= link_to "Voltar", m_eventos_path, class: "secondary-button" %>
     </div>
   </div>
@@ -17,6 +19,8 @@
       <section class="panel-card show-summary">
         <p class="eyebrow">Evento</p>
         <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
+        <span class="status-badge <%= m_evento_status_badge_class(@m_evento) %>"><%= m_evento_status_label(@m_evento) %></span>
+        <p class="show-summary__text">Cancelável até <%= format_datetime(@m_evento.cancelamento_limite_em) %></p>
         <div class="page-header__actions">
           <%= link_to "Ir para repertório", "#gestao-repertorio", class: "secondary-button" %>
         </div>
@@ -41,6 +45,10 @@
           <div class="show-stat">
             <span class="show-stat__label">Arranjos definidos</span>
             <span class="show-stat__value"><%= @m_evento.arranjos_definidos_count %></span>
+          </div>
+          <div class="show-stat">
+            <span class="show-stat__label">Status</span>
+            <span class="show-stat__value"><%= m_evento_status_label(@m_evento) %></span>
           </div>
         </div>
       </section>

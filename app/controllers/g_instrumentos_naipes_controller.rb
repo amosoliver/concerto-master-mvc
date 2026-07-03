@@ -1,4 +1,6 @@
 class GInstrumentosNaipesController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_g_instrumento_naipe, only: %i[show edit update destroy]
   before_action :load_form_collections, only: %i[new create edit update]
 

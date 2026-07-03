@@ -1,11 +1,13 @@
 class GPessoasController < ApplicationController
   STEPS = %w[dados grupos instrumentos funcoes usuario].freeze
 
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_g_pessoa, only: %i[show edit update destroy]
   before_action :prepare_new_wizard, only: %i[new create]
   before_action :prepare_edit_wizard, only: %i[edit update]
   before_action :load_form_collections, only: %i[new create edit update]
-  helper_method :current_step, :step_index, :last_step?, :first_step?, :wizard_values, :step_path_for, :selected_entity
+  helper_method :current_step, :step_index, :last_step?, :first_step?, :wizard_values, :selected_entity
 
   def index
     @q = tenant_scope(GPessoa).ransack(params[:q])
@@ -30,6 +32,8 @@ class GPessoasController < ApplicationController
 
     if navigating_previous?
       redirect_to new_g_pessoa_path(step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to new_g_pessoa_path(step: navigation_target_step, resume: 1)
     elsif current_step_valid?
       if last_step?
         GPessoas::ServicoCriacao.new(g_pessoa: @g_pessoa, params: wizard_params).call
@@ -51,6 +55,8 @@ class GPessoasController < ApplicationController
 
     if navigating_previous?
       redirect_to edit_g_pessoa_path(@g_pessoa, step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to edit_g_pessoa_path(@g_pessoa, step: navigation_target_step, resume: 1)
     elsif current_step_valid?
       if last_step?
         GPessoas::ServicoAtualizacao.new(g_pessoa: @g_pessoa, params: wizard_params).call
@@ -124,14 +130,6 @@ class GPessoasController < ApplicationController
     @wizard_values ||= persisted_wizard_values
   end
 
-  def step_path_for(step)
-    if action_name.in?(%w[edit update]) && @g_pessoa&.persisted?
-      edit_g_pessoa_path(@g_pessoa, step: step, resume: 1)
-    else
-      new_g_pessoa_path(step: step, resume: 1)
-    end
-  end
-
   def store_wizard_step!
     session[wizard_session_key] = normalized_wizard_values(wizard_values.merge(g_pessoa_params.to_h))
     @wizard_values = nil
@@ -196,6 +194,14 @@ class GPessoasController < ApplicationController
 
   def navigating_previous?
     params[:navigation] == "previous"
+  end
+
+  def navigation_target_step
+    value = params[:navigation].to_s
+    return unless value.start_with?("goto:")
+
+    step = value.delete_prefix("goto:")
+    step if STEPS.include?(step)
   end
 
   def fresh_wizard_start?

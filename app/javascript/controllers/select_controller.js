@@ -15,6 +15,7 @@ export default class extends Controller {
     this.instances = Array.from(this.element.querySelectorAll("select")).map((select) => {
       const instance = new window.TomSelect(select, {
         create: false,
+        hidePlaceholder: true,
         // Render the dropdown on <body> instead of inline: several form cards
         // (.panel-card, .group-builder__card, etc.) use overflow: hidden to
         // round their corners, which was clipping the options list whenever
@@ -45,7 +46,8 @@ export default class extends Controller {
 function syncPlaceholder(instance) {
   if (!instance?.control_input) return
 
-  instance.control_input.placeholder = instance.items.length ? "" : placeholderText(instance)
+  const hasSelection = Array.isArray(instance.items) ? instance.items.length > 0 : Boolean(instance.getValue?.())
+  instance.control_input.placeholder = hasSelection ? "" : placeholderText(instance)
 }
 
 function syncDisabledState(instance) {

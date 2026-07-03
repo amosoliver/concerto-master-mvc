@@ -1,4 +1,6 @@
 class UPerfisController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   helper_method :section_title
 
   before_action :set_u_perfil, only: %i[show edit update destroy]

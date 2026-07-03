@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_01_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_03_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -303,6 +303,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_01_120000) do
     t.index ["m_grupo_id"], name: "index_m_evento_musica_grupos_on_m_grupo_id"
   end
 
+  create_table "m_evento_statuses", force: :cascade do |t|
+    t.string "codigo", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "descricao", null: false
+    t.datetime "updated_at", null: false
+    t.index ["codigo"], name: "index_m_evento_statuses_on_codigo", unique: true
+    t.index ["deleted_at"], name: "index_m_evento_statuses_on_deleted_at"
+  end
+
   create_table "m_eventos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "data_fim"
@@ -311,10 +321,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_01_120000) do
     t.string "descricao"
     t.bigint "g_entidade_id", null: false
     t.bigint "g_predio_id", null: false
+    t.bigint "m_evento_status_id", null: false
+    t.datetime "status_at"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_m_eventos_on_deleted_at"
     t.index ["g_entidade_id"], name: "index_m_eventos_on_g_entidade_id"
     t.index ["g_predio_id"], name: "index_m_eventos_on_g_predio_id"
+    t.index ["m_evento_status_id"], name: "index_m_eventos_on_m_evento_status_id"
   end
 
   create_table "m_eventos_musicas", force: :cascade do |t|
@@ -536,6 +549,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_01_120000) do
   add_foreign_key "m_evento_musica_grupos", "m_grupos"
   add_foreign_key "m_eventos", "g_entidades"
   add_foreign_key "m_eventos", "g_predios"
+  add_foreign_key "m_eventos", "m_evento_statuses"
   add_foreign_key "m_eventos_musicas", "g_entidades"
   add_foreign_key "m_eventos_musicas", "m_arranjos"
   add_foreign_key "m_eventos_musicas", "m_eventos"

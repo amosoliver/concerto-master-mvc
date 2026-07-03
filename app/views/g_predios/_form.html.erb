@@ -43,20 +43,22 @@
           </div>
           <a href="<%= g_predio.latitude.present? && g_predio.longitude.present? ? "https://www.openstreetmap.org/?mlat=#{g_predio.latitude}&mlon=#{g_predio.longitude}#map=16/#{g_predio.latitude}/#{g_predio.longitude}" : "#" %>" target="_blank" rel="noopener" class="secondary-button" data-entidade-form-target="mapLink">Abrir mapa</a>
         </div>
-        <iframe
-          title="Mapa do endereço"
-          class="map-card__frame"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          src="<%= if g_predio.latitude.present? && g_predio.longitude.present?
-            lat = g_predio.latitude.to_f
-            lng = g_predio.longitude.to_f
-            delta = 0.01
-            bbox = [lng - delta, lat - delta, lng + delta, lat + delta].join('%2C')
-            marker = "#{lat}%2C#{lng}"
-            "https://www.openstreetmap.org/export/embed.html?bbox=#{bbox}&layer=mapnik&marker=#{marker}"
-          end %>"
-          data-entidade-form-target="mapFrame"></iframe>
+        <div class="map-embed-crop">
+          <iframe
+            title="Mapa do endereço"
+            class="map-card__frame"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="<%= if g_predio.latitude.present? && g_predio.longitude.present?
+              lat = g_predio.latitude.to_f
+              lng = g_predio.longitude.to_f
+              delta = 0.01
+              bbox = [lng - delta, lat - delta, lng + delta, lat + delta].join('%2C')
+              marker = "#{lat}%2C#{lng}"
+              "https://www.openstreetmap.org/export/embed.html?bbox=#{bbox}&layer=mapnik&marker=#{marker}"
+            end %>"
+            data-entidade-form-target="mapFrame"></iframe>
+        </div>
       </div>
     </div>
   </div>

@@ -12,56 +12,91 @@
   </div>
 
   <div class="show-stack">
-    <div class="show-hero">
-      <section class="panel-card show-summary">
-        <p class="eyebrow">Evento</p>
-        <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
-        <p class="show-summary__text show-summary__text--highlight">Início em <%= format_datetime(@m_evento.data_inicio) %></p>
-      </section>
+    <% if @m_evento.cancelado? %>
+      <div class="show-hero show-hero--solo">
+        <section class="panel-card show-summary">
+          <p class="eyebrow">Evento</p>
+          <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
+          <span class="status-badge <%= m_evento_status_badge_class(@m_evento) %>"><%= m_evento_status_label(@m_evento) %></span>
+          <p class="show-summary__text show-summary__text--highlight">Aconteceria em <%= format_datetime(@m_evento.data_inicio) %></p>
+        </section>
+      </div>
+    <% else %>
+      <div class="show-hero">
+        <section class="panel-card show-summary">
+          <p class="eyebrow">Evento</p>
+          <h2 class="show-summary__title"><%= @m_evento.descricao %></h2>
+          <span class="status-badge <%= m_evento_status_badge_class(@m_evento) %>"><%= m_evento_status_label(@m_evento) %></span>
+          <p class="show-summary__text show-summary__text--highlight">Início em <%= format_datetime(@m_evento.data_inicio) %></p>
+          <div class="show-mini-grid show-mini-grid--hero">
+            <article class="show-mini-card">
+              <span class="show-mini-card__label">Prédio</span>
+              <span class="show-mini-card__value"><%= @m_evento.g_predio %></span>
+            </article>
+            <article class="show-mini-card">
+              <span class="show-mini-card__label">Músicas</span>
+              <span class="show-mini-card__value"><%= @m_evento.repertorio_count %></span>
+              <span class="show-mini-card__meta">itens no repertório</span>
+            </article>
+            <article class="show-mini-card">
+              <span class="show-mini-card__label">Arranjos</span>
+              <span class="show-mini-card__value"><%= @m_evento.arranjos_definidos_count %></span>
+              <span class="show-mini-card__meta">já definidos</span>
+            </article>
+            <article class="show-mini-card">
+              <span class="show-mini-card__label">Cancelável até</span>
+              <span class="show-mini-card__value"><%= format_datetime(@m_evento.cancelamento_limite_em) %></span>
+              <span class="show-mini-card__meta">depois disso finaliza automático</span>
+            </article>
+          </div>
+        </section>
 
-      <% predio = @m_evento.g_predio %>
-      <section class="panel-card show-section show-location">
+        <% predio = @m_evento.g_predio %>
+        <section class="panel-card show-section show-location">
+          <div class="panel-card__header">
+            <div>
+              <p class="eyebrow">Local</p>
+              <h3><%= predio %></h3>
+            </div>
+            <% if openstreetmap_url(predio).present? %>
+              <%= link_to "Abrir mapa", openstreetmap_url(predio), target: "_blank", rel: "noopener", class: "secondary-button" %>
+            <% end %>
+          </div>
+          <div class="show-location__grid">
+            <div class="show-location__content">
+              <p class="show-location__address"><%= predio_location_line(predio).presence || "Endereço indisponível" %></p>
+            </div>
+            <% if openstreetmap_embed_url(predio).present? %>
+              <div class="map-embed-crop">
+                <iframe
+                  title="Mapa do local do evento"
+                  class="show-location__map"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  src="<%= openstreetmap_embed_url(predio) %>"></iframe>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel-card show-section show-section--full-width">
         <div class="panel-card__header">
           <div>
-            <p class="eyebrow">Local</p>
-            <h3><%= predio %></h3>
+            <p class="eyebrow">Repertório</p>
+            <h3>Músicas, arranjos e arquivos do seu naipe</h3>
           </div>
-          <% if openstreetmap_url(predio).present? %>
-            <%= link_to "Abrir mapa", openstreetmap_url(predio), target: "_blank", rel: "noopener", class: "secondary-button" %>
-          <% end %>
         </div>
-        <div class="show-location__grid">
-          <div class="show-location__content">
-            <p class="show-location__address"><%= predio_location_line(predio).presence || "Endereço indisponível" %></p>
+        <% if @evento_repertorio.any? %>
+          <div class="evento-showcase">
+            <% @evento_repertorio.each do |evento_musica| %>
+              <%= render "shared/music_track_card", evento_musica: evento_musica %>
+            <% end %>
           </div>
-          <% if openstreetmap_embed_url(predio).present? %>
-            <iframe
-              title="Mapa do local do evento"
-              class="show-location__map"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              src="<%= openstreetmap_embed_url(predio) %>"></iframe>
-          <% end %>
-        </div>
+        <% else %>
+          <div class="empty-card">Nenhuma música foi vinculada a este evento.</div>
+        <% end %>
       </section>
-    </div>
-
-    <section class="panel-card show-section show-section--full-width">
-      <div class="panel-card__header">
-        <div>
-          <p class="eyebrow">Repertório</p>
-          <h3>Músicas, arranjos e arquivos do seu naipe</h3>
-        </div>
-      </div>
-      <% if @evento_repertorio.any? %>
-        <div class="evento-showcase">
-          <% @evento_repertorio.each do |evento_musica| %>
-            <%= render "shared/music_track_card", evento_musica: evento_musica %>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="empty-card">Nenhuma música foi vinculada a este evento.</div>
-      <% end %>
-    </section>
+    <% end %>
   </div>
 </div>

@@ -31,20 +31,12 @@
       <% if musica.url_referencia.present? %>
         <section class="evento-track-card__panel evento-track-card__reference">
           <div class="evento-track-card__reference-header">
-            <div>
-              <span class="related-card__label">Referência da música</span>
-              <% if arranjo.present? && [arranjo.m_tipo_arranjo, arranjo.m_arranjador, arranjo.m_tonalidade].any?(&:present?) %>
-                <p class="evento-track-card__subtitle">
-                  <%= [arranjo.m_tipo_arranjo, arranjo.m_arranjador, arranjo.m_tonalidade].compact.join(" • ") %>
-                </p>
-              <% end %>
-            </div>
+            <span class="related-card__label">Referência da música</span>
             <%= link_to "Abrir link", musica.url_referencia, target: "_blank", rel: "noopener", class: "related-card__value related-card__value--link" %>
           </div>
           <%= render "shared/music_reference_preview",
                 musica: musica,
-                title: "Ouvir #{musica.descricao}",
-                subtitle: [musica.url_referencia_provider, arranjo&.m_tipo_arranjo, arranjo&.m_arranjador, arranjo&.m_tonalidade].compact.join(" • "),
+                subtitle: musica.url_referencia_provider,
                 eyebrow: "Player externo" %>
         </section>
       <% end %>

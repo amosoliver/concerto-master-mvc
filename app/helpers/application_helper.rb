@@ -36,7 +36,11 @@ module ApplicationHelper
     menu: '<path d="M4 8l16 0" /><path d="M4 12l16 0" /><path d="M4 16l16 0" />',
     x: '<path d="M18 6l-12 12" /><path d="M6 6l12 12" />',
     chevron_down: '<path d="M6 9l6 6l6 -6" />',
-    logout: '<path d="M13 5l0 -1a2 2 0 0 0 -2 -2h-4a2 2 0 0 0 -2 2v16a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-1" /><path d="M16 17l5 -5l-5 -5" /><path d="M21 12h-13" />'
+    logout: '<path d="M13 5l0 -1a2 2 0 0 0 -2 -2h-4a2 2 0 0 0 -2 2v16a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-1" /><path d="M16 17l5 -5l-5 -5" /><path d="M21 12h-13" />',
+    player_play: '<path d="M7 4v16l13 -8z" />',
+    player_pause: '<path d="M9 4h2v16h-2z" /><path d="M13 4h2v16h-2z" />',
+    player_skip_back: '<path d="M20 5v14l-8 -7z" /><path d="M9 5v14l-8 -7z" />',
+    player_skip_forward: '<path d="M3 5v14l8 -7z" /><path d="M14 5v14l8 -7z" />'
   }.freeze
 
   CALENDAR_MONTH_NAMES = [
@@ -222,7 +226,23 @@ module ApplicationHelper
   end
 
   def calendar_entry_css_class(entry)
-    entry[:kind] == :ensaio ? "is-ensaio" : "is-evento"
+    classes = [entry[:kind] == :ensaio ? "is-ensaio" : "is-evento"]
+    classes << "is-cancelado" if calendar_entry_cancelado?(entry)
+    classes.join(" ")
+  end
+
+  def calendar_entry_cancelado?(entry)
+    entry[:kind] == :evento && entry[:record].respond_to?(:cancelado?) && entry[:record].cancelado?
+  end
+
+  # Eventos cancelados aparecem riscados na agenda e não devem ser clicáveis
+  # (evita o usuário entrar em um evento que não vai mais acontecer).
+  def calendar_entry_tag(entry, css_class, &block)
+    if calendar_entry_cancelado?(entry)
+      content_tag(:div, class: css_class, &block)
+    else
+      link_to(calendar_entry_path(entry), class: css_class, &block)
+    end
   end
 
   AUDIO_FILE_EXTENSIONS = %w[

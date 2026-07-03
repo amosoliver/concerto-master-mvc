@@ -5,13 +5,7 @@
   <%= hidden_field_tag :step, current_step %>
 
   <%= render "shared/form_errors", record: g_pessoa %>
-  <div class="steps-nav">
-    <% GPessoasController::STEPS.each_with_index do |step, index| %>
-      <%= link_to step_path_for(step), class: "steps-nav__item #{'is-active' if current_step == step}" do %>
-        <%= "#{index + 1}. #{step.titleize}" %>
-      <% end %>
-    <% end %>
-  </div>
+  <%= render "shared/steps_nav", steps: GPessoasController::STEPS, current_step: current_step %>
 
   <% case current_step %>
   <% when "dados" %>

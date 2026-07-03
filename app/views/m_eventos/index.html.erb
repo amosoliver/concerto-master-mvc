@@ -55,6 +55,7 @@
         <thead>
           <tr>
             <th scope="col"><%= MEvento.human_attribute_name(:descricao) %></th>
+            <th scope="col">Status</th>
             <th scope="col"><%= MEvento.human_attribute_name(:data_inicio) %></th>
             <th scope="col"><%= MEvento.human_attribute_name(:g_predio_id) %></th>
             <th scope="col" class="table-actions-col">Ações</th>
@@ -64,6 +65,7 @@
           <% @m_eventos.each do |m_evento| %>
             <tr>
               <td><%= m_evento.descricao %></td>
+              <td><span class="status-badge <%= m_evento_status_badge_class(m_evento) %>"><%= m_evento_status_label(m_evento) %></span></td>
               <td><%= format_datetime(m_evento.data_inicio) %></td>
               <td><%= m_evento.g_predio %></td>
               <td class="table-actions-cell">
@@ -81,6 +83,7 @@
           <div class="record-card__body">
             <div class="record-card__header">
               <h3 class="record-card__title"><%= m_evento.descricao %></h3>
+              <span class="status-badge <%= m_evento_status_badge_class(m_evento) %>"><%= m_evento_status_label(m_evento) %></span>
             </div>
             <div class="record-card__attrs">
               <div class="record-card__attr">

@@ -1,12 +1,14 @@
 class GEntidadesController < ApplicationController
   STEPS = %w[dados predio grupos].freeze
 
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_g_entidade, only: %i[show edit update destroy]
   before_action :prepare_new_wizard, only: %i[new create]
   before_action :prepare_edit_wizard, only: %i[edit update]
   before_action :load_form_collections, only: %i[new create edit update]
   before_action :load_group_rows, only: %i[new create edit update]
-  helper_method :current_step, :first_step?, :last_step?, :step_path_for
+  helper_method :current_step, :first_step?, :last_step?
 
   def index
     @q = tenant_scope(GEntidade).ransack(params[:q])
@@ -33,6 +35,8 @@ class GEntidadesController < ApplicationController
 
     if navigating_previous?
       redirect_to new_g_entidade_path(step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to new_g_entidade_path(step: navigation_target_step, resume: 1)
     elsif current_step_valid?
       if last_step?
         GEntidades::ServicoCriacao.new(g_entidade: @g_entidade, params: wizard_params).call
@@ -54,6 +58,8 @@ class GEntidadesController < ApplicationController
 
     if navigating_previous?
       redirect_to edit_g_entidade_path(@g_entidade, step: previous_step, resume: 1)
+    elsif navigation_target_step
+      redirect_to edit_g_entidade_path(@g_entidade, step: navigation_target_step, resume: 1)
     elsif current_step_valid?
       if last_step?
         GEntidades::ServicoAtualizacao.new(g_entidade: @g_entidade, params: wizard_params).call
@@ -118,14 +124,6 @@ class GEntidadesController < ApplicationController
     STEPS[[STEPS.index(current_step) - 1, 0].max]
   end
 
-  def step_path_for(step)
-    if @g_entidade&.persisted?
-      edit_g_entidade_path(@g_entidade, step: step, resume: 1)
-    else
-      new_g_entidade_path(step: step, resume: 1)
-    end
-  end
-
   def wizard_session_key
     @wizard_session_key ||= @g_entidade&.persisted? ? "g_entidade_wizard_#{@g_entidade.id}" : "g_entidade_wizard_new"
   end
@@ -156,6 +154,14 @@ class GEntidadesController < ApplicationController
 
   def navigating_previous?
     params[:navigation] == "previous"
+  end
+
+  def navigation_target_step
+    value = params[:navigation].to_s
+    return unless value.start_with?("goto:")
+
+    step = value.delete_prefix("goto:")
+    step if STEPS.include?(step)
   end
 
   def fresh_wizard_start?

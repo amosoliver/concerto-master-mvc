@@ -21,9 +21,8 @@
     <span class="related-card__label"><%= local_assigns[:eyebrow] || "Referência" %></span>
     <h4 class="url-preview__title"><%= preview_title %></h4>
     <p class="url-preview__meta"><%= preview_subtitle %></p>
-    <p class="url-preview__link"><%= musica.url_referencia %></p>
-    <div class="url-preview__actions">
-      <% if embed_url.present? %>
+    <% if embed_url.present? %>
+      <div class="url-preview__actions">
         <details class="url-preview__player">
           <summary class="secondary-button secondary-button--sm">Reproduzir aqui</summary>
           <div class="url-preview__player-body">
@@ -37,8 +36,7 @@
             ></iframe>
           </div>
         </details>
-      <% end %>
-      <%= link_to "Abrir link", musica.url_referencia, target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-    </div>
+      </div>
+    <% end %>
   </div>
 </div>

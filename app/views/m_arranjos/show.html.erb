@@ -11,30 +11,11 @@
   </div>
 
   <div class="show-stack">
-    <div class="show-hero">
+    <div class="show-hero show-hero--solo">
       <section class="panel-card show-summary">
         <p class="eyebrow">Arranjo</p>
-        <h2 class="show-summary__title"><%= @m_arranjo.descricao.presence || "#{@m_arranjo.m_musica} - #{@m_arranjo.m_arranjador}" %></h2>
-        <p class="show-summary__text"><%= [@m_arranjo.m_tipo_arranjo, @m_arranjo.m_arranjador, @m_arranjo.m_tonalidade].compact.join(" • ") %></p>
-      </section>
-
-      <section class="panel-card show-section">
-        <div class="panel-card__header">
-          <div>
-            <p class="eyebrow">Resumo</p>
-            <h3>Instrumentação</h3>
-          </div>
-        </div>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Instrumentos</span>
-            <span class="show-stat__value"><%= @m_arranjo.g_instrumentos_naipes.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Música</span>
-            <span class="show-stat__value">#<%= @m_arranjo.m_musica_id %></span>
-          </div>
-        </div>
+        <h2 class="show-summary__title"><%= @m_arranjo.descricao.presence || @m_arranjo.m_musica.to_s %></h2>
+        <p class="show-summary__text"><%= @m_arranjo.m_tipo_arranjo %></p>
       </section>
     </div>
 
@@ -46,27 +27,27 @@
         </div>
       </div>
 
-      <div class="detail-grid">
-        <div class="detail-tile">
-          <span class="detail-label"><%= MArranjo.human_attribute_name(:descricao) %></span>
-          <span class="detail-value"><%= @m_arranjo.descricao.presence || "-" %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
-          <span class="detail-value"><%= @m_arranjo.m_musica %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></span>
-          <span class="detail-value"><%= @m_arranjo.m_tipo_arranjo %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
-          <span class="detail-value"><%= @m_arranjo.m_arranjador %></span>
-        </div>
-        <div class="detail-tile">
-          <span class="detail-label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>
-          <span class="detail-value"><%= @m_arranjo.m_tonalidade %></span>
-        </div>
+      <div class="show-mini-grid">
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= MArranjo.human_attribute_name(:descricao) %></span>
+          <span class="show-mini-card__value"><%= @m_arranjo.descricao.presence || "-" %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= MArranjo.human_attribute_name(:m_musica_id) %></span>
+          <span class="show-mini-card__value"><%= @m_arranjo.m_musica %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= MArranjo.human_attribute_name(:m_tipo_arranjo_id) %></span>
+          <span class="show-mini-card__value"><%= @m_arranjo.m_tipo_arranjo %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= MArranjo.human_attribute_name(:m_arranjador_id) %></span>
+          <span class="show-mini-card__value"><%= @m_arranjo.m_arranjador %></span>
+        </article>
+        <article class="show-mini-card">
+          <span class="show-mini-card__label"><%= MArranjo.human_attribute_name(:m_tonalidade_id) %></span>
+          <span class="show-mini-card__value"><%= @m_arranjo.m_tonalidade %></span>
+        </article>
       </div>
 
       <div class="detail-meta">
@@ -81,9 +62,8 @@
           <p class="eyebrow">Instrumentos</p>
           <h3>Arquivos do seu instrumento ou naipe</h3>
         </div>
-        <% user_relations = instrument_relations_for_current_user(@m_arranjo) %>
-        <span class="show-section__count"><%= user_relations.count %></span>
       </div>
+      <% user_relations = instrument_relations_for_current_user(@m_arranjo) %>
       <% if !current_user_has_instrument_assignments? %>
         <div class="empty-card">Seu usuário não possui instrumento/naipe associado nesta entidade.</div>
       <% elsif user_relations.any? %>

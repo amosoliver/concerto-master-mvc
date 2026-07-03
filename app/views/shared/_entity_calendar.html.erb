@@ -47,7 +47,7 @@
           <div class="calendar-week__events">
             <% if day_entries.any? %>
               <% day_entries.each do |entry| %>
-                <%= link_to calendar_entry_path(entry), class: "calendar-event-pill #{calendar_entry_css_class(entry)}" do %>
+                <%= calendar_entry_tag(entry, "calendar-event-pill #{calendar_entry_css_class(entry)}") do %>
                   <strong><%= format_time(entry[:starts_at]) %></strong>
                   <span><%= calendar_entry_type_label(entry) %>: <%= entry[:title] %></span>
                 <% end %>
@@ -66,7 +66,7 @@
         <ul class="event-list">
           <% snapshot[:day_entries].each do |entry| %>
             <li>
-              <%= link_to calendar_entry_path(entry), class: "event-list__link" do %>
+              <%= calendar_entry_tag(entry, "event-list__link #{"is-cancelado" if calendar_entry_cancelado?(entry)}") do %>
                 <span>
                   <strong><%= entry[:title] %></strong><br>
                   <small><%= calendar_entry_type_label(entry) %> • <%= entry[:location] %></small>
@@ -107,7 +107,7 @@
             <% if day_entries.any? %>
               <div class="calendar-day__events">
                 <% day_entries.first(2).each do |entry| %>
-                  <%= link_to calendar_entry_path(entry), class: "calendar-day__entry #{calendar_entry_css_class(entry)}" do %>
+                  <%= calendar_entry_tag(entry, "calendar-day__entry #{calendar_entry_css_class(entry)}") do %>
                     <strong><%= format_time(entry[:starts_at]) %></strong>
                     <span><%= entry[:title] %></span>
                   <% end %>

@@ -18,6 +18,8 @@ class DashboardResumoService
   end
 
   def call
+    MEventos::AtualizadorStatusService.new(scope: event_scope).call
+
     {
       view: view,
       month_start: month_start,

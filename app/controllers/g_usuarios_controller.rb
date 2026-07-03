@@ -1,4 +1,6 @@
 class GUsuariosController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_g_usuario, only: %i[show edit update destroy manage_perfis update_perfis]
   before_action :load_access_management_collections, only: %i[manage_perfis update_perfis]
 

@@ -1,4 +1,6 @@
 class MGruposController < ApplicationController
+  layout "modal", only: %i[new edit create update]
+
   before_action :set_m_grupo, only: %i[show edit update destroy manage update_management]
   before_action :load_management_collections, only: %i[manage update_management]
 

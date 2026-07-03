@@ -1,14 +1,46 @@
 <%# locals: (arquivo:) %>
 <% if audio_attachment_file?(arquivo) %>
-  <div class="attachment-row attachment-row--audio">
+  <div class="attachment-row attachment-row--audio attachment-row--player">
     <div class="attachment-row__main">
-      <span class="attachment-row__label"><%= attachment_label(arquivo) %></span>
-      <span class="attachment-row__file"><%= arquivo.filename.to_s %></span>
-      <%= audio_tag rails_blob_path(arquivo), controls: true, preload: "none", class: "audio-inline__player" %>
+      <div class="audio-player-card" data-controller="audio-player">
+        <%= audio_tag rails_blob_path(arquivo), preload: "metadata", data: { audio_player_target: "audio" } %>
+        <div class="audio-player-card__head">
+          <div class="audio-player-card__cover">
+            <%= ui_icon(:music, size: 18) %>
+          </div>
+          <div class="audio-player-card__meta">
+            <span class="audio-player-card__eyebrow"><%= attachment_label(arquivo) %></span>
+            <strong class="audio-player-card__title"><%= arquivo.filename.base.to_s %></strong>
+            <span class="audio-player-card__subline"><%= arquivo.filename.to_s %></span>
+          </div>
+        </div>
+        <div class="audio-player">
+          <button type="button" class="audio-player__skip" data-action="audio-player#skipBack" aria-label="Voltar 10 segundos">
+            <%= ui_icon(:player_skip_back, size: 16) %>
+          </button>
+          <button type="button" class="audio-player__toggle" data-action="audio-player#togglePlay" aria-label="Reproduzir ou pausar">
+            <%= ui_icon(:player_play, size: 18, classes: "audio-player__icon audio-player__icon--play") %>
+            <%= ui_icon(:player_pause, size: 18, classes: "audio-player__icon audio-player__icon--pause") %>
+          </button>
+          <button type="button" class="audio-player__skip" data-action="audio-player#skipForward" aria-label="Avançar 10 segundos">
+            <%= ui_icon(:player_skip_forward, size: 16) %>
+          </button>
+          <div class="audio-player__timeline">
+            <span class="audio-player__time" data-audio-player-target="currentTime">0:00</span>
+            <input
+              type="range"
+              class="audio-player__seek"
+              min="0" max="100" step="0.1" value="0"
+              data-audio-player-target="seek"
+              data-action="input->audio-player#onSeekInput change->audio-player#onSeekChange"
+              aria-label="Posição da reprodução">
+            <span class="audio-player__time" data-audio-player-target="duration">0:00</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="attachment-actions">
-      <%= link_to "Abrir", rails_blob_path(arquivo), target: "_blank", rel: "noopener", class: "secondary-button secondary-button--sm" %>
-      <%= link_to "Download", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
+      <%= link_to "Descarregar", rails_blob_path(arquivo, disposition: "attachment"), class: "secondary-button secondary-button--sm" %>
     </div>
   </div>
 <% else %>

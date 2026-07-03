@@ -44,6 +44,8 @@ class GUsuario < ApplicationRecord
   end
 
   def allowed_to?(controller_name, action_name)
+    return true if admin_for?(Current.g_entidade)
+
     permission_keys.include?("#{controller_name}##{action_name}")
   end
 

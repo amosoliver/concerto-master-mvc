@@ -12,30 +12,11 @@
   </div>
 
   <div class="show-stack">
-    <div class="show-hero">
+    <div class="show-hero show-hero--solo">
       <section class="panel-card show-summary">
         <p class="eyebrow">Grupo</p>
         <h2 class="show-summary__title"><%= @m_grupo.descricao %></h2>
         <p class="show-summary__text">Grupo do tipo <%= @m_grupo.m_tipo_grupo %> vinculado a <%= @m_grupo.g_entidade %>.</p>
-      </section>
-
-      <section class="panel-card show-section">
-        <div class="panel-card__header">
-          <div>
-            <p class="eyebrow">Resumo</p>
-            <h3>Composição</h3>
-          </div>
-        </div>
-        <div class="show-stats">
-          <div class="show-stat">
-            <span class="show-stat__label">Pessoas</span>
-            <span class="show-stat__value"><%= @m_grupo.g_pessoas.count %></span>
-          </div>
-          <div class="show-stat">
-            <span class="show-stat__label">Instrumentos</span>
-            <span class="show-stat__value"><%= @m_grupo.g_instrumentos_naipes.count %></span>
-          </div>
-        </div>
       </section>
     </div>
 
@@ -69,7 +50,6 @@
           <p class="eyebrow">Instrumentação</p>
           <h3>Instrumentos permitidos</h3>
         </div>
-        <span class="show-section__count"><%= @m_grupo.g_instrumentos_naipes.count %></span>
       </div>
       <% if @m_grupo.g_instrumentos_naipes.any? %>
         <div class="tag-cloud">
@@ -88,7 +68,6 @@
           <p class="eyebrow">Pessoas</p>
           <h3>Membros do grupo</h3>
         </div>
-        <span class="show-section__count"><%= @m_grupo.g_pessoas.count %></span>
       </div>
       <% if @m_grupo.g_pessoas.any? %>
         <div class="related-grid">

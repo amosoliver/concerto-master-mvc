@@ -1,0 +1,11 @@
+<%# locals: (steps:, current_step:) %>
+<div class="steps-nav">
+  <% current_index = steps.index(current_step) %>
+  <% steps.each_with_index do |step, index| %>
+    <% status = index < current_index ? "is-done" : (index == current_index ? "is-active" : "") %>
+    <%= button_tag type: "submit", name: "navigation", value: "goto:#{step}", formnovalidate: true, class: "steps-nav__item #{status}" do %>
+      <span class="steps-nav__circle"><%= index + 1 %></span>
+      <span class="steps-nav__label"><%= step.titleize %></span>
+    <% end %>
+  <% end %>
+</div>
